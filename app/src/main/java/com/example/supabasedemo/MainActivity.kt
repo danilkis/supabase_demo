@@ -1,9 +1,15 @@
 package com.example.supabasedemo
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -12,10 +18,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.example.supabasedemo.model.Contacts
 import com.example.supabasedemo.model.Persons
 import com.example.supabasedemo.ui.theme.SupabaseDemoTheme
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.gotrue.GoTrue
+import io.github.jan.supabase.gotrue.user.UserInfo
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.postgrest.query.Columns
@@ -33,19 +42,19 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Greeting("Android")
                     LaunchedEffect(true){
                         get_info_from_supa()
                     }
+                    PersonColumn(Pers)
                 }
             }
         }
     }
 }
 
-var text: String = ""
+var Pers: List<Persons> = mutableListOf()
 val client = createSupabaseClient(
-    supabaseUrl = "http://91.185.84.211/api/v1",
+    supabaseUrl = "http://91.185.84.211:8000",
     supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJhbm9uIiwKICAgICJpc3MiOiAic3VwYWJhc2UtZGVtbyIsCiAgICAiaWF0IjogMTY0MTc2OTIwMCwKICAgICJleHAiOiAxNzk5NTM1NjAwCn0.dc_X5iR_VP_qT0zsiyj_I_OZ2T9FtRU2BBNWN8Bu4GE"
 ) {
     install(Postgrest)
@@ -59,21 +68,42 @@ val client = createSupabaseClient(
 }
 
 suspend fun get_info_from_supa() {
-    text = client.postgrest["Persons"].select(Columns.ALL).decodeList<Persons>().toString()
+    Pers = client.postgrest["Persons"].select().decodeList<Persons>()
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = com.example.supabasedemo.text,
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    SupabaseDemoTheme {
-        Greeting("Android")
+fun PersonColumn(Pers: List<Persons>)
+{
+    Column()
+    {
+        for (person in Pers)
+        {
+            PersonCard(person)
+        }
     }
 }
+
+@Composable
+fun PersonCard(Person: Persons) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+        ) {
+            Text(
+                text = Person.name + " " + Person.surname,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+            Text(
+                text = "DedugData" + Person.id + "   " + Person.contacts,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
+    }
+}
+var user: UserInfo? = null
