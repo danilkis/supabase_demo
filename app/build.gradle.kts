@@ -62,7 +62,7 @@ dependencies {
     implementation("io.github.jan-tennert.supabase:storage-kt")
     implementation("io.github.jan-tennert.supabase:realtime-kt")
     implementation("io.github.jan-tennert.supabase:functions-kt")
-
+    implementation ("androidx.compose.material:material-icons-extended:1.4.3")
     implementation("io.ktor:ktor-client-okhttp:$ktor_version")
 
     implementation("io.ktor:ktor-client-android:$ktor_version")

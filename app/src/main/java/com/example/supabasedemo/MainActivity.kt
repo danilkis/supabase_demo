@@ -5,12 +5,15 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,6 +29,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.supabasedemo.model.Contacts
 import com.example.supabasedemo.model.Persons
+import com.example.supabasedemo.screens.PersonScreen
+import com.example.supabasedemo.screens.SearchBarCustom
 import com.example.supabasedemo.ui.theme.SupabaseDemoTheme
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.gotrue.GoTrue
@@ -47,7 +52,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    PersonColumn()
+                    PersonScreen()
                 }
             }
         }
@@ -62,46 +67,5 @@ val client = createSupabaseClient(
     install(Postgrest)
     install(GoTrue)
     //httpEngine = OkHttpEngine(OkHttpConfig())
-}
-@Composable
-fun PersonColumn()
-{
-    var Cont = remember { mutableStateListOf<Contacts>()}
-    LaunchedEffect(true){
-       client.postgrest["Contacts"].select().decodeList<Contacts>().forEach(){
-           Cont.add(it)
-        }
-    }
-    Column()
-    {
-        for (contact in Cont)
-        {
-            PersonCard(contact)
-        }
-    }
-}
-
-@Composable
-fun PersonCard(Person: Contacts) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(4.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-        ) {
-            Text(
-                text = Person.url + " " + Person.phone,
-                style = MaterialTheme.typography.bodyMedium,
-            )
-            Text(
-                text = "DedugData" + Person.id + "   " + Person.telegram,
-                style = MaterialTheme.typography.bodyMedium,
-            )
-        }
-    }
 }
 var user: UserInfo? = null
