@@ -17,15 +17,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.annotation.ColorInt
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.graphics.toArgb
 import androidx.core.graphics.ColorUtils
 import kotlin.math.absoluteValue
-
-@ColorInt
-fun String.toHslColor(saturation: Float = 0.5f, lightness: Float = 0.4f): Int {
-    val hue = fold(0) { acc, char -> char.code + acc * 37 } % 360
-    return ColorUtils.HSLToColor(floatArrayOf(hue.absoluteValue.toFloat(), saturation, lightness))
-}
-
 @Composable
 fun UserHead(
     id: String,
@@ -33,14 +27,15 @@ fun UserHead(
     lastName: String,
     modifier: Modifier = Modifier,
     size: Dp = 40.dp,
-    textStyle: TextStyle = MaterialTheme.typography.bodyMedium,
+    textStyle: TextStyle = MaterialTheme.typography.bodyMedium
 ) {
+    var color = MaterialTheme.colorScheme.primary.toArgb()
     Box(modifier.size(size), contentAlignment = Alignment.Center) {
         val color = remember(id, firstName, lastName) {
             val name = listOf(firstName, lastName)
                 .joinToString(separator = "")
                 .uppercase()
-            Color("$id / $name".toHslColor())
+            Color(color)
         }
         val initials = (firstName.take(1) + lastName.take(1)).uppercase()
         Canvas(modifier = Modifier.fillMaxSize()) {

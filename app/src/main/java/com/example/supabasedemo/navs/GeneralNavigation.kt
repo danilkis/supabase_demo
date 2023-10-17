@@ -1,11 +1,16 @@
 package com.example.supabasedemo.navs
 
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.supabasedemo.screens.Auth
+import com.example.supabasedemo.screens.Hello
+import com.example.supabasedemo.screens.MainScreen
+
 //TODO: Настроить навигацию
 
 @Composable
@@ -14,26 +19,16 @@ fun GeneralNavigation() {
 
     NavHost(navController = navController, startDestination = "auth") {
         composable("auth") {
-            //Auth(navController)
+            Auth(navController)
             //Ввод адреса сервера
         }
         composable("helloScreen") {
-            //HelloScreen(navController)
+            Hello(navController)
             //Авторизация
         }
         composable("mainScreen") {
-            //MainScreen(navController)
+            MainScreen(navController)
             //Переход на главный экран
-        }
-        composable(
-            "person/{personId}",
-            arguments = listOf(navArgument("personId") { type = NavType.IntType })
-        ) {
-            val personId: Int = it.arguments?.getInt("personId") ?: 0
-            //LessonScreen(lessorn = lessonDtoId, navController)
-        }
-        composable("test"){
-            //GameScreen()
         }
     }
 }
