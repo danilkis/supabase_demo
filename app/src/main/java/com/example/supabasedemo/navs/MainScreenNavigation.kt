@@ -23,7 +23,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.supabasedemo.model.MainScreenDest
+import com.example.supabasedemo.screens.OrdersMainScreen
 import com.example.supabasedemo.screens.PersonScreen
+import com.example.supabasedemo.screens.ThingsMainScreen
 
 
 val destinations = listOf(
@@ -31,10 +33,10 @@ val destinations = listOf(
         PersonScreen(it)
     },
     MainScreenDest("Things", Icons.Rounded.Build) {
-        Text(text = "Искуственный интелект")
+        ThingsMainScreen(it)
     },
     MainScreenDest("Orders", Icons.Rounded.ShoppingCart) {
-        //GameScreen()
+        OrdersMainScreen(it)
     },
 )
 
