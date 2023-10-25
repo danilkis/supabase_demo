@@ -23,7 +23,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.supabasedemo.client
 import com.example.supabasedemo.customelements.SearchBarCustom
 import com.example.supabasedemo.customelements.UserHead
 import com.example.supabasedemo.model.Persons
@@ -40,6 +39,7 @@ fun PersonScreen(navController: NavController, viewModel: PersonsViewmodel = vie
         PersonColumn(persons)
     }
 }
+
 
 
 @Composable
