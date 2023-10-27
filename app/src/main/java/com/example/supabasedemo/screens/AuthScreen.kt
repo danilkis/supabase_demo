@@ -8,6 +8,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,9 +29,12 @@ fun Auth(navController: NavController) {
     val sharedPreference: SharedPreference =SharedPreference(ctx)
     if (!sharedPreference.GetBool("Init_setup"))
     {
-    var serverURL by remember { mutableStateOf("") }
-    var APIkey by remember { mutableStateOf("") }
-    var Name by remember { mutableStateOf("") }
+        var serverURL by remember { mutableStateOf("") }
+        var APIkey by remember { mutableStateOf("") }
+        var Name by remember { mutableStateOf("") }
+        var UserReady by remember {
+            mutableStateOf(false)
+        }
     Column(modifier = Modifier.fillMaxSize(),
     horizontalAlignment = Alignment.CenterHorizontally) {
         Text(text = "Time to set up your server")
@@ -58,9 +62,16 @@ fun Auth(navController: NavController) {
                 sharedPreference.SaveBool("Init_setup", true)
                 sharedPreference.SaveString("API_key", APIkey.toString())
                 sharedPreference.SaveString("Name", Name.toString())
-                navController.navigate("helloScreen")
+                UserReady = true
             }) {
             Text(text = "Done")
+        }
+        if (UserReady)
+        {
+            LaunchedEffect(true)
+            {
+                navController.navigate("helloScreen")
+            }
         }
     }
     }
@@ -68,6 +79,9 @@ fun Auth(navController: NavController) {
     {
         supaHelper.url = sharedPreference.GetString("Server_URL").toString()
         supaHelper.key = sharedPreference.GetString("API_key").toString()
-        navController.navigate("helloScreen")
+        LaunchedEffect(true)
+        {
+            navController.navigate("helloScreen")
+        }
     }
 }

@@ -22,6 +22,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.supabasedemo.animation.EnterAnimation
 import com.example.supabasedemo.model.MainScreenDest
 import com.example.supabasedemo.screens.OrdersMainScreen
 import com.example.supabasedemo.screens.PersonScreen

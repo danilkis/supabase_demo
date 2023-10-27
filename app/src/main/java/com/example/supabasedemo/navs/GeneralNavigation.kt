@@ -30,5 +30,12 @@ fun GeneralNavigation() {
             MainScreen(navController)
             //Переход на главный экран
         }
+        composable(
+            "person/{personInfoId}",
+            arguments = listOf(navArgument("personInfoId") { type = NavType.IntType })
+        ) {
+            val personInfoId: Int = it.arguments?.getInt("personInfoId") ?: 0
+            LessonScreen(lesson = lessonDtoId, navController)
+        }
     }
 }
