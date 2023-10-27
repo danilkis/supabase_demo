@@ -25,6 +25,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.supabasedemo.customelements.SearchBarCustom
 import com.example.supabasedemo.customelements.UserHead
+import com.example.supabasedemo.model.Contacts
 import com.example.supabasedemo.model.Persons
 import com.example.supabasedemo.viewmodel.PersonsViewmodel
 import io.github.jan.supabase.postgrest.postgrest

@@ -68,7 +68,6 @@ fun Auth(navController: NavController) {
     {
         supaHelper.url = sharedPreference.GetString("Server_URL").toString()
         supaHelper.key = sharedPreference.GetString("API_key").toString()
-        supaHelper.isInitDone = true
         navController.navigate("helloScreen")
     }
 }
