@@ -2,6 +2,7 @@ package com.example.supabasedemo.viewmodel
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.supabasedemo.client
@@ -23,6 +24,7 @@ class PersonsViewmodel : ViewModel() {
         emit(cont)
     }
 
+    var deleteComplete: Boolean = false
     suspend fun delete(personId: Int)
     {
         withContext(Dispatchers.Main) {

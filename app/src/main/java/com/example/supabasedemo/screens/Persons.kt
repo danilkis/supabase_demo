@@ -1,9 +1,13 @@
 package com.example.supabasedemo.screens
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -18,6 +22,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
@@ -93,7 +99,7 @@ fun PersonScreen(navController: NavController, viewModel: PersonsViewmodel = vie
                     .fillMaxWidth()) {
                     SearchBarCustom()
                     Spacer(modifier = Modifier.height(8.dp))
-                    PersonColumn(persons, navController)
+                    PersonColumn(navController, viewModel)
                 }
             }
         )
@@ -106,32 +112,52 @@ fun PersonScreen(navController: NavController, viewModel: PersonsViewmodel = vie
 
 
 
+@SuppressLint("UnrememberedMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PersonColumn(persons: MutableList<Persons>, navController: NavController)
+fun PersonColumn(navController: NavController, viewModel: PersonsViewmodel = viewModel())
 {
+    val persons by viewModel.persons.collectAsState(initial = remember { mutableStateListOf() } )
+    var columnAppeared by remember { mutableStateOf(false) }
+    var deleteComplete by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        columnAppeared = true
+    }
     LazyColumn(modifier = Modifier.fillMaxWidth())
     {
-        items(persons.size) { index ->
-            val person = persons[index]
+        items(persons){ person ->
             val dismissState = rememberDismissState()
-
+            val dismissDirection = dismissState.dismissDirection
+            var isDismissed = dismissState.isDismissed(DismissDirection.EndToStart)
             // check if the user swiped
-            if (dismissState.isDismissed(direction = DismissDirection.EndToStart)) {
-                DeleteDialog(person = person)
-                persons.remove(person)
+            if (isDismissed && dismissDirection == DismissDirection.EndToStart) {
+                DeleteDialog(person = person, viewModel, onDismiss = {isDismissed = true})
             }
 
+
+            var itemAppeared by remember { mutableStateOf(!columnAppeared) }
+            LaunchedEffect(Unit) {
+                itemAppeared = true
+            }
+            AnimatedVisibility(
+                visible = itemAppeared && !viewModel.deleteComplete,
+                exit = shrinkVertically(
+                    animationSpec = tween(
+                        durationMillis = 300,
+                    )
+                ),
+                enter = expandVertically(
+                    animationSpec = tween(
+                        durationMillis = 300
+                    )
+                )
+            ) {
             SwipeToDismiss(
                 state = dismissState,
                 directions = setOf(
                     DismissDirection.EndToStart
                 ),
                 background = {
-                    // this background is visible when we swipe.
-                    // it contains the icon
-
-                    // background color
                     val backgroundColor by animateColorAsState(
                         when (dismissState.targetValue) {
                             DismissValue.DismissedToStart -> MaterialTheme.colorScheme.error.copy(alpha = 0.8f)
@@ -163,6 +189,7 @@ fun PersonColumn(persons: MutableList<Persons>, navController: NavController)
                 {
                     PersonCard(person, navController)
                 })
+        }
         }
     }
 }
@@ -201,19 +228,22 @@ fun PersonCard(Person: Persons, navController: NavController) {
 }
 
 @Composable
-fun DeleteDialog(person: Persons) {
+fun DeleteDialog(person: Persons, viewModel: PersonsViewmodel = viewModel(), onDismiss: () -> Unit) {
     val coroutineScope = rememberCoroutineScope()
     var openDialog by remember { mutableStateOf(true) }
     if (openDialog) {
         AlertDialog(
             onDismissRequest = {
                 openDialog = false
+                onDismiss
             },
             confirmButton = {
                 TextButton(
                     onClick = {
                         coroutineScope.launch { PersonsViewmodel().delete(person.id!!) }
+                        viewModel.deleteComplete = true
                         openDialog = false
+                        onDismiss
                     }
                 ) {
                     Text(text = "Yes")
@@ -223,6 +253,7 @@ fun DeleteDialog(person: Persons) {
                 TextButton(
                     onClick = {
                         openDialog = false
+                        onDismiss
                     }
                 ) {
                     Text(text = "No")
