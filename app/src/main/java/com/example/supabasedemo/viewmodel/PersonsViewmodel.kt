@@ -1,5 +1,7 @@
 package com.example.supabasedemo.viewmodel
 
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.supabasedemo.client
@@ -16,24 +18,48 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class PersonsViewmodel : ViewModel() {
-    var persons: Flow<List<Persons>> = flow {
+    var persons: Flow<MutableList<Persons>> = flow {
         val cont = getContacts()
         emit(cont)
     }
 
-    private suspend fun getContacts(): List<Persons> {
+    suspend fun delete(personId: Int)
+    {
+        withContext(Dispatchers.Main) {
+            deletePerson(personId)
+        }
+    }
+
+    private suspend fun getContacts(): MutableList<Persons> {
+        return withContext(Dispatchers.IO) {
+            // Ensure SupabaseClient is initialized on the main thread
+            val asyncClient = null
+            withContext(Dispatchers.Main) {
+                try {
+                    var asyncClient = getAsyncClient()
+                    return@withContext asyncClient.postgrest["Persons"].select().decodeList<Persons>()
+                } catch (e: Exception) {
+                    return@withContext emptyList()
+                }
+            }
+        } as MutableList<Persons>
+    }
+    private suspend fun deletePerson(personId: Int): Boolean {
         return withContext(Dispatchers.IO) {
             // Ensure SupabaseClient is initialized on the main thread
             val asyncClient = null
             withContext(Dispatchers.Main) {
                 try
                 {
-                var asyncClient = getAsyncClient()
-                return@withContext asyncClient.postgrest["Persons"].select().decodeList<Persons>()
+                    var asyncClient = getAsyncClient()
+                    asyncClient.postgrest["Persons"].delete(){
+                        eq("id", personId)
+                    }
+                    return@withContext true
                 }
                 catch (e: Exception)
                 {
-                    return@withContext emptyList()
+                    return@withContext false
                 }
             }
         }

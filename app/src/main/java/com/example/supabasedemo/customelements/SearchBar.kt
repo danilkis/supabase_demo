@@ -36,7 +36,7 @@ fun SearchBarCustom() {
     var active by remember { mutableStateOf(false) } // Active state for SearchBar
     val searchHistory = remember { mutableStateListOf("") }
 
-    Column(modifier = Modifier.padding(horizontal = 12.dp)) {
+    Column(modifier = Modifier.padding(5.dp)) {
         SearchBar(modifier = Modifier.fillMaxWidth(),
             query = text,
             onQueryChange = {

@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -81,12 +82,12 @@ fun MainScreenNavigation(navControllerGeneral: NavHostController) { //
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
+                .padding(5.dp)
         ) {
             NavHost(
                 navController = navController,
                 startDestination = destinations.first().name,
-                modifier = Modifier.padding(innerPadding)
+                modifier = Modifier.padding(3.dp)
             ) {
                 for (dest in destinations) {
                     composable(dest.name) {

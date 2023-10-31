@@ -1,7 +1,7 @@
 package com.example.supabasedemo.screens
 
-import android.app.Person
-import android.util.Log
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -21,16 +21,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.modifier.modifierLocalConsumer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.NavController
 import com.example.supabasedemo.customelements.UserHead
 import com.example.supabasedemo.model.Contacts
 import com.example.supabasedemo.model.Persons
 import com.example.supabasedemo.viewmodel.PersonInfoViewmodel
 import com.example.supabasedemo.viewmodel.PersonInfoViewmodelFactory
+
 
 @Composable
 fun PersonInfoScreen(person: Persons, navController: NavController, viewModel: PersonInfoViewmodel = androidx.lifecycle.viewmodel.compose.viewModel {
@@ -48,7 +48,7 @@ fun PersonInfoScreen(person: Persons, navController: NavController, viewModel: P
             .fillMaxSize()
             .padding(10.dp)) {
             Row (modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Start, verticalAlignment = Alignment.CenterVertically) {
-                UserHead(id = person.id.toString(), firstName = person.Name, lastName = person.Surname.toString(), size = 80.dp)
+                UserHead(id = person.id.toString(), firstName = person.Name, lastName = person.Surname.toString(), size = 80.dp, textStyle = MaterialTheme.typography.headlineLarge)
                 Spacer(modifier = Modifier.width(10.dp))
                 Column (modifier = Modifier.padding(5.dp), verticalArrangement = Arrangement.Center) {
                     Text(text = person.Name,
@@ -58,18 +58,19 @@ fun PersonInfoScreen(person: Persons, navController: NavController, viewModel: P
                         style = MaterialTheme.typography.headlineSmall)
                 }
             }
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(10.dp))
             Text(text = "Контакты",
                 style = MaterialTheme.typography.displaySmall)
+            Spacer(modifier = Modifier.height(10.dp))
             Column (modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.Start, verticalArrangement = Arrangement.Top) {
                 ContactCard(contactName = "Phone", value = contact.value.phone )
                 Spacer(modifier = Modifier.height(10.dp))
-                if (contact.value.url.isNullOrBlank())
+                if (!contact.value.telegram.isNullOrBlank())
                 {
                     ContactCard(contactName = "Telegram", value = contact.value.telegram.toString())
                     Spacer(modifier = Modifier.height(10.dp))
                 }
-                if (contact.value.url.isNullOrBlank())
+                if (!contact.value.url.isNullOrBlank())
                 {
                     ContactCard(contactName = "Url", value = contact.value.url.toString() )
                     Spacer(modifier = Modifier.height(10.dp))
@@ -82,15 +83,30 @@ fun PersonInfoScreen(person: Persons, navController: NavController, viewModel: P
 @Composable
 fun ContactCard(contactName: String, value: String)
 {
+    val ctx = LocalContext.current
     OutlinedCard(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 10.dp, top = 4.dp, end = 10.dp, bottom = 4.dp)
+            .padding(start = 0.dp, top = 5.dp, end = 0.dp, bottom = 0.dp)
+            .clickable {
+                if (contactName == "Phone") {
+                    val intent =
+                        Intent(Intent.ACTION_DIAL, Uri.parse("tel:$value"))
+                          startActivity(ctx, intent, null)
+                }
+                else if (contactName == "Telegram")
+                {
+                    val username = value.replace("@", "")
+                    val telegram = Intent(Intent.ACTION_VIEW, Uri.parse("https://t.me/$username"))
+                    telegram.setPackage("org.telegram.messenger")
+                    startActivity(ctx, telegram, null)
+                }
+            }
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 4.dp, top = 4.dp, end = 4.dp, bottom = 4.dp),
+                .padding(10.dp),
             horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.Start),
             verticalAlignment = Alignment.CenterVertically,
         ) {
