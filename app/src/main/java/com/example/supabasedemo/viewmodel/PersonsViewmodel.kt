@@ -12,6 +12,7 @@ import com.example.supabasedemo.supa.supaHelper
 import com.example.supabasedemo.supa.supaHelper.Companion.getAsyncClient
 import io.github.jan.supabase.gotrue.gotrue
 import io.github.jan.supabase.postgrest.postgrest
+import io.github.jan.supabase.postgrest.query.Returning
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -62,6 +63,31 @@ class PersonsViewmodel : ViewModel() {
                 catch (e: Exception)
                 {
                     return@withContext false
+                }
+            }
+        }
+    }
+
+    suspend fun insertContact(contact: Contacts, person: Persons)
+    {
+        withContext(Dispatchers.IO) {
+            // Ensure SupabaseClient is initialized on the main thread
+            val asyncClient = null
+            withContext(Dispatchers.Main) {
+                try
+                {
+                    var asyncClient = getAsyncClient()
+                    asyncClient.postgrest["Contacts"].insert(contact, returning = Returning.MINIMAL)
+
+                    var contact_id = asyncClient.postgrest["Contacts"].select()
+                    {
+                        eq("phone", contact.phone)
+                    }.decodeSingle<Contacts>()
+                    asyncClient.postgrest["Persons"].insert(Persons(null, person.Name, person.Surname, contact_id.id!!), returning = Returning.MINIMAL)
+                }
+                catch (e: Exception)
+                {
+
                 }
             }
         }

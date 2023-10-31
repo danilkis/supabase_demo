@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
@@ -57,11 +58,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.supabasedemo.customelements.SearchBarCustom
 import com.example.supabasedemo.customelements.UserHead
+import com.example.supabasedemo.model.Contacts
 import com.example.supabasedemo.model.Persons
 import com.example.supabasedemo.viewmodel.PersonsViewmodel
 import kotlinx.coroutines.Dispatchers
@@ -276,16 +279,25 @@ fun AddPersonDialog(open: Boolean, onDismiss: () -> Unit) {
 
     var name by remember { mutableStateOf("") }
     var surname by remember { mutableStateOf("") }
+    var phone by remember { mutableStateOf("") }
+    var telegram by remember { mutableStateOf("") }
+    var avito by remember { mutableStateOf("") }
     if (open) {
         AlertDialog(
             onDismissRequest = {
-                onDismiss
+                onDismiss()
             },
             confirmButton = {
                 TextButton(
                     onClick = {
-                        coroutineScope.launch { }
-                        onDismiss
+                        coroutineScope.launch()
+                        {
+                            val new_person = Persons(null, name, surname, 0)
+                            val new_contact = Contacts(null, phone, telegram, avito)
+
+
+                        }
+                        onDismiss()
                     }
                 ) {
                     Text(text = "Done")
@@ -298,18 +310,37 @@ fun AddPersonDialog(open: Boolean, onDismiss: () -> Unit) {
                         onValueChange = { name = it },
                         placeholder = { Text("Name") }
                     )
-                    Spacer(modifier = Modifier.height(2.dp))
+                    Spacer(modifier = Modifier.height(5.dp))
                     OutlinedTextField(
                         value = surname,
                         onValueChange = { surname = it },
                         placeholder = { Text("Surname") }
+                    )
+                    Spacer(modifier = Modifier.height(5.dp))
+                    OutlinedTextField(
+                        value = phone,
+                        onValueChange = { phone = it },
+                        placeholder = { Text("Phone") },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone)
+                    )
+                    Spacer(modifier = Modifier.height(5.dp))
+                    OutlinedTextField(
+                        value = telegram,
+                        onValueChange = { telegram = it },
+                        placeholder = { Text("Telegram") }
+                    )
+                    Spacer(modifier = Modifier.height(5.dp))
+                    OutlinedTextField(
+                        value = avito,
+                        onValueChange = { avito = it },
+                        placeholder = { Text("Avito") }
                     )
                 }
             },
             dismissButton = {
                 TextButton(
                     onClick = {
-                        onDismiss
+                        onDismiss()
                     }
                 ) {
                     Text(text = "Cancel")

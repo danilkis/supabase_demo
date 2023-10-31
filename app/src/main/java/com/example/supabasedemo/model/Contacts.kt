@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Contacts(
-    val id: Int,
+    val id: Int?,
     val phone: String,
     val telegram: String?,
     val url: String?
