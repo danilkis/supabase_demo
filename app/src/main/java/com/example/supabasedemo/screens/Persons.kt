@@ -64,7 +64,10 @@ import com.example.supabasedemo.customelements.SearchBarCustom
 import com.example.supabasedemo.customelements.UserHead
 import com.example.supabasedemo.model.Persons
 import com.example.supabasedemo.viewmodel.PersonsViewmodel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState")
 @Composable
 fun PersonScreen(navController: NavController, viewModel: PersonsViewmodel = viewModel())
@@ -126,12 +129,13 @@ fun PersonColumn(navController: NavController, viewModel: PersonsViewmodel = vie
     LazyColumn(modifier = Modifier.fillMaxWidth())
     {
         items(persons){ person ->
-            val dismissState = rememberDismissState()
+            var dismissState = rememberDismissState()
+            val coroutineScope = rememberCoroutineScope()
             val dismissDirection = dismissState.dismissDirection
             var isDismissed = dismissState.isDismissed(DismissDirection.EndToStart)
             // check if the user swiped
             if (isDismissed && dismissDirection == DismissDirection.EndToStart) {
-                DeleteDialog(person = person, viewModel, onDismiss = {isDismissed = true})
+                DeleteDialog(person = person, viewModel, onDismiss = {isDismissed = true; coroutineScope.launch{dismissState.reset()}}, onCancel = {isDismissed = false; coroutineScope.launch{dismissState.reset()}})
             }
 
 
@@ -228,14 +232,14 @@ fun PersonCard(Person: Persons, navController: NavController) {
 }
 
 @Composable
-fun DeleteDialog(person: Persons, viewModel: PersonsViewmodel = viewModel(), onDismiss: () -> Unit) {
+fun DeleteDialog(person: Persons, viewModel: PersonsViewmodel = viewModel(), onDismiss: () -> Unit, onCancel: () -> Unit) {
     val coroutineScope = rememberCoroutineScope()
     var openDialog by remember { mutableStateOf(true) }
     if (openDialog) {
         AlertDialog(
             onDismissRequest = {
                 openDialog = false
-                onDismiss
+                onCancel()
             },
             confirmButton = {
                 TextButton(
@@ -243,7 +247,7 @@ fun DeleteDialog(person: Persons, viewModel: PersonsViewmodel = viewModel(), onD
                         coroutineScope.launch { PersonsViewmodel().delete(person.id!!) }
                         viewModel.deleteComplete = true
                         openDialog = false
-                        onDismiss
+                        onDismiss()
                     }
                 ) {
                     Text(text = "Yes")
@@ -253,7 +257,7 @@ fun DeleteDialog(person: Persons, viewModel: PersonsViewmodel = viewModel(), onD
                 TextButton(
                     onClick = {
                         openDialog = false
-                        onDismiss
+                        onCancel()
                     }
                 ) {
                     Text(text = "No")
