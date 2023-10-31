@@ -1,6 +1,7 @@
 package com.example.supabasedemo.screens
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.animation.animateColorAsState
@@ -58,6 +59,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -111,7 +113,7 @@ fun PersonScreen(navController: NavController, viewModel: PersonsViewmodel = vie
         )
         if (openDialog.value)
         {
-            AddPersonDialog(openDialog.value, onDismiss = {openDialog.value = false})
+            AddPersonDialog(openDialog.value, onDismiss = {openDialog.value = false}, viewModel)
         }
     }
 }
@@ -123,7 +125,7 @@ fun PersonScreen(navController: NavController, viewModel: PersonsViewmodel = vie
 @Composable
 fun PersonColumn(navController: NavController, viewModel: PersonsViewmodel = viewModel())
 {
-    val persons by viewModel.persons.collectAsState(initial = remember { mutableStateListOf() } )
+    val persons by viewModel.persons.collectAsState(initial = mutableStateListOf())
     var columnAppeared by remember { mutableStateOf(false) }
     var deleteComplete by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
@@ -247,7 +249,7 @@ fun DeleteDialog(person: Persons, viewModel: PersonsViewmodel = viewModel(), onD
             confirmButton = {
                 TextButton(
                     onClick = {
-                        coroutineScope.launch { PersonsViewmodel().delete(person.id!!) }
+                        coroutineScope.launch { viewModel.delete(person.id!!) }
                         viewModel.deleteComplete = true
                         openDialog = false
                         onDismiss()
@@ -274,9 +276,8 @@ fun DeleteDialog(person: Persons, viewModel: PersonsViewmodel = viewModel(), onD
 }
 
 @Composable
-fun AddPersonDialog(open: Boolean, onDismiss: () -> Unit) {
+fun AddPersonDialog(open: Boolean, onDismiss: () -> Unit, viewModel: PersonsViewmodel = viewModel()) {
     val coroutineScope = rememberCoroutineScope()
-
     var name by remember { mutableStateOf("") }
     var surname by remember { mutableStateOf("") }
     var phone by remember { mutableStateOf("") }
@@ -290,13 +291,10 @@ fun AddPersonDialog(open: Boolean, onDismiss: () -> Unit) {
             confirmButton = {
                 TextButton(
                     onClick = {
-                        coroutineScope.launch()
-                        {
-                            val new_person = Persons(null, name, surname, 0)
-                            val new_contact = Contacts(null, phone, telegram, avito)
+                            var new_person = Persons(null, name, surname, 0)
+                            var new_contact = Contacts(null, phone, telegram, avito)
+                            coroutineScope.launch {viewModel.insert(new_contact, new_person)}
 
-
-                        }
                         onDismiss()
                     }
                 ) {
@@ -320,14 +318,14 @@ fun AddPersonDialog(open: Boolean, onDismiss: () -> Unit) {
                     OutlinedTextField(
                         value = phone,
                         onValueChange = { phone = it },
-                        placeholder = { Text("Phone") },
+                        placeholder = { Text("+700000000") },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone)
                     )
                     Spacer(modifier = Modifier.height(5.dp))
                     OutlinedTextField(
                         value = telegram,
                         onValueChange = { telegram = it },
-                        placeholder = { Text("Telegram") }
+                        placeholder = { Text("@Telegram") }
                     )
                     Spacer(modifier = Modifier.height(5.dp))
                     OutlinedTextField(

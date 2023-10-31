@@ -1,5 +1,6 @@
 package com.example.supabasedemo.viewmodel
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,23 +35,16 @@ class PersonsViewmodel : ViewModel() {
     }
 
     private suspend fun getContacts(): MutableList<Persons> {
-        return withContext(Dispatchers.IO) {
-            // Ensure SupabaseClient is initialized on the main thread
-            val asyncClient = null
-            withContext(Dispatchers.Main) {
-                try {
-                    var asyncClient = getAsyncClient()
-                    return@withContext asyncClient.postgrest["Persons"].select().decodeList<Persons>()
-                } catch (e: Exception) {
-                    return@withContext emptyList()
-                }
+        return withContext(Dispatchers.Main) {
+            try {
+                var asyncClient = getAsyncClient()
+                return@withContext asyncClient.postgrest["Persons"].select().decodeList<Persons>()
+            } catch (e: Exception) {
+                return@withContext emptyList()
             }
-        } as MutableList<Persons>
+        }.toMutableList()
     }
-    private suspend fun deletePerson(personId: Int): Boolean {
-        return withContext(Dispatchers.IO) {
-            // Ensure SupabaseClient is initialized on the main thread
-            val asyncClient = null
+    private suspend fun deletePerson(personId: Int) {
             withContext(Dispatchers.Main) {
                 try
                 {
@@ -58,38 +52,32 @@ class PersonsViewmodel : ViewModel() {
                     asyncClient.postgrest["Persons"].delete(){
                         eq("id", personId)
                     }
-                    return@withContext true
                 }
                 catch (e: Exception)
                 {
-                    return@withContext false
+                    Log.e("SUPA", e.toString())
                 }
             }
-        }
     }
 
-    suspend fun insertContact(contact: Contacts, person: Persons)
+    suspend fun insert(contact: Contacts, person: Persons)
     {
-        withContext(Dispatchers.IO) {
-            // Ensure SupabaseClient is initialized on the main thread
-            val asyncClient = null
-            withContext(Dispatchers.Main) {
-                try
-                {
-                    var asyncClient = getAsyncClient()
-                    asyncClient.postgrest["Contacts"].insert(contact, returning = Returning.MINIMAL)
-
-                    var contact_id = asyncClient.postgrest["Contacts"].select()
-                    {
-                        eq("phone", contact.phone)
-                    }.decodeSingle<Contacts>()
-                    asyncClient.postgrest["Persons"].insert(Persons(null, person.Name, person.Surname, contact_id.id!!), returning = Returning.MINIMAL)
-                }
-                catch (e: Exception)
-                {
-
-                }
+        Log.e("SUPA", "CALL PRIVATE")
+        insertContact(contact, person)
+    }
+    private suspend fun insertContact(contact: Contacts, person: Persons)
+    {
+        withContext(Dispatchers.Default) {
+            try
+            {
+                var asyncClient = getAsyncClient()
+                var info = asyncClient.postgrest["Contacts"].select().decodeList<Contacts>().last()
+                Log.e("SUPA", info.id.toString())
+            }
+            catch (e: Exception)
+            {
+                Log.e("SUPA", e.toString())
             }
         }
-    }
+        }
 }

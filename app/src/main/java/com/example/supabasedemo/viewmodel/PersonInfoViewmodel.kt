@@ -28,9 +28,6 @@ class PersonInfoViewmodel(val person: Persons) : ViewModel() {
     }
     private suspend fun getContacts(): Contacts {
         return withContext(Dispatchers.IO) {
-            // Ensure SupabaseClient is initialized on the main thread
-            val asyncClient = null
-            withContext(Dispatchers.Main) {
                 try
                 {
                     var asyncClient = supaHelper.getAsyncClient()
@@ -50,7 +47,6 @@ class PersonInfoViewmodel(val person: Persons) : ViewModel() {
                     return@withContext Contacts(0, "0", "0", "0")
                 }
             }
-        }
     }
 }
 class PersonInfoViewmodelFactory(private val person: Persons) : ViewModelProvider.NewInstanceFactory() {
