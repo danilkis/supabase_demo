@@ -71,6 +71,7 @@ import com.example.supabasedemo.model.Contacts
 import com.example.supabasedemo.model.Persons
 import com.example.supabasedemo.viewmodel.PersonsViewmodel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -79,7 +80,7 @@ import kotlinx.coroutines.withContext
 @Composable
 fun PersonScreen(navController: NavController, viewModel: PersonsViewmodel = viewModel())
 {
-    val persons by viewModel.persons.collectAsState(initial = remember { mutableStateListOf() })
+    val persons by viewModel.newPersons.collectAsState(initial =  mutableListOf() )
     if (persons.isEmpty()) {
         Column(modifier = Modifier.fillMaxSize()) {
             SearchBarCustom()
@@ -127,7 +128,7 @@ fun PersonScreen(navController: NavController, viewModel: PersonsViewmodel = vie
 @Composable
 fun PersonColumn(navController: NavController, viewModel: PersonsViewmodel = viewModel())
 {
-    val persons by viewModel.persons.collectAsState(initial = remember { mutableStateListOf() })
+    val persons by viewModel.newPersons.collectAsState(initial = mutableListOf())
     var columnAppeared by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         columnAppeared = true

@@ -17,20 +17,26 @@ import io.github.jan.supabase.postgrest.query.Returning
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class PersonsViewmodel : ViewModel() {
 
-    var persons: Flow<MutableList<Persons>> = flow {
-        val cont = getContacts()
-        emit(cont)
+    val _persons = MutableStateFlow<MutableList<Persons>>(mutableListOf())
+
+    var newPersons: StateFlow<MutableList<Persons>> = _persons
+
+    init {
+        CoroutineScope(Dispatchers.IO).launch {
+            reloadPersons()
+        }
     }
 
     var deleteComplete: Boolean = false
-    suspend fun delete(personId: Int)
-    {
+    suspend fun delete(personId: Int) {
         withContext(Dispatchers.Main) {
             deletePerson(personId)
         }
@@ -46,37 +52,49 @@ class PersonsViewmodel : ViewModel() {
             }
         }.toMutableList()
     }
+
     private suspend fun deletePerson(personId: Int) {
-            withContext(Dispatchers.Main) {
-                try
-                {
-                    var asyncClient = getAsyncClient()
-                    asyncClient.postgrest["Persons"].delete(){
-                        eq("id", personId)
-                    }
+        withContext(Dispatchers.Main) {
+            try {
+                var asyncClient = getAsyncClient()
+                asyncClient.postgrest["Persons"].delete() {
+                    eq("id", personId)
                 }
-                catch (e: Exception)
-                {
-                    Log.e("SUPA", e.toString())
-                }
+            } catch (e: Exception) {
+                Log.e("SUPA", e.toString())
             }
+        }
     }
 
-    suspend fun insertContact(contacts: Contacts, person: Persons)
-    {
-        CoroutineScope(Dispatchers.Main).launch{
-            try
-            {
+    suspend fun reloadPersons() {
+        _persons.emit(getContacts())
+        deleteComplete = false
+    }
+
+    suspend fun insertContact(contacts: Contacts, person: Persons) {
+        CoroutineScope(Dispatchers.Main).launch {
+            try {
                 var asyncClient = getAsyncClient()
                 var info = asyncClient.postgrest["Contacts"].select().decodeList<Contacts>()
-                val new_contact = Contacts(info.last().id!!+1, contacts.phone, contacts.telegram, contacts.url)
-                asyncClient.postgrest["Contacts"].insert(new_contact, returning = Returning.HEADERS_ONLY)
+                val new_contact =
+                    Contacts(info.last().id!! + 1, contacts.phone, contacts.telegram, contacts.url)
+                asyncClient.postgrest["Contacts"].insert(
+                    new_contact,
+                    returning = Returning.HEADERS_ONLY
+                )
                 var info_person = asyncClient.postgrest["Persons"].select().decodeList<Persons>()
-                val new_person = Persons(info_person.last().id!!+1, person.Name, person.Surname,info.last().id!!+1 )
-                asyncClient.postgrest["Persons"].insert(new_person, returning = Returning.HEADERS_ONLY)
-            }
-            catch (e: Exception)
-            {
+                val new_person = Persons(
+                    info_person.last().id!! + 1,
+                    person.Name,
+                    person.Surname,
+                    info.last().id!! + 1
+                )
+                asyncClient.postgrest["Persons"].insert(
+                    new_person,
+                    returning = Returning.HEADERS_ONLY
+                )
+                reloadPersons()
+            } catch (e: Exception) {
                 Log.e("SUPA", e.toString())
             }
         }
