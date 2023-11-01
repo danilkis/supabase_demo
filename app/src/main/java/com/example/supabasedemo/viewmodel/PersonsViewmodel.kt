@@ -1,6 +1,7 @@
 package com.example.supabasedemo.viewmodel
 
 import android.util.Log
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,14 +36,15 @@ class PersonsViewmodel : ViewModel() {
         }
     }
 
-    var deleteComplete: Boolean = false
+    var deleteComplete = mutableStateOf(false)
     suspend fun delete(personId: Int) {
         withContext(Dispatchers.Main) {
             deletePerson(personId)
+            deleteComplete.value = true
         }
     }
 
-    private suspend fun getContacts(): MutableList<Persons> {
+    suspend fun getContacts(): MutableList<Persons> {
         return withContext(Dispatchers.Main) {
             try {
                 var asyncClient = getAsyncClient()
@@ -60,6 +62,7 @@ class PersonsViewmodel : ViewModel() {
                 asyncClient.postgrest["Persons"].delete() {
                     eq("id", personId)
                 }
+                reloadPersons()
             } catch (e: Exception) {
                 Log.e("SUPA", e.toString())
             }
@@ -68,7 +71,7 @@ class PersonsViewmodel : ViewModel() {
 
     suspend fun reloadPersons() {
         _persons.emit(getContacts())
-        deleteComplete = false
+        deleteComplete.value = false
     }
 
     suspend fun insertContact(contacts: Contacts, person: Persons) {

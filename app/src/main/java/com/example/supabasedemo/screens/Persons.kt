@@ -71,6 +71,7 @@ import com.example.supabasedemo.model.Contacts
 import com.example.supabasedemo.model.Persons
 import com.example.supabasedemo.viewmodel.PersonsViewmodel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -145,13 +146,15 @@ fun PersonColumn(navController: NavController, viewModel: PersonsViewmodel = vie
                 DeleteDialog(person = person, viewModel, onDismiss = {isDismissed = true; coroutineScope.launch{dismissState.reset()}}, onCancel = {isDismissed = false; coroutineScope.launch{dismissState.reset()}})
             }
 
-
             var itemAppeared by remember { mutableStateOf(!columnAppeared) }
             LaunchedEffect(Unit) {
                 itemAppeared = true
             }
+            if(viewModel.deleteComplete.value && itemAppeared && !isDismissed) {
+                viewModel.deleteComplete.value = false
+            }
             AnimatedVisibility(
-                visible = itemAppeared && !viewModel.deleteComplete,
+                visible = itemAppeared && !viewModel.deleteComplete.value,
                 exit = shrinkVertically(
                     animationSpec = tween(
                         durationMillis = 300,
@@ -207,12 +210,15 @@ fun PersonColumn(navController: NavController, viewModel: PersonsViewmodel = vie
 
 @Composable
 fun PersonCard(Person: Persons, navController: NavController) {
+    val coroutineScope = rememberCoroutineScope()
     OutlinedCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = 10.dp, top = 2.dp, end = 10.dp, bottom = 2.dp)
             .clickable {
-                navController.navigate("person/${Person.id}")
+                coroutineScope.launch(Dispatchers.Main) {
+                    navController.navigate("person/${Person.id}")
+                }
             }
     ) {
         Row(
@@ -252,7 +258,6 @@ fun DeleteDialog(person: Persons, viewModel: PersonsViewmodel = viewModel(), onD
                 TextButton(
                     onClick = {
                         coroutineScope.launch { viewModel.delete(person.id!!) }
-                        viewModel.deleteComplete = true
                         openDialog = false
                         onDismiss()
                     }
@@ -293,8 +298,9 @@ fun AddPersonDialog(open: Boolean, onDismiss: () -> Unit, viewModel: PersonsView
             confirmButton = {
                 TextButton(
                     onClick = {
-                            var new_person = Persons(null, name, surname, 0)
+                            var new_person = Persons(0, name, surname, 0)
                             var new_contact = Contacts(0, phone, telegram, avito)
+                            viewModel.deleteComplete.value = true
                             coroutineScope.launch {viewModel.insertContact(new_contact, new_person)}
                         onDismiss()
                     }

@@ -41,7 +41,7 @@ fun GeneralNavigation() {
             arguments = listOf(navArgument("personInfoId") { type = NavType.IntType })
         ) {
             val personInfoId: Int = it.arguments?.getInt("personInfoId") ?: 0
-            val persons by PersonsViewmodel().persons.collectAsState(initial = listOf())
+            val persons by PersonsViewmodel().newPersons.collectAsState(initial = listOf())
             persons.forEach { it ->
                 if (it.id == personInfoId) {
                     PersonInfoScreen(person = it, navController)

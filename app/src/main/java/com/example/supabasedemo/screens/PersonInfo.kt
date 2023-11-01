@@ -18,18 +18,26 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.startActivity
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.supabasedemo.customelements.UserHead
 import com.example.supabasedemo.model.Contacts
 import com.example.supabasedemo.model.Persons
 import com.example.supabasedemo.viewmodel.PersonInfoViewmodel
 import com.example.supabasedemo.viewmodel.PersonInfoViewmodelFactory
+import com.example.supabasedemo.viewmodel.PersonsViewmodel
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -37,13 +45,7 @@ fun PersonInfoScreen(person: Persons, navController: NavController, viewModel: P
     PersonInfoViewmodelFactory(person).create(PersonInfoViewmodel::class.java)
 })
 {
-    val contact = PersonInfoViewmodel(person).contacts.collectAsState(initial = Contacts(0, "0","0", "0"))
-
-    if (contact.value == Contacts(0, "0","0", "0")) {
-        CircularProgressIndicator(modifier = Modifier.size(60.dp))
-    }
-    else
-    {
+    val contact = viewModel.contact.collectAsState(mutableListOf()).value.first()
         Column(modifier = Modifier
             .fillMaxSize()
             .padding(10.dp)) {
@@ -63,22 +65,21 @@ fun PersonInfoScreen(person: Persons, navController: NavController, viewModel: P
                 style = MaterialTheme.typography.displaySmall)
             Spacer(modifier = Modifier.height(10.dp))
             Column (modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.Start, verticalArrangement = Arrangement.Top) {
-                ContactCard(contactName = "Phone", value = contact.value.phone )
+                ContactCard(contactName = "Phone", value = contact.phone )
                 Spacer(modifier = Modifier.height(10.dp))
-                if (!contact.value.telegram.isNullOrBlank())
+                if (!contact.telegram.isNullOrBlank())
                 {
-                    ContactCard(contactName = "Telegram", value = contact.value.telegram.toString())
+                    ContactCard(contactName = "Telegram", value = contact.telegram.toString())
                     Spacer(modifier = Modifier.height(10.dp))
                 }
-                if (!contact.value.url.isNullOrBlank())
+                if (!contact.url.isNullOrBlank())
                 {
-                    ContactCard(contactName = "Url", value = contact.value.url.toString() )
+                    ContactCard(contactName = "Url", value = contact.url.toString() )
                     Spacer(modifier = Modifier.height(10.dp))
                 }
             }
         }
     }
-}
 
 @Composable
 fun ContactCard(contactName: String, value: String)
