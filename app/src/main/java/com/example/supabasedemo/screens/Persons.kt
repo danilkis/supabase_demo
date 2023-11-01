@@ -62,6 +62,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.supabasedemo.customelements.SearchBarCustom
@@ -70,6 +71,7 @@ import com.example.supabasedemo.model.Contacts
 import com.example.supabasedemo.model.Persons
 import com.example.supabasedemo.viewmodel.PersonsViewmodel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -77,7 +79,7 @@ import kotlinx.coroutines.withContext
 @Composable
 fun PersonScreen(navController: NavController, viewModel: PersonsViewmodel = viewModel())
 {
-    val persons by viewModel.persons.collectAsState(initial = mutableStateListOf())
+    val persons by viewModel.persons.collectAsState(initial = remember { mutableStateListOf() })
     if (persons.isEmpty()) {
         Column(modifier = Modifier.fillMaxSize()) {
             SearchBarCustom()
@@ -125,9 +127,8 @@ fun PersonScreen(navController: NavController, viewModel: PersonsViewmodel = vie
 @Composable
 fun PersonColumn(navController: NavController, viewModel: PersonsViewmodel = viewModel())
 {
-    val persons by viewModel.persons.collectAsState(initial = mutableStateListOf())
+    val persons by viewModel.persons.collectAsState(initial = remember { mutableStateListOf() })
     var columnAppeared by remember { mutableStateOf(false) }
-    var deleteComplete by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         columnAppeared = true
     }
@@ -292,9 +293,8 @@ fun AddPersonDialog(open: Boolean, onDismiss: () -> Unit, viewModel: PersonsView
                 TextButton(
                     onClick = {
                             var new_person = Persons(null, name, surname, 0)
-                            var new_contact = Contacts(null, phone, telegram, avito)
-                            coroutineScope.launch {viewModel.insert(new_contact, new_person)}
-
+                            var new_contact = Contacts(0, phone, telegram, avito)
+                            coroutineScope.launch {viewModel.insertContact(new_contact, new_person)}
                         onDismiss()
                     }
                 ) {
