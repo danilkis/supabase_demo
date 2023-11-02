@@ -11,33 +11,23 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.startActivity
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.supabasedemo.customelements.UserHead
 import com.example.supabasedemo.model.Contacts
 import com.example.supabasedemo.model.Persons
 import com.example.supabasedemo.viewmodel.PersonInfoViewmodel
 import com.example.supabasedemo.viewmodel.PersonInfoViewmodelFactory
-import com.example.supabasedemo.viewmodel.PersonsViewmodel
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 
 
 @Composable
@@ -45,7 +35,7 @@ fun PersonInfoScreen(person: Persons, navController: NavController, viewModel: P
     PersonInfoViewmodelFactory(person).create(PersonInfoViewmodel::class.java)
 })
 {
-    val contact = viewModel.contact.collectAsState(mutableListOf()).value.first()
+    val contact = viewModel.contacts.collectAsState(Contacts(0, "0", "0", "0")).value
         Column(modifier = Modifier
             .fillMaxSize()
             .padding(10.dp)) {
