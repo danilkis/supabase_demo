@@ -6,6 +6,8 @@
         android:name="android.hardware.telephony"
         android:required="false" />
 
+
+    <!-- Использование разрешений для доступа к интернету, состоянию сети и набора телефона -->
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.CALL_PHONE"/>

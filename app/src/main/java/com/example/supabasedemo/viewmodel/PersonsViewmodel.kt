@@ -59,8 +59,14 @@ class PersonsViewmodel : ViewModel() {
         withContext(Dispatchers.Main) {
             try {
                 var asyncClient = getAsyncClient()
+                var info_person = asyncClient.postgrest["Persons"].select(){
+                    eq("id", personId)
+                }.decodeSingle<Persons>()
                 asyncClient.postgrest["Persons"].delete() {
                     eq("id", personId)
+                }
+                asyncClient.postgrest["Contacts"].delete() {
+                    eq("id", info_person.contactsId)
                 }
                 reloadPersons()
             } catch (e: Exception) {

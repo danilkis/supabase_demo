@@ -5,6 +5,16 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonObject
 import java.sql.Timestamp
 
+
+
+
+/** Модель с рериализацией для таблицы с чеками
+ * @param id ID чека
+ * @param created_at дата создания
+ * @param payment_recieved дата получения платежа
+ * @param pay оплдата
+ * @param status статус опллаты
+ */
 @Serializable
 data class Billing(
     val id: Int,

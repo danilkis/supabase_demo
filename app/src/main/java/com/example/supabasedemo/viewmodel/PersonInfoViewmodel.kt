@@ -21,7 +21,7 @@ class PersonInfoViewmodel(persons: Persons) : ViewModel() {
                 val contact = asyncClient.postgrest["Contacts"]
                     .select()
                     {
-                        eq("id", person.id)
+                        eq("id", person.contactsId)
                     }
                     .decodeSingle<Contacts>()
                 return contact
