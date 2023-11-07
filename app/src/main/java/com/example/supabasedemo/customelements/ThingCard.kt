@@ -39,7 +39,7 @@ fun ThingCard(thing: Things)
                 Spacer(modifier = Modifier.height(4.dp))
                 Text("В наличии: ${thing.amount}", style = MaterialTheme.typography.bodySmall)
                 Spacer(modifier = Modifier.height(4.dp))
-                Text(thing.Type.toString(), style = MaterialTheme.typography.bodySmall)
+                Text(thing.type.toString(), style = MaterialTheme.typography.bodySmall)
             }
 
             Spacer(modifier = Modifier.width(15.dp))

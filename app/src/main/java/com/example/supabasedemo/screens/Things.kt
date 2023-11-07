@@ -126,7 +126,7 @@ fun ThingColumn(navController: NavController, viewModel: ThingsViewmodel = viewM
     LaunchedEffect(Unit) {
         columnAppeared = true
     }
-    LazyColumn(modifier = Modifier.fillMaxWidth())
+    LazyColumn(modifier = Modifier.fillMaxWidth().padding(8.dp), verticalArrangement = Arrangement.spacedBy(10.dp))
     {
         items(things){ thing ->
             var dismissState = rememberDismissState()

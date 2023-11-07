@@ -9,5 +9,5 @@ data class Things(
     val name: String,
     val store: String?,
     val amount: Int,
-    val Type: Int
+    val type: Int
 )
