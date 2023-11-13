@@ -262,7 +262,7 @@ fun DeleteDialog(person: Persons, viewModel: PersonsViewmodel = viewModel(), onD
                         onDismiss()
                     }
                 ) {
-                    Text(text = "Yes")
+                    Text(text = "Да")
                 }
             },
             dismissButton = {
@@ -272,11 +272,11 @@ fun DeleteDialog(person: Persons, viewModel: PersonsViewmodel = viewModel(), onD
                         onCancel()
                     }
                 ) {
-                    Text(text = "No")
+                    Text(text = "Отмена")
                 }
             },
-            title = { Text(text = "Are you sure?") },
-            text = { Text(text = "Are you sure you want to delete ${person.Name} ${person.Surname}?") },
+            title = { Text(text = "Вы уверенны?") },
+            text = { Text(text = "Вы собираетесь удалить ${person.Name} ${person.Surname}?") },
             icon = { Icon(imageVector = Icons.Default.Delete, contentDescription = null) } // add icon
         )
     }
@@ -305,7 +305,7 @@ fun AddPersonDialog(open: Boolean, onDismiss: () -> Unit, viewModel: PersonsView
                         onDismiss()
                     }
                 ) {
-                    Text(text = "Done")
+                    Text(text = "Готово")
                 }
             },
             text = {
@@ -313,32 +313,32 @@ fun AddPersonDialog(open: Boolean, onDismiss: () -> Unit, viewModel: PersonsView
                     OutlinedTextField(
                         value = name,
                         onValueChange = { name = it },
-                        placeholder = { Text("Name") }
+                        placeholder = { Text("Имя") }
                     )
                     Spacer(modifier = Modifier.height(5.dp))
                     OutlinedTextField(
                         value = surname,
                         onValueChange = { surname = it },
-                        placeholder = { Text("Surname") }
+                        placeholder = { Text("Фамилия") }
                     )
                     Spacer(modifier = Modifier.height(5.dp))
                     OutlinedTextField(
                         value = phone,
                         onValueChange = { phone = it },
-                        placeholder = { Text("+700000000") },
+                        placeholder = { Text("Номер телефона, формат (+7...)")},
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone)
                     )
                     Spacer(modifier = Modifier.height(5.dp))
                     OutlinedTextField(
                         value = telegram,
                         onValueChange = { telegram = it },
-                        placeholder = { Text("@Telegram") }
+                        placeholder = { Text("Ник телеграмм") }
                     )
                     Spacer(modifier = Modifier.height(5.dp))
                     OutlinedTextField(
                         value = avito,
                         onValueChange = { avito = it },
-                        placeholder = { Text("Avito") }
+                        placeholder = { Text("Ссылка на авито") }
                     )
                 }
             },
@@ -348,10 +348,10 @@ fun AddPersonDialog(open: Boolean, onDismiss: () -> Unit, viewModel: PersonsView
                         onDismiss()
                     }
                 ) {
-                    Text(text = "Cancel")
+                    Text(text = "Отмена")
                 }
             },
-            title = { Text(text = "Add a new person") },
+            title = { Text(text = "Добавление нового человека") },
             icon = { Icon(imageVector = Icons.Default.PersonAdd, contentDescription = null) } // add icon
         )
     }

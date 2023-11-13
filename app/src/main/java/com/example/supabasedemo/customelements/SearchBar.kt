@@ -51,7 +51,7 @@ fun SearchBarCustom() {
                 active = it
             },
             placeholder = {
-                Text(text = "Enter your query")
+                Text(text = "Поиск")
             },
             leadingIcon = {
                 Icon(imageVector = Icons.Default.Search, contentDescription = "Search icon")
@@ -92,7 +92,7 @@ fun SearchBarCustom() {
                     },
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
-                text = "clear all history"
+                text = "Очистить историю"
             )
         }
     }

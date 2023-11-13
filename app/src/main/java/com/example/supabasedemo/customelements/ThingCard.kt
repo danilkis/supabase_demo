@@ -28,12 +28,12 @@ fun ThingCard(thing: Things)
 {
     OutlinedCard(onClick = { /*TODO*/ }, modifier = Modifier.fillMaxWidth()) {
         Row(
-            modifier = Modifier.padding(8.dp),
-            horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.Start),
-            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         )
         {
-            Column()
+            Column(modifier = Modifier.padding(8.dp))
             {
                 Text(thing.name, style = MaterialTheme.typography.bodyLarge)
                 Spacer(modifier = Modifier.height(4.dp))
@@ -41,12 +41,10 @@ fun ThingCard(thing: Things)
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(thing.type.toString(), style = MaterialTheme.typography.bodySmall)
             }
-
-            Spacer(modifier = Modifier.width(15.dp))
             Image(
                 painter = rememberAsyncImagePainter("https://proreiling.ru/wp-content/uploads/5/9/d/59d46a21ac5629beea300f92ad418b98.png"),
                 contentDescription = null,
-                modifier = Modifier.height(80.dp).fillMaxWidth(),
+                modifier = Modifier.height(80.dp).width(90.dp),
                 contentScale = ContentScale.Crop
             )
         }

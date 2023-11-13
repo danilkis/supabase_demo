@@ -112,7 +112,7 @@ fun ThingsMainScreen(navController: NavController, viewModel: ThingsViewmodel = 
         )
         if (openDialog.value)
         {
-            //AddPersonDialog(openDialog.value, onDismiss = {openDialog.value = false}, viewModel)
+            AddThingDialog(openDialog.value, onDismiss = {openDialog.value = false}, viewModel)
         }
     }
 }
@@ -269,13 +269,13 @@ fun AddThingDialog(open: Boolean, onDismiss: () -> Unit, viewModel: ThingsViewmo
                     OutlinedTextField(
                         value = name,
                         onValueChange = { name = it },
-                        placeholder = { Text("Name") }
+                        placeholder = { Text("Название") }
                     )
                     Spacer(modifier = Modifier.height(5.dp))
                     OutlinedTextField(
                         value = surname,
                         onValueChange = { surname = it },
-                        placeholder = { Text("Surname") }
+                        placeholder = { Text("Количество") }
                     )
                     Spacer(modifier = Modifier.height(5.dp))
                     OutlinedTextField(

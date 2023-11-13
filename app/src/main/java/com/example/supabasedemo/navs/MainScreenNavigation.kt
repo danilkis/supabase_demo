@@ -31,13 +31,13 @@ import com.example.supabasedemo.screens.ThingsMainScreen
 
 
 val destinations = listOf(
-    MainScreenDest("People", Icons.Rounded.Person) {
+    MainScreenDest("Люди", Icons.Rounded.Person) {
         PersonScreen(it)
     },
-    MainScreenDest("Things", Icons.Rounded.Build) {
+    MainScreenDest("Вещи", Icons.Rounded.Build) {
         ThingsMainScreen(it)
     },
-    MainScreenDest("Orders", Icons.Rounded.ShoppingCart) {
+    MainScreenDest("Заказы", Icons.Rounded.ShoppingCart) {
         OrdersMainScreen(it)
     },
 )
