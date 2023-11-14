@@ -3,8 +3,8 @@ package com.example.supabasedemo.viewmodel
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import com.example.supabasedemo.model.Persons
 import com.example.supabasedemo.model.Things
+import com.example.supabasedemo.model.Type
 import com.example.supabasedemo.supa.supaHelper
 import io.github.jan.supabase.postgrest.postgrest
 import kotlinx.coroutines.CoroutineScope
@@ -18,6 +18,9 @@ class ThingsViewmodel : ViewModel() {
     private val _things = MutableStateFlow<MutableList<Things>>(mutableListOf())
 
     var things: StateFlow<MutableList<Things>> = _things
+
+    private val _types = MutableStateFlow<MutableList<Type>>(mutableListOf())
+    var types: StateFlow<MutableList<Type>> = _types
 
     init {
         CoroutineScope(Dispatchers.IO).launch {
@@ -60,8 +63,22 @@ class ThingsViewmodel : ViewModel() {
         }
     }
 
+    suspend fun getTypes(): MutableList<Type> {
+        return withContext(Dispatchers.Main) {
+            try {
+                Log.e("SUPA", "Getting data from supa")
+                var asyncClient = supaHelper.getAsyncClient()
+                return@withContext asyncClient.postgrest["Thing_types"].select().decodeList<Type>()
+            } catch (e: Exception) {
+                Log.e("SUPA", e.toString())
+                return@withContext emptyList()
+            }
+        } as MutableList<Type>
+    }
+
     suspend fun reloadThings() {
         _things.emit(getThings())
+        _types.emit(getTypes())
         deleteComplete.value = false
     }
 }

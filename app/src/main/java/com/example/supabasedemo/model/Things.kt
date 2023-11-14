@@ -1,5 +1,7 @@
 package com.example.supabasedemo.model
 
+import androidx.compose.runtime.collectAsState
+import com.example.supabasedemo.viewmodel.ThingsViewmodel
 import kotlinx.datetime.DateTimePeriod
 import kotlinx.serialization.Serializable
 
@@ -10,4 +12,8 @@ data class Things(
     val store: String?,
     val amount: Int,
     val type: Int
-)
+) {
+    fun getTypeName(types: MutableList<Type>): String {
+        return types.find { it.id == type }?.Name ?: "nothing"
+    }
+}

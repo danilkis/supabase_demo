@@ -17,15 +17,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.example.supabasedemo.model.Things
+import com.example.supabasedemo.model.Type
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ThingCard(thing: Things)
-{
+fun ThingCard(thing: Things, type: MutableList<Type>) {
     OutlinedCard(onClick = { /*TODO*/ }, modifier = Modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -39,12 +38,14 @@ fun ThingCard(thing: Things)
                 Spacer(modifier = Modifier.height(4.dp))
                 Text("В наличии: ${thing.amount}", style = MaterialTheme.typography.bodySmall)
                 Spacer(modifier = Modifier.height(4.dp))
-                Text(thing.type.toString(), style = MaterialTheme.typography.bodySmall)
+                Text(thing.getTypeName(type), style = MaterialTheme.typography.bodySmall)
             }
             Image(
                 painter = rememberAsyncImagePainter("https://proreiling.ru/wp-content/uploads/5/9/d/59d46a21ac5629beea300f92ad418b98.png"),
                 contentDescription = null,
-                modifier = Modifier.height(80.dp).width(90.dp),
+                modifier = Modifier
+                    .height(80.dp)
+                    .width(90.dp),
                 contentScale = ContentScale.Crop
             )
         }
