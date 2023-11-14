@@ -1,6 +1,9 @@
 package com.example.supabasedemo.screens
 
 import android.annotation.SuppressLint
+import android.provider.MediaStore
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
@@ -26,18 +29,24 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DismissDirection
 import androidx.compose.material3.DismissValue
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SwipeToDismiss
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -51,16 +60,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.supabasedemo.customelements.SearchBarCustom
 import com.example.supabasedemo.customelements.ThingCard
-import com.example.supabasedemo.model.Contacts
-import com.example.supabasedemo.model.Persons
 import com.example.supabasedemo.model.Things
 import com.example.supabasedemo.model.Type
+import com.example.supabasedemo.supa.BucketWorker
 import com.example.supabasedemo.viewmodel.ThingsViewmodel
 import kotlinx.coroutines.launch
 
@@ -253,14 +262,21 @@ fun DeleteThingDialog(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddThingDialog(open: Boolean, onDismiss: () -> Unit, viewModel: ThingsViewmodel = viewModel()) {
+fun AddThingDialog(
+    open: Boolean,
+    onDismiss: () -> Unit,
+    viewModel: ThingsViewmodel = viewModel()
+) { //TODO: Навигация на добавление товара
     val coroutineScope = rememberCoroutineScope()
+    val contentResolver = LocalContext.current.contentResolver
     var name by remember { mutableStateOf("") }
     var surname by remember { mutableStateOf("") }
     var phone by remember { mutableStateOf("") }
     var telegram by remember { mutableStateOf("") }
     var avito by remember { mutableStateOf("") }
+    var filePath by remember { mutableStateOf("") }
     if (open) {
         AlertDialog(
             onDismissRequest = {
@@ -269,10 +285,11 @@ fun AddThingDialog(open: Boolean, onDismiss: () -> Unit, viewModel: ThingsViewmo
             confirmButton = {
                 TextButton(
                     onClick = {
-                        var new_person = Persons(0, name, surname, 0)
-                        var new_contact = Contacts(0, phone, telegram, avito)
-                        viewModel.deleteComplete.value = true
+                        //var new_person = Persons(0, name, surname, 0)
+                        //var new_contact = Contacts(0, phone, telegram, avito)
+                        //viewModel.deleteComplete.value = true
                         //coroutineScope.launch {viewModel.insertContact(new_contact, new_person)}
+                        BucketWorker().UploadFile(filePath, contentResolver)
                         onDismiss()
                     }
                 ) {
@@ -280,7 +297,7 @@ fun AddThingDialog(open: Boolean, onDismiss: () -> Unit, viewModel: ThingsViewmo
                 }
             },
             text = {
-                Column {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     OutlinedTextField(
                         value = name,
                         onValueChange = { name = it },
@@ -288,29 +305,71 @@ fun AddThingDialog(open: Boolean, onDismiss: () -> Unit, viewModel: ThingsViewmo
                     )
                     Spacer(modifier = Modifier.height(5.dp))
                     OutlinedTextField(
-                        value = surname,
-                        onValueChange = { surname = it },
-                        placeholder = { Text("Количество") }
-                    )
-                    Spacer(modifier = Modifier.height(5.dp))
-                    OutlinedTextField(
                         value = phone,
                         onValueChange = { phone = it },
-                        placeholder = { Text("+700000000") },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone)
+                        placeholder = { Text("Количество в наличии") },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                     )
                     Spacer(modifier = Modifier.height(5.dp))
-                    OutlinedTextField(
-                        value = telegram,
-                        onValueChange = { telegram = it },
-                        placeholder = { Text("@Telegram") }
-                    )
-                    Spacer(modifier = Modifier.height(5.dp))
-                    OutlinedTextField(
-                        value = avito,
-                        onValueChange = { avito = it },
-                        placeholder = { Text("Avito") }
-                    )
+                    val typesList = viewModel.types.collectAsState(initial = listOf<Type>()).value
+                    var expanded by remember { mutableStateOf(false) }
+                    var textFieldValue by remember { mutableStateOf("") }
+
+                    // container for textfield and menu
+                    ExposedDropdownMenuBox(
+                        expanded = expanded,
+                        onExpandedChange = {
+                            expanded = !expanded
+                        }
+                    ) {
+                        // textfield
+                        TextField(
+                            modifier = Modifier
+                                .menuAnchor(), // menuAnchor modifier must be passed to the text field for correctness
+                            value = textFieldValue,
+                            onValueChange = { newValue ->
+                                textFieldValue = newValue
+                            },
+                            label = { Text("Тип") },
+                            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                            colors = ExposedDropdownMenuDefaults.textFieldColors(),
+                        )
+
+                        // filter options based on text field value
+                        val filteringOptions =
+                            typesList.filter { it.Name.contains(textFieldValue, ignoreCase = true) }
+                        if (filteringOptions.isNotEmpty()) {
+                            ExposedDropdownMenu(
+                                expanded = expanded,
+                                onDismissRequest = { expanded = false },
+                            ) {
+                                filteringOptions.forEach { selectedMovie_ ->
+                                    DropdownMenuItem(
+                                        text = { Text(selectedMovie_.Name) },
+                                        onClick = {
+                                            textFieldValue = selectedMovie_.Name
+                                            expanded = false
+                                        },
+                                        contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+                                    )
+                                }
+                            }
+                        }
+                    }
+                    val context = LocalContext.current
+
+                    val filePickerLauncher =
+                        rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+                            // Handle the result from the file picker dialog
+                            filePath = uri.toString()
+                        }
+
+                    OutlinedButton(onClick = {
+                        // Launch the file picker dialog when the button is pressed
+                        filePickerLauncher.launch("image/*")
+                    }) {
+                        Text("Выберите фото")
+                    }
                 }
             },
             dismissButton = {
@@ -319,13 +378,13 @@ fun AddThingDialog(open: Boolean, onDismiss: () -> Unit, viewModel: ThingsViewmo
                         onDismiss()
                     }
                 ) {
-                    Text(text = "Cancel")
+                    Text(text = "Отмена")
                 }
             },
-            title = { Text(text = "Add a new person") },
+            title = { Text(text = "Добавить новую вещь") },
             icon = {
                 Icon(
-                    imageVector = Icons.Default.PersonAdd,
+                    imageVector = Icons.Default.Add,
                     contentDescription = null
                 )
             } // add icon
