@@ -4,6 +4,7 @@ import android.content.ContentResolver
 import android.content.Context
 import android.net.Uri
 import android.provider.MediaStore
+import android.util.Log
 import io.github.jan.supabase.storage.UploadData
 import io.github.jan.supabase.storage.storage
 import kotlinx.coroutines.CoroutineScope
@@ -24,10 +25,8 @@ class BucketWorker {
             contentResolver.openInputStream(uri)?.use { inputStream ->
                 // Read the file bytes from the input stream
                 val fileBytes = inputStream.readBytes()
-
                 // Upload the file to the bucket
-                bucket.upload("myIcon.png", fileBytes, upsert = false)
-
+                bucket.upload("${file_path.substring(file_path.lastIndexOf("/") + 1)}.jpg", fileBytes, upsert = false)
             }
         }
     }
