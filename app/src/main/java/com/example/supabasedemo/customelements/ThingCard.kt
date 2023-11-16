@@ -40,12 +40,14 @@ fun ThingCard(thing: Things, type: MutableList<Type>) {
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(thing.getTypeName(type), style = MaterialTheme.typography.bodySmall)
             }
+            var photo = thing.photoUrl
+
             Image(
-                painter = rememberAsyncImagePainter("https://proreiling.ru/wp-content/uploads/5/9/d/59d46a21ac5629beea300f92ad418b98.png"),
+                painter = rememberAsyncImagePainter(photo),
                 contentDescription = null,
                 modifier = Modifier
                     .height(80.dp)
-                    .width(90.dp),
+                    .width(120.dp),
                 contentScale = ContentScale.Crop
             )
         }

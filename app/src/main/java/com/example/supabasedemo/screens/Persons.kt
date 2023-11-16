@@ -8,6 +8,10 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -155,16 +159,22 @@ fun PersonColumn(navController: NavController, viewModel: PersonsViewmodel = vie
             }
             AnimatedVisibility(
                 visible = itemAppeared && !viewModel.deleteComplete.value,
-                exit = shrinkVertically(
+                exit = fadeOut(
                     animationSpec = tween(
                         durationMillis = 300,
                     )
-                ),
-                enter = expandVertically(
+                ) + scaleOut(
                     animationSpec = tween(
                         durationMillis = 300
                     )
-                )
+                ),
+                enter = fadeIn(
+                    animationSpec = tween(
+                        durationMillis = 300
+                    )
+                ) + scaleIn(animationSpec = tween(
+                    durationMillis = 300
+                ))
             ) {
             SwipeToDismiss(
                 state = dismissState,

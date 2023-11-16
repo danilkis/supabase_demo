@@ -9,7 +9,13 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -88,7 +94,7 @@ fun ThingsMainScreen(navController: NavController, viewModel: ThingsViewmodel = 
         val openDialog = remember { mutableStateOf(false) }
         Scaffold(modifier = Modifier
             .fillMaxSize()
-            .padding(start = 0.dp, top = 0.dp, end = 0.dp, bottom = 70.dp),
+            .padding(start = 0.dp, top = 0.dp, end = 0.dp, bottom = 80.dp),
             floatingActionButton = {
                 FloatingActionButton(
                     onClick = {
@@ -158,16 +164,22 @@ fun ThingColumn(navController: NavController, viewModel: ThingsViewmodel = viewM
             }
             AnimatedVisibility(
                 visible = itemAppeared && !viewModel.deleteComplete.value,
-                exit = shrinkVertically(
+                exit = fadeOut(
                     animationSpec = tween(
                         durationMillis = 300,
                     )
-                ),
-                enter = expandVertically(
+                ) + scaleOut(
                     animationSpec = tween(
                         durationMillis = 300
                     )
-                )
+                ),
+                enter = fadeIn(
+                    animationSpec = tween(
+                        durationMillis = 300
+                    )
+                ) + scaleIn(animationSpec = tween(
+                    durationMillis = 300
+                ))
             ) {
                 SwipeToDismiss(
                     state = dismissState,
@@ -272,11 +284,10 @@ fun AddThingDialog(
     val coroutineScope = rememberCoroutineScope()
     val contentResolver = LocalContext.current.contentResolver
     var name by remember { mutableStateOf("") }
-    var surname by remember { mutableStateOf("") }
-    var phone by remember { mutableStateOf("") }
-    var telegram by remember { mutableStateOf("") }
-    var avito by remember { mutableStateOf("") }
+    var amount by remember { mutableStateOf("") }
+    var storeUrl by remember { mutableStateOf("") }
     var filePath by remember { mutableStateOf("") }
+    val chosenType by remember { mutableStateOf(mutableStateOf(Type(0, ""))) }
     if (open) {
         AlertDialog(
             onDismissRequest = {
@@ -289,7 +300,21 @@ fun AddThingDialog(
                         //var new_contact = Contacts(0, phone, telegram, avito)
                         //viewModel.deleteComplete.value = true
                         //coroutineScope.launch {viewModel.insertContact(new_contact, new_person)}
-                        BucketWorker().UploadFile(filePath, contentResolver)
+                        coroutineScope.launch {
+                            val photo = BucketWorker().UploadFile(filePath, contentResolver)
+                            if (!photo.isNullOrBlank()) {
+                                viewModel.insertThing(
+                                    Things(
+                                        0,
+                                        name,
+                                        storeUrl,
+                                        amount.toInt(),
+                                        chosenType.value.id,
+                                        photo
+                                    )
+                                )
+                            }
+                        }
                         onDismiss()
                     }
                 ) {
@@ -305,16 +330,21 @@ fun AddThingDialog(
                     )
                     Spacer(modifier = Modifier.height(5.dp))
                     OutlinedTextField(
-                        value = phone,
-                        onValueChange = { phone = it },
+                        value = amount,
+                        onValueChange = { amount = it },
                         placeholder = { Text("Количество в наличии") },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                     )
                     Spacer(modifier = Modifier.height(5.dp))
+                    OutlinedTextField(
+                        value = storeUrl,
+                        onValueChange = { storeUrl = it },
+                        placeholder = { Text("Ссылка на магазин") }
+                    )
+                    Spacer(modifier = Modifier.height(5.dp))
                     val typesList = viewModel.types.collectAsState(initial = listOf<Type>()).value
-                    var expanded by remember { mutableStateOf(false) }
                     var textFieldValue by remember { mutableStateOf("") }
-
+                    var expanded by remember { mutableStateOf(false) }
                     // container for textfield and menu
                     ExposedDropdownMenuBox(
                         expanded = expanded,
@@ -348,6 +378,7 @@ fun AddThingDialog(
                                         text = { Text(selectedMovie_.Name) },
                                         onClick = {
                                             textFieldValue = selectedMovie_.Name
+                                            chosenType.value = selectedMovie_
                                             expanded = false
                                         },
                                         contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,

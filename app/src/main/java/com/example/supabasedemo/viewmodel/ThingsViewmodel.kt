@@ -3,10 +3,13 @@ package com.example.supabasedemo.viewmodel
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import com.example.supabasedemo.model.Contacts
+import com.example.supabasedemo.model.Persons
 import com.example.supabasedemo.model.Things
 import com.example.supabasedemo.model.Type
 import com.example.supabasedemo.supa.supaHelper
 import io.github.jan.supabase.postgrest.postgrest
+import io.github.jan.supabase.postgrest.query.Returning
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -61,6 +64,25 @@ class ThingsViewmodel : ViewModel() {
                 Log.e("SUPA", e.toString())
             }
         }
+    }
+
+    suspend fun insertThing(thing: Things) {
+        CoroutineScope(Dispatchers.Main).launch {
+            try {
+                var asyncClient = supaHelper.getAsyncClient()
+                var info = asyncClient.postgrest["Things"].select().decodeList<Things>()
+                val new_thing =
+                    Things(info.last().id!! + 1, thing.name, thing.store, thing.amount, thing.type, thing.photoUrl)
+                asyncClient.postgrest["Things"].insert(
+                    new_thing,
+                    returning = Returning.HEADERS_ONLY
+                )
+                reloadThings()
+            } catch (e: Exception) {
+                Log.e("SUPA", e.toString())
+            }
+        }
+
     }
 
     suspend fun getTypes(): MutableList<Type> {
