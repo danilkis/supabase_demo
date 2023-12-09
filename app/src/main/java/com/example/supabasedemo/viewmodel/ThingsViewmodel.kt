@@ -3,6 +3,7 @@ package com.example.supabasedemo.viewmodel
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import com.example.supabasedemo.model.Box
 import com.example.supabasedemo.model.Contacts
 import com.example.supabasedemo.model.Persons
 import com.example.supabasedemo.model.Things
@@ -25,6 +26,9 @@ class ThingsViewmodel : ViewModel() {
     private val _types = MutableStateFlow<MutableList<Type>>(mutableListOf())
     var types: StateFlow<MutableList<Type>> = _types
 
+    private val _boxes = MutableStateFlow<MutableList<Box>>(mutableListOf())
+    var boxes: StateFlow<MutableList<Box>> = _boxes
+
     init {
         CoroutineScope(Dispatchers.IO).launch {
             reloadThings()
@@ -42,7 +46,6 @@ class ThingsViewmodel : ViewModel() {
     suspend fun getThings(): MutableList<Things> {
         return withContext(Dispatchers.Main) {
             try {
-                Log.e("SUPA", "Getting data from supa")
                 var asyncClient = supaHelper.getAsyncClient()
                 return@withContext asyncClient.postgrest["Things"].select().decodeList<Things>()
             } catch (e: Exception) {
@@ -52,7 +55,7 @@ class ThingsViewmodel : ViewModel() {
         } as MutableList<Things>
     }
 
-    private suspend fun deleteThing(thingId: Int) {
+    suspend fun deleteThing(thingId: Int) {
         withContext(Dispatchers.Main) {
             try {
                 var asyncClient = supaHelper.getAsyncClient()
@@ -72,7 +75,7 @@ class ThingsViewmodel : ViewModel() {
                 var asyncClient = supaHelper.getAsyncClient()
                 var info = asyncClient.postgrest["Things"].select().decodeList<Things>()
                 val new_thing =
-                    Things(info.last().id!! + 1, thing.name, thing.store, thing.amount, thing.type, thing.photoUrl)
+                    Things(info.last().id!! + 1, thing.name, thing.store, thing.amount, thing.type, thing.photoUrl, thing.boxId)
                 asyncClient.postgrest["Things"].insert(
                     new_thing,
                     returning = Returning.HEADERS_ONLY
@@ -88,19 +91,43 @@ class ThingsViewmodel : ViewModel() {
     suspend fun getTypes(): MutableList<Type> {
         return withContext(Dispatchers.Main) {
             try {
-                Log.e("SUPA", "Getting data from supa")
                 var asyncClient = supaHelper.getAsyncClient()
                 return@withContext asyncClient.postgrest["Thing_types"].select().decodeList<Type>()
             } catch (e: Exception) {
-                Log.e("SUPA", e.toString())
                 return@withContext emptyList()
             }
         } as MutableList<Type>
     }
 
+    suspend fun getBoxes(): MutableList<Box> {
+        return withContext(Dispatchers.Main) {
+            try {
+                var asyncClient = supaHelper.getAsyncClient()
+                return@withContext asyncClient.postgrest["Box"].select().decodeList<Box>()
+            } catch (e: Exception) {
+                return@withContext emptyList()
+            }
+        } as MutableList<Box>
+    }
+
+    suspend fun deleteBox(boxId: Int) {
+        withContext(Dispatchers.Main) {
+            try {
+                var asyncClient = supaHelper.getAsyncClient()
+                asyncClient.postgrest["Box"].delete() {
+                    eq("id", boxId)
+                }
+                reloadThings()
+            } catch (e: Exception) {
+                Log.e("SUPA", e.toString())
+            }
+        }
+    }
+
     suspend fun reloadThings() {
         _things.emit(getThings())
         _types.emit(getTypes())
+        _boxes.emit(getBoxes())
         deleteComplete.value = false
     }
 }

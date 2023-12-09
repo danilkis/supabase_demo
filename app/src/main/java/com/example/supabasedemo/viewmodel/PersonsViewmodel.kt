@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.supabasedemo.client
 import com.example.supabasedemo.model.Contacts
 import com.example.supabasedemo.model.Persons
+import com.example.supabasedemo.model.Things
 import com.example.supabasedemo.supa.supaHelper
 import com.example.supabasedemo.supa.supaHelper.Companion.getAsyncClient
 import io.github.jan.supabase.gotrue.gotrue
@@ -45,18 +46,19 @@ class PersonsViewmodel : ViewModel() {
     }
 
     suspend fun getContacts(): MutableList<Persons> {
+
         return withContext(Dispatchers.Main) {
             try {
+                deleteComplete.value = false
                 var asyncClient = getAsyncClient()
                 return@withContext asyncClient.postgrest["Persons"].select().decodeList<Persons>()
             } catch (e: Exception) {
                 return@withContext emptyList()
             }
-        }.toMutableList()
+        } as MutableList<Persons>
     }
 
-    private suspend fun deletePerson(personId: Int) {
-        withContext(Dispatchers.Main) {
+    suspend fun deletePerson(personId: Int) {
             try {
                 var asyncClient = getAsyncClient()
                 var info_person = asyncClient.postgrest["Persons"].select(){
@@ -72,7 +74,7 @@ class PersonsViewmodel : ViewModel() {
             } catch (e: Exception) {
                 Log.e("SUPA", e.toString())
             }
-        }
+
     }
 
     suspend fun reloadPersons() {

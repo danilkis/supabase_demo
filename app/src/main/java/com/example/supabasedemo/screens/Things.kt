@@ -1,21 +1,16 @@
 package com.example.supabasedemo.screens
 
 import android.annotation.SuppressLint
-import android.provider.MediaStore
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
-import androidx.compose.animation.shrinkVertically
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -32,10 +27,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DismissDirection
 import androidx.compose.material3.DismissValue
@@ -52,7 +45,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SwipeToDismiss
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -71,8 +63,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.supabasedemo.customelements.BoxCard
+import com.example.supabasedemo.customelements.OptionsFAB
 import com.example.supabasedemo.customelements.SearchBarCustom
 import com.example.supabasedemo.customelements.ThingCard
+import com.example.supabasedemo.customelements.ToggleHeading
+import com.example.supabasedemo.model.Box
 import com.example.supabasedemo.model.Things
 import com.example.supabasedemo.model.Type
 import com.example.supabasedemo.supa.BucketWorker
@@ -94,15 +90,9 @@ fun ThingsMainScreen(navController: NavController, viewModel: ThingsViewmodel = 
         val openDialog = remember { mutableStateOf(false) }
         Scaffold(modifier = Modifier
             .fillMaxSize()
-            .padding(start = 0.dp, top = 0.dp, end = 0.dp, bottom = 80.dp),
+            .padding(start = 4.dp, top = 0.dp, end = 4.dp, bottom = 70.dp),
             floatingActionButton = {
-                FloatingActionButton(
-                    onClick = {
-                        openDialog.value = true
-                    }
-                ) {
-                    Icon(imageVector = Icons.Default.Add, contentDescription = "add icon")
-                }
+                                   OptionsFAB({openDialog.value = true}, {openDialog.value = true})
             },
             content = {
                 Column(
@@ -112,7 +102,9 @@ fun ThingsMainScreen(navController: NavController, viewModel: ThingsViewmodel = 
                 ) {
                     SearchBarCustom()
                     Spacer(modifier = Modifier.height(8.dp))
-                    ThingColumn(navController = navController, viewModel)
+                    ToggleHeading({ BoxColumn(navController = navController, viewModel) }, "Коробки")
+                    Spacer(modifier = Modifier.height(8.dp))
+                    ToggleHeading({ ThingColumn(navController = navController, viewModel) }, "Несортированно")
                 }
             }
         )
@@ -121,6 +113,111 @@ fun ThingsMainScreen(navController: NavController, viewModel: ThingsViewmodel = 
         }
     }
 }
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun BoxColumn(navController: NavController, viewModel: ThingsViewmodel = viewModel()) {
+    val boxes by viewModel.boxes.collectAsState(initial = mutableListOf())
+    var columnAppeared by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        columnAppeared = true
+    }
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)
+    )
+    {
+        items(boxes.filter { it.id != 0 }) { box ->
+            val dismissState = rememberDismissState()
+            val coroutineScope = rememberCoroutineScope()
+            val dismissDirection = dismissState.dismissDirection
+            var isDismissed = dismissState.isDismissed(DismissDirection.EndToStart)
+            // check if the user swiped
+            if (isDismissed && dismissDirection == DismissDirection.EndToStart) {
+                DeleteBoxDialog(
+                    box,
+                    viewModel,
+                    onDismiss = {
+                        isDismissed = true; coroutineScope.launch { dismissState.reset() }
+                    },
+                    onCancel = {
+                        isDismissed = false; coroutineScope.launch { dismissState.reset() }
+                    })
+            }
+
+            var itemAppeared by remember { mutableStateOf(!columnAppeared) }
+            LaunchedEffect(Unit) {
+                itemAppeared = true
+            }
+            if (viewModel.deleteComplete.value && itemAppeared && !isDismissed) {
+                viewModel.deleteComplete.value = false
+            }
+            AnimatedVisibility(
+                visible = itemAppeared && !viewModel.deleteComplete.value,
+                exit = fadeOut(
+                    animationSpec = tween(
+                        durationMillis = 300,
+                    )
+                ) + scaleOut(
+                    animationSpec = tween(
+                        durationMillis = 300
+                    )
+                ),
+                enter = fadeIn(
+                    animationSpec = tween(
+                        durationMillis = 300
+                    )
+                ) + scaleIn(
+                    animationSpec = tween(
+                        durationMillis = 300
+                    )
+                )
+            ) {
+                SwipeToDismiss(
+                    state = dismissState,
+                    directions = setOf(
+                        DismissDirection.EndToStart
+                    ),
+                    background = {
+                        val backgroundColor by animateColorAsState(
+                            when (dismissState.targetValue) {
+                                DismissValue.DismissedToStart -> MaterialTheme.colorScheme.error.copy(
+                                    alpha = 0.8f
+                                )
+
+                                else -> MaterialTheme.colorScheme.background
+                            }
+                        )
+
+                        // icon size
+                        val iconScale by animateFloatAsState(
+                            targetValue = if (dismissState.targetValue == DismissValue.DismissedToStart) 1.3f else 0.5f
+                        )
+
+                        Box(
+                            Modifier
+                                .fillMaxSize()
+                                .background(color = backgroundColor)
+                                .padding(end = 16.dp), // inner padding
+                            contentAlignment = Alignment.CenterEnd // place the icon at the end (left)
+                        ) {
+                            Icon(
+                                modifier = Modifier.scale(iconScale),
+                                imageVector = Icons.Outlined.Delete,
+                                contentDescription = "Delete",
+                                tint = Color.White
+                            )
+                        }
+                    },
+                    dismissContent =
+                    {
+                        BoxCard(box = box, navController = navController)
+                    })
+            }
+        }
+    }
+}
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -133,11 +230,10 @@ fun ThingColumn(navController: NavController, viewModel: ThingsViewmodel = viewM
     }
     LazyColumn(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp), verticalArrangement = Arrangement.spacedBy(10.dp)
+            .fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)
     )
     {
-        items(things) { thing ->
+        items(things.filter { it.boxId == 0 }) { thing ->
             val dismissState = rememberDismissState()
             val coroutineScope = rememberCoroutineScope()
             val dismissDirection = dismissState.dismissDirection
@@ -177,9 +273,11 @@ fun ThingColumn(navController: NavController, viewModel: ThingsViewmodel = viewM
                     animationSpec = tween(
                         durationMillis = 300
                     )
-                ) + scaleIn(animationSpec = tween(
-                    durationMillis = 300
-                ))
+                ) + scaleIn(
+                    animationSpec = tween(
+                        durationMillis = 300
+                    )
+                )
             ) {
                 SwipeToDismiss(
                     state = dismissState,
@@ -244,12 +342,12 @@ fun DeleteThingDialog(
             confirmButton = {
                 TextButton(
                     onClick = {
-                        //coroutineScope.launch { viewModel.delete(thing.id!!) }
+                        coroutineScope.launch { viewModel.deleteThing(thing.id!!) }
                         openDialog = false
                         onDismiss()
                     }
                 ) {
-                    Text(text = "Yes")
+                    Text(text = "Да")
                 }
             },
             dismissButton = {
@@ -259,11 +357,11 @@ fun DeleteThingDialog(
                         onCancel()
                     }
                 ) {
-                    Text(text = "No")
+                    Text(text = "Нет")
                 }
             },
-            title = { Text(text = "?") },
-            text = { Text(text = "Are you sure you want to delete ${thing.name}?") },
+            title = { Text(text = "Вы уверенны?") },
+            text = { Text(text = "Вы собираетесь удалить ${thing.name}?") },
             icon = {
                 Icon(
                     imageVector = Icons.Default.Delete,
@@ -273,6 +371,56 @@ fun DeleteThingDialog(
         )
     }
 }
+
+
+@Composable
+fun DeleteBoxDialog(
+    box: Box,
+    viewModel: ThingsViewmodel = viewModel(),
+    onDismiss: () -> Unit,
+    onCancel: () -> Unit
+) {
+    val coroutineScope = rememberCoroutineScope()
+    var openDialog by remember { mutableStateOf(true) }
+    if (openDialog) {
+        AlertDialog(
+            onDismissRequest = {
+                openDialog = false
+                onCancel()
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        coroutineScope.launch { viewModel.deleteBox(box.id!!) }
+                        openDialog = false
+                        onDismiss()
+                    }
+                ) {
+                    Text(text = "Да")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        openDialog = false
+                        onCancel()
+                    }
+                ) {
+                    Text(text = "Нет")
+                }
+            },
+            title = { Text(text = "Вы уверенны?") },
+            text = { Text(text = "Вы собираетесь удалить коробку ${box.name}?") },
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = null
+                )
+            } // add icon
+        )
+    }
+}
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -288,6 +436,7 @@ fun AddThingDialog(
     var storeUrl by remember { mutableStateOf("") }
     var filePath by remember { mutableStateOf("") }
     val chosenType by remember { mutableStateOf(mutableStateOf(Type(0, ""))) }
+    val chosenBox by remember { mutableStateOf(mutableStateOf(Box(0, "", null))) }
     if (open) {
         AlertDialog(
             onDismissRequest = {
@@ -296,10 +445,6 @@ fun AddThingDialog(
             confirmButton = {
                 TextButton(
                     onClick = {
-                        //var new_person = Persons(0, name, surname, 0)
-                        //var new_contact = Contacts(0, phone, telegram, avito)
-                        //viewModel.deleteComplete.value = true
-                        //coroutineScope.launch {viewModel.insertContact(new_contact, new_person)}
                         coroutineScope.launch {
                             val photo = BucketWorker().UploadFile(filePath, contentResolver)
                             if (!photo.isNullOrBlank()) {
@@ -310,7 +455,8 @@ fun AddThingDialog(
                                         storeUrl,
                                         amount.toInt(),
                                         chosenType.value.id,
-                                        photo
+                                        photo,
+                                        chosenBox.value.id
                                     )
                                 )
                             }
@@ -342,6 +488,52 @@ fun AddThingDialog(
                         placeholder = { Text("Ссылка на магазин") }
                     )
                     Spacer(modifier = Modifier.height(5.dp))
+                    val boxesList = viewModel.boxes.collectAsState(initial = listOf<Box>()).value
+                    var boxFieldValue by remember { mutableStateOf("") }
+                    var expanded1 by remember { mutableStateOf(false) }
+                    // container for textfield and menu
+                    ExposedDropdownMenuBox(
+                        expanded = expanded1,
+                        onExpandedChange = {
+                            expanded1 = !expanded1
+                        }
+                    ) {
+                        // textfield
+                        OutlinedTextField(
+                            modifier = Modifier
+                                .menuAnchor(), // menuAnchor modifier must be passed to the text field for correctness
+                            value = boxFieldValue,
+                            onValueChange = { newValue ->
+                                boxFieldValue = newValue
+                            },
+                            label = { Text("Коробка") },
+                            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded1) },
+                            colors = ExposedDropdownMenuDefaults.textFieldColors(),
+                        )
+
+                        // filter options based on text field value
+                        val filteringOptions =
+                            boxesList.filter { it.name.contains(boxFieldValue, ignoreCase = true) }
+                        if (filteringOptions.isNotEmpty()) {
+                            ExposedDropdownMenu(
+                                expanded = expanded1,
+                                onDismissRequest = { expanded1 = false },
+                            ) {
+                                filteringOptions.forEach { selectedBox ->
+                                    DropdownMenuItem(
+                                        text = { Text(selectedBox.name) },
+                                        onClick = {
+                                            boxFieldValue = selectedBox.name
+                                            chosenBox.value = selectedBox
+                                            expanded1 = false
+                                        },
+                                        contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+                                    )
+                                }
+                            }
+                        }
+                    }
+
                     val typesList = viewModel.types.collectAsState(initial = listOf<Type>()).value
                     var textFieldValue by remember { mutableStateOf("") }
                     var expanded by remember { mutableStateOf(false) }
@@ -353,7 +545,7 @@ fun AddThingDialog(
                         }
                     ) {
                         // textfield
-                        TextField(
+                        OutlinedTextField(
                             modifier = Modifier
                                 .menuAnchor(), // menuAnchor modifier must be passed to the text field for correctness
                             value = textFieldValue,
@@ -387,6 +579,7 @@ fun AddThingDialog(
                             }
                         }
                     }
+
                     val context = LocalContext.current
 
                     val filePickerLauncher =

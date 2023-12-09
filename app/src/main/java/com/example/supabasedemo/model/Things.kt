@@ -12,7 +12,8 @@ data class Things(
     val store: String?,
     val amount: Int,
     val type: Int,
-    val photoUrl: String?
+    val photoUrl: String?,
+    val boxId: Int
 ) {
     fun getTypeName(types: MutableList<Type>): String {
         return types.find { it.id == type }?.Name ?: "nothing"
