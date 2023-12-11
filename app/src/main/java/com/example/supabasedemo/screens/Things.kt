@@ -27,6 +27,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
@@ -69,9 +70,12 @@ import com.example.supabasedemo.customelements.SearchBarCustom
 import com.example.supabasedemo.customelements.ThingCard
 import com.example.supabasedemo.customelements.ToggleHeading
 import com.example.supabasedemo.model.Box
+import com.example.supabasedemo.model.Contacts
+import com.example.supabasedemo.model.Persons
 import com.example.supabasedemo.model.Things
 import com.example.supabasedemo.model.Type
 import com.example.supabasedemo.supa.BucketWorker
+import com.example.supabasedemo.viewmodel.PersonsViewmodel
 import com.example.supabasedemo.viewmodel.ThingsViewmodel
 import kotlinx.coroutines.launch
 
@@ -87,12 +91,13 @@ fun ThingsMainScreen(navController: NavController, viewModel: ThingsViewmodel = 
             }
         }
     } else {
-        val openDialog = remember { mutableStateOf(false) }
+        val openDialogThing = remember { mutableStateOf(false) }
+        val openDialogBox = remember { mutableStateOf(false) }
         Scaffold(modifier = Modifier
             .fillMaxSize()
             .padding(start = 4.dp, top = 0.dp, end = 4.dp, bottom = 70.dp),
             floatingActionButton = {
-                                   OptionsFAB({openDialog.value = true}, {openDialog.value = true})
+                                   OptionsFAB({openDialogBox.value = true}, {openDialogThing.value = true})
             },
             content = {
                 Column(
@@ -108,8 +113,11 @@ fun ThingsMainScreen(navController: NavController, viewModel: ThingsViewmodel = 
                 }
             }
         )
-        if (openDialog.value) {
-            AddThingDialog(openDialog.value, onDismiss = { openDialog.value = false }, viewModel)
+        if (openDialogThing.value) {
+            AddThingDialog(openDialogThing.value, onDismiss = { openDialogThing.value = false }, viewModel)
+        }
+        if (openDialogBox.value) {
+            AddBoxDialog(openDialogBox.value, onDismiss = { openDialogBox.value = false }, viewModel)
         }
     }
 }
@@ -421,6 +429,66 @@ fun DeleteBoxDialog(
     }
 }
 
+@Composable
+fun AddBoxDialog(
+    open: Boolean,
+    onDismiss: () -> Unit,
+    viewModel: ThingsViewmodel = viewModel()
+) {
+    val coroutineScope = rememberCoroutineScope()
+    var name by remember { mutableStateOf("") }
+    var barcode by remember { mutableStateOf("") }
+    if (open) {
+        AlertDialog(
+            onDismissRequest = {
+                onDismiss()
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        var box = Box(0, name, barcode)
+                        viewModel.deleteComplete.value = true
+                        coroutineScope.launch { viewModel.insertBoxes(box) }
+                        onDismiss()
+                    }
+                ) {
+                    Text(text = "Готово")
+                }
+            },
+            text = {
+                Column {
+                    OutlinedTextField(
+                        value = name,
+                        onValueChange = { name = it },
+                        placeholder = { Text("Название") }
+                    )
+                    Spacer(modifier = Modifier.height(5.dp))
+                    OutlinedTextField(
+                        value = barcode,
+                        onValueChange = { barcode = it },
+                        placeholder = { Text("Штрихкод") }
+                    )
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        onDismiss()
+                    }
+                ) {
+                    Text(text = "Отмена")
+                }
+            },
+            title = { Text(text = "Добавление новой коробки") },
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.PersonAdd,
+                    contentDescription = null
+                )
+            } // add icon
+        )
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

@@ -38,12 +38,6 @@ class PersonsViewmodel : ViewModel() {
     }
 
     var deleteComplete = mutableStateOf(false)
-    suspend fun delete(personId: Int) {
-        withContext(Dispatchers.Main) {
-            deletePerson(personId)
-            deleteComplete.value = true
-        }
-    }
 
     suspend fun getContacts(): MutableList<Persons> {
 
@@ -59,14 +53,12 @@ class PersonsViewmodel : ViewModel() {
     }
 
     suspend fun deletePerson(personId: Int) {
+        CoroutineScope(Dispatchers.Main).launch {
             try {
                 var asyncClient = getAsyncClient()
-                var info_person = asyncClient.postgrest["Persons"].select(){
+                var info_person = asyncClient.postgrest["Persons"].select() {
                     eq("id", personId)
                 }.decodeSingle<Persons>()
-                asyncClient.postgrest["Persons"].delete() {
-                    eq("id", personId)
-                }
                 asyncClient.postgrest["Contacts"].delete() {
                     eq("id", info_person.contactsId)
                 }
@@ -74,7 +66,7 @@ class PersonsViewmodel : ViewModel() {
             } catch (e: Exception) {
                 Log.e("SUPA", e.toString())
             }
-
+        }
     }
 
     suspend fun reloadPersons() {

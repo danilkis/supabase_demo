@@ -1,9 +1,16 @@
 package com.example.supabasedemo.screens
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -50,6 +57,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.supabasedemo.customelements.BoxCard
 import com.example.supabasedemo.customelements.PersonCard
 import com.example.supabasedemo.customelements.SearchBarCustom
 import com.example.supabasedemo.model.Contacts
@@ -106,67 +114,102 @@ fun PersonScreen(navController: NavController, viewModel: PersonsViewmodel = vie
 @Composable
 fun PersonColumn(navController: NavController, viewModel: PersonsViewmodel = viewModel()) {
     val persons by viewModel.newPersons.collectAsState(initial = mutableListOf())
-
-    LazyColumn(modifier = Modifier.fillMaxWidth()) {
+    var columnAppeared by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        columnAppeared = true
+    }
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)
+    )
+    {
         items(persons) { person ->
-            var dismissState = rememberDismissState()
+            val dismissState = rememberDismissState()
             val coroutineScope = rememberCoroutineScope()
-            LaunchedEffect(persons) {
-                dismissState.reset()
+            val dismissDirection = dismissState.dismissDirection
+            var isDismissed = dismissState.isDismissed(DismissDirection.EndToStart)
+            // check if the user swiped
+            if (isDismissed && dismissDirection == DismissDirection.EndToStart) {
+                DeleteDialog(
+                    person,
+                    viewModel,
+                    onDismiss = {
+                        isDismissed = true; coroutineScope.launch { dismissState.reset() }
+                    },
+                    onCancel = {
+                        isDismissed = false; coroutineScope.launch { dismissState.reset() }
+                    })
             }
-            SwipeToDismiss(
-                state = dismissState,
-                directions = setOf(DismissDirection.EndToStart),
-                background = {
-                    val backgroundColor by animateColorAsState(
-                        when (dismissState.targetValue) {
-                            DismissValue.DismissedToStart -> MaterialTheme.colorScheme.error.copy(
-                                alpha = 0.8f
-                            )
 
-                            else -> MaterialTheme.colorScheme.background
-                        }
+            var itemAppeared by remember { mutableStateOf(!columnAppeared) }
+            LaunchedEffect(Unit) {
+                itemAppeared = true
+            }
+            if (viewModel.deleteComplete.value && itemAppeared && !isDismissed) {
+                viewModel.deleteComplete.value = false
+            }
+            AnimatedVisibility(
+                visible = itemAppeared && !viewModel.deleteComplete.value,
+                exit = fadeOut(
+                    animationSpec = tween(
+                        durationMillis = 300,
                     )
-
-                    // icon size
-                    val iconScale by animateFloatAsState(
-                        targetValue = if (dismissState.targetValue == DismissValue.DismissedToStart) 1.3f else 0.5f
+                ) + scaleOut(
+                    animationSpec = tween(
+                        durationMillis = 300
                     )
+                ),
+                enter = fadeIn(
+                    animationSpec = tween(
+                        durationMillis = 300
+                    )
+                ) + scaleIn(
+                    animationSpec = tween(
+                        durationMillis = 300
+                    )
+                )
+            ) {
+                SwipeToDismiss(
+                    state = dismissState,
+                    directions = setOf(
+                        DismissDirection.EndToStart
+                    ),
+                    background = {
+                        val backgroundColor by animateColorAsState(
+                            when (dismissState.targetValue) {
+                                DismissValue.DismissedToStart -> MaterialTheme.colorScheme.error.copy(
+                                    alpha = 0.8f
+                                )
 
-                    Box(
-                        Modifier
-                            .fillMaxSize()
-                            .background(color = backgroundColor)
-                            .padding(end = 16.dp), // inner padding
-                        contentAlignment = Alignment.CenterEnd // place the icon at the end (left)
-                    ) {
-                        Icon(
-                            modifier = Modifier.scale(iconScale),
-                            imageVector = Icons.Outlined.Delete,
-                            contentDescription = "Delete",
-                            tint = Color.White
-                        )
-                    }
-                },
-                dismissContent = {
-                    PersonCard(person, navController)
-                    if (dismissState.isDismissed(DismissDirection.EndToStart)) {
-                        DeleteDialog(
-                            person = person,
-                            viewModel,
-                            onDismiss = {
-                                coroutineScope.launch {
-                                    dismissState.reset()
-
-                                }
-                            },
-                            onCancel = {
-                                coroutineScope.launch { dismissState.reset() }
+                                else -> MaterialTheme.colorScheme.background
                             }
                         )
-                    }
-                }
-            )
+
+                        // icon size
+                        val iconScale by animateFloatAsState(
+                            targetValue = if (dismissState.targetValue == DismissValue.DismissedToStart) 1.3f else 0.5f
+                        )
+
+                        Box(
+                            Modifier
+                                .fillMaxSize()
+                                .background(color = backgroundColor)
+                                .padding(end = 16.dp), // inner padding
+                            contentAlignment = Alignment.CenterEnd // place the icon at the end (left)
+                        ) {
+                            Icon(
+                                modifier = Modifier.scale(iconScale),
+                                imageVector = Icons.Outlined.Delete,
+                                contentDescription = "Delete",
+                                tint = Color.White
+                            )
+                        }
+                    },
+                    dismissContent =
+                    {
+                        PersonCard(person, navController = navController)
+                    })
+            }
         }
     }
 }
@@ -190,7 +233,7 @@ fun DeleteDialog(
             confirmButton = {
                 TextButton(
                     onClick = {
-                        coroutineScope.launch { viewModel.delete(person.id!!) }
+                        coroutineScope.launch { viewModel.deletePerson(person.id!!) }
                         openDialog = false
                         onDismiss()
                     }

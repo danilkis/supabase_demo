@@ -36,12 +36,6 @@ class ThingsViewmodel : ViewModel() {
     }
 
     var deleteComplete = mutableStateOf(false)
-    suspend fun delete(thingId: Int) {
-        withContext(Dispatchers.Main) {
-            deleteThing(thingId)
-            deleteComplete.value = true
-        }
-    }
 
     suspend fun getThings(): MutableList<Things> {
         return withContext(Dispatchers.Main) {
@@ -56,7 +50,7 @@ class ThingsViewmodel : ViewModel() {
     }
 
     suspend fun deleteThing(thingId: Int) {
-        withContext(Dispatchers.Main) {
+        CoroutineScope(Dispatchers.Main).launch {
             try {
                 var asyncClient = supaHelper.getAsyncClient()
                 asyncClient.postgrest["Things"].delete() {
@@ -110,8 +104,26 @@ class ThingsViewmodel : ViewModel() {
         } as MutableList<Box>
     }
 
+    suspend fun insertBoxes(box: Box) {
+        CoroutineScope(Dispatchers.Main).launch {
+            try {
+                var asyncClient = supaHelper.getAsyncClient()
+                var info = asyncClient.postgrest["Box"].select().decodeList<Box>()
+                val new_thing =
+                    Box(info.last().id!! + 1, box.name, box.barcode)
+                asyncClient.postgrest["Box"].insert(
+                    new_thing,
+                    returning = Returning.HEADERS_ONLY
+                )
+                reloadThings()
+            } catch (e: Exception) {
+                Log.e("ThingsViewmodel", e.toString())
+            }
+        }
+    }
+
     suspend fun deleteBox(boxId: Int) {
-        withContext(Dispatchers.Main) {
+        CoroutineScope(Dispatchers.Main).launch {
             try {
                 var asyncClient = supaHelper.getAsyncClient()
                 asyncClient.postgrest["Box"].delete() {
