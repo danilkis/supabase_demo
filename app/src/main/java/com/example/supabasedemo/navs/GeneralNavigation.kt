@@ -9,10 +9,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.supabasedemo.screens.Auth
+import com.example.supabasedemo.screens.BoxInfoScreen
 import com.example.supabasedemo.screens.Hello
 import com.example.supabasedemo.screens.MainScreen
 import com.example.supabasedemo.screens.PersonInfoScreen
 import com.example.supabasedemo.viewmodel.PersonsViewmodel
+import com.example.supabasedemo.viewmodel.ThingsViewmodel
 
 //TODO: Настроить навигацию
 
@@ -20,7 +22,9 @@ import com.example.supabasedemo.viewmodel.PersonsViewmodel
 fun GeneralNavigation() {
     val navController = rememberNavController()
     val personVm = PersonsViewmodel()
+    val thingVm = ThingsViewmodel()
     val persons by personVm.newPersons.collectAsState(initial = listOf())
+    val boxes by thingVm.boxes.collectAsState(initial = listOf())
     NavHost(navController = navController, startDestination = "auth") {
         composable("auth") {
             Auth(navController)
@@ -42,6 +46,17 @@ fun GeneralNavigation() {
             persons.forEach { it ->
                 if (it.id == personInfoId) {
                     PersonInfoScreen(person = it, navController)
+                }
+            }
+        }
+        composable(
+            "box/{boxId}",
+            arguments = listOf(navArgument("boxId") { type = NavType.IntType })
+        ) {
+            val personInfoId: Int = it.arguments?.getInt("boxId") ?: 0
+            boxes.forEach { it ->
+                if (it.id == personInfoId) {
+                    BoxInfoScreen(it, navController)
                 }
             }
         }

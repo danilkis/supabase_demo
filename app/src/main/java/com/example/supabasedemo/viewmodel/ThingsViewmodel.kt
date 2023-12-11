@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class ThingsViewmodel : ViewModel() {
+open class ThingsViewmodel : ViewModel() {
     private val _things = MutableStateFlow<MutableList<Things>>(mutableListOf())
 
     var things: StateFlow<MutableList<Things>> = _things
