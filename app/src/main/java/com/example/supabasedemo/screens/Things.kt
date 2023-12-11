@@ -26,8 +26,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.AllInbox
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
@@ -37,7 +37,6 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -60,22 +59,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.supabasedemo.R
 import com.example.supabasedemo.customelements.BoxCard
 import com.example.supabasedemo.customelements.OptionsFAB
 import com.example.supabasedemo.customelements.SearchBarCustom
 import com.example.supabasedemo.customelements.ThingCard
 import com.example.supabasedemo.customelements.ToggleHeading
 import com.example.supabasedemo.model.Box
-import com.example.supabasedemo.model.Contacts
-import com.example.supabasedemo.model.Persons
 import com.example.supabasedemo.model.Things
 import com.example.supabasedemo.model.Type
 import com.example.supabasedemo.supa.BucketWorker
-import com.example.supabasedemo.viewmodel.PersonsViewmodel
 import com.example.supabasedemo.viewmodel.ThingsViewmodel
 import kotlinx.coroutines.launch
 
@@ -107,9 +105,17 @@ fun ThingsMainScreen(navController: NavController, viewModel: ThingsViewmodel = 
                 ) {
                     SearchBarCustom()
                     Spacer(modifier = Modifier.height(8.dp))
-                    ToggleHeading({ BoxColumn(navController = navController, viewModel) }, "Коробки")
+                    ToggleHeading({ BoxColumn(navController = navController, viewModel) },
+                        stringResource(
+                            R.string.boxes
+                        )
+                    )
                     Spacer(modifier = Modifier.height(8.dp))
-                    ToggleHeading({ ThingColumn(navController = navController, viewModel) }, "Несортированно")
+                    ToggleHeading({ ThingColumn(navController = navController, viewModel) },
+                        stringResource(
+                            R.string.unsorted
+                        )
+                    )
                 }
             }
         )
@@ -350,7 +356,7 @@ fun DeleteThingDialog(
             confirmButton = {
                 TextButton(
                     onClick = {
-                        coroutineScope.launch { viewModel.deleteThing(thing.id!!) }
+                        coroutineScope.launch { viewModel.deleteThing(thing.id) }
                         openDialog = false
                         onDismiss()
                     }
@@ -368,8 +374,8 @@ fun DeleteThingDialog(
                     Text(text = "Нет")
                 }
             },
-            title = { Text(text = "Вы уверенны?") },
-            text = { Text(text = "Вы собираетесь удалить ${thing.name}?") },
+            title = { Text(text = stringResource(R.string.confirmation_question)) },
+            text = { Text(text = stringResource(R.string.thing_delete_message, thing.name)) },
             icon = {
                 Icon(
                     imageVector = Icons.Default.Delete,
@@ -399,7 +405,7 @@ fun DeleteBoxDialog(
             confirmButton = {
                 TextButton(
                     onClick = {
-                        coroutineScope.launch { viewModel.deleteBox(box.id!!) }
+                        coroutineScope.launch { viewModel.deleteBox(box.id) }
                         openDialog = false
                         onDismiss()
                     }
@@ -417,8 +423,8 @@ fun DeleteBoxDialog(
                     Text(text = "Нет")
                 }
             },
-            title = { Text(text = "Вы уверенны?") },
-            text = { Text(text = "Вы собираетесь удалить коробку ${box.name}?") },
+            title = { Text(text = stringResource(R.string.confirmation_question)) },
+            text = { Text(text = stringResource(R.string.box_delete_message, box.name)) },
             icon = {
                 Icon(
                     imageVector = Icons.Default.Delete,
@@ -446,13 +452,13 @@ fun AddBoxDialog(
             confirmButton = {
                 TextButton(
                     onClick = {
-                        var box = Box(0, name, barcode)
+                        val box = Box(0, name, barcode)
                         viewModel.deleteComplete.value = true
                         coroutineScope.launch { viewModel.insertBoxes(box) }
                         onDismiss()
                     }
                 ) {
-                    Text(text = "Готово")
+                    Text(text = stringResource(R.string.done))
                 }
             },
             text = {
@@ -460,13 +466,13 @@ fun AddBoxDialog(
                     OutlinedTextField(
                         value = name,
                         onValueChange = { name = it },
-                        placeholder = { Text("Название") }
+                        placeholder = { Text(stringResource(R.string.name)) }
                     )
                     Spacer(modifier = Modifier.height(5.dp))
                     OutlinedTextField(
                         value = barcode,
                         onValueChange = { barcode = it },
-                        placeholder = { Text("Штрихкод") }
+                        placeholder = { Text(stringResource(R.string.barcode)) }
                     )
                 }
             },
@@ -476,13 +482,13 @@ fun AddBoxDialog(
                         onDismiss()
                     }
                 ) {
-                    Text(text = "Отмена")
+                    Text(text = stringResource(R.string.cancel))
                 }
             },
-            title = { Text(text = "Добавление новой коробки") },
+            title = { Text(text = stringResource(R.string.add_box_message)) },
             icon = {
                 Icon(
-                    imageVector = Icons.Default.PersonAdd,
+                    imageVector = Icons.Default.AllInbox,
                     contentDescription = null
                 )
             } // add icon
@@ -532,7 +538,7 @@ fun AddThingDialog(
                         onDismiss()
                     }
                 ) {
-                    Text(text = "Done")
+                    Text(text = stringResource(R.string.done))
                 }
             },
             text = {
@@ -540,20 +546,20 @@ fun AddThingDialog(
                     OutlinedTextField(
                         value = name,
                         onValueChange = { name = it },
-                        placeholder = { Text("Название") }
+                        placeholder = { Text(stringResource(R.string.name)) }
                     )
                     Spacer(modifier = Modifier.height(5.dp))
                     OutlinedTextField(
                         value = amount,
                         onValueChange = { amount = it },
-                        placeholder = { Text("Количество в наличии") },
+                        placeholder = { Text(stringResource(R.string.in_stock)) },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                     )
                     Spacer(modifier = Modifier.height(5.dp))
                     OutlinedTextField(
                         value = storeUrl,
                         onValueChange = { storeUrl = it },
-                        placeholder = { Text("Ссылка на магазин") }
+                        placeholder = { Text(stringResource(R.string.store_url)) }
                     )
                     Spacer(modifier = Modifier.height(5.dp))
                     val boxesList = viewModel.boxes.collectAsState(initial = listOf<Box>()).value
@@ -574,7 +580,7 @@ fun AddThingDialog(
                             onValueChange = { newValue ->
                                 boxFieldValue = newValue
                             },
-                            label = { Text("Коробка") },
+                            label = { Text(stringResource(R.string.box)) },
                             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded1) },
                             colors = ExposedDropdownMenuDefaults.textFieldColors(),
                         )
@@ -620,7 +626,7 @@ fun AddThingDialog(
                             onValueChange = { newValue ->
                                 textFieldValue = newValue
                             },
-                            label = { Text("Тип") },
+                            label = { Text(stringResource(R.string.type)) },
                             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                             colors = ExposedDropdownMenuDefaults.textFieldColors(),
                         )
@@ -648,8 +654,6 @@ fun AddThingDialog(
                         }
                     }
 
-                    val context = LocalContext.current
-
                     val filePickerLauncher =
                         rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
                             // Handle the result from the file picker dialog
@@ -660,7 +664,7 @@ fun AddThingDialog(
                         // Launch the file picker dialog when the button is pressed
                         filePickerLauncher.launch("image/*")
                     }) {
-                        Text("Выберите фото")
+                        Text(stringResource(R.string.choose_photo))
                     }
                 }
             },
@@ -670,10 +674,10 @@ fun AddThingDialog(
                         onDismiss()
                     }
                 ) {
-                    Text(text = "Отмена")
+                    Text(text = stringResource(R.string.cancel))
                 }
             },
-            title = { Text(text = "Добавить новую вещь") },
+            title = { Text(text = stringResource(R.string.add_thing_message)) },
             icon = {
                 Icon(
                     imageVector = Icons.Default.Add,

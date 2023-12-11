@@ -16,16 +16,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.supabasedemo.R
 import com.example.supabasedemo.SharedPreference
 import com.example.supabasedemo.supa.supaHelper
-import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 
 @Composable
 fun Auth(navController: NavController) {
-    var ctx = LocalContext.current
+    val ctx = LocalContext.current
     val sharedPreference: SharedPreference =SharedPreference(ctx)
     if (!sharedPreference.GetBool("Init_setup"))
     {
@@ -37,18 +37,18 @@ fun Auth(navController: NavController) {
         }
     Column(modifier = Modifier.fillMaxSize(),
     horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(text = "Time to set up your server")
+        Text(text = stringResource(R.string.connect_to_server))
         Spacer(modifier = Modifier.height(8.dp))
         OutlinedTextField(
             value = Name,
             onValueChange = { Name = it },
-            placeholder = { Text(text = "Your name") }
+            placeholder = { Text(text = stringResource(R.string.your_name)) }
         )
         Spacer(modifier = Modifier.height(4.dp))
         OutlinedTextField(
             value = serverURL,
             onValueChange = { serverURL = it },
-            placeholder = { Text(text = "Server URL") }
+            placeholder = { Text(text = stringResource(R.string.server_url)) }
         )
         Spacer(modifier = Modifier.height(4.dp))
         OutlinedTextField(
@@ -58,13 +58,13 @@ fun Auth(navController: NavController) {
         )
         Spacer(modifier = Modifier.height(4.dp))
         Button(onClick = {
-                sharedPreference.SaveString("Server_URL", serverURL.toString())
+                sharedPreference.SaveString("Server_URL", serverURL)
                 sharedPreference.SaveBool("Init_setup", true)
-                sharedPreference.SaveString("API_key", APIkey.toString())
-                sharedPreference.SaveString("Name", Name.toString())
+                sharedPreference.SaveString("API_key", APIkey)
+                sharedPreference.SaveString("Name", Name)
                 UserReady = true
             }) {
-            Text(text = "Done")
+            Text(text = stringResource(R.string.done))
         }
         if (UserReady)
         {

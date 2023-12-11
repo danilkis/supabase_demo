@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -23,27 +24,28 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.supabasedemo.animation.EnterAnimation
+import com.example.supabasedemo.R
 import com.example.supabasedemo.model.MainScreenDest
 import com.example.supabasedemo.screens.OrdersMainScreen
 import com.example.supabasedemo.screens.PersonScreen
 import com.example.supabasedemo.screens.ThingsMainScreen
 
 
-val destinations = listOf(
-    MainScreenDest("Люди", Icons.Rounded.Person) {
-        PersonScreen(it)
-    },
-    MainScreenDest("Вещи", Icons.Rounded.Build) {
-        ThingsMainScreen(it)
-    },
-    MainScreenDest("Заказы", Icons.Rounded.ShoppingCart) {
-        OrdersMainScreen(it)
-    },
-)
-
 @Composable
 fun MainScreenNavigation(navControllerGeneral: NavHostController) { //
+
+    val destinations = listOf(
+        MainScreenDest(stringResource(id = R.string.persons), Icons.Rounded.Person) {
+            PersonScreen(it)
+        },
+        MainScreenDest(stringResource(R.string.things), Icons.Rounded.Build) {
+            ThingsMainScreen(it)
+        },
+        MainScreenDest(stringResource(R.string.orders), Icons.Rounded.ShoppingCart) {
+            OrdersMainScreen(it)
+        },
+    )
+
     val navController = rememberNavController()
 
     Scaffold(bottomBar = {

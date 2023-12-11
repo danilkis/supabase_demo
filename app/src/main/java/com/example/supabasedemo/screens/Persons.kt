@@ -53,11 +53,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.supabasedemo.customelements.BoxCard
+import com.example.supabasedemo.R
 import com.example.supabasedemo.customelements.PersonCard
 import com.example.supabasedemo.customelements.SearchBarCustom
 import com.example.supabasedemo.model.Contacts
@@ -77,7 +78,7 @@ fun PersonScreen(navController: NavController, viewModel: PersonsViewmodel = vie
             }
         }
     } else {
-        var openDialog = remember { mutableStateOf(false) }
+        val openDialog = remember { mutableStateOf(false) }
         Scaffold(modifier = Modifier
             .fillMaxSize()
             .padding(start = 8.dp, top = 0.dp, end = 8.dp, bottom = 70.dp),
@@ -233,12 +234,12 @@ fun DeleteDialog(
             confirmButton = {
                 TextButton(
                     onClick = {
-                        coroutineScope.launch { viewModel.deletePerson(person.id!!) }
+                        coroutineScope.launch { viewModel.deletePerson(person.id) }
                         openDialog = false
                         onDismiss()
                     }
                 ) {
-                    Text(text = "Да")
+                    Text(text = stringResource(R.string.yes))
                 }
             },
             dismissButton = {
@@ -248,11 +249,15 @@ fun DeleteDialog(
                         onCancel()
                     }
                 ) {
-                    Text(text = "Отмена")
+                    Text(text = stringResource(R.string.cancel))
                 }
             },
-            title = { Text(text = "Вы уверенны?") },
-            text = { Text(text = "Вы собираетесь удалить ${person.Name} ${person.Surname}?") },
+            title = { Text(text = stringResource(R.string.confirmation_question)) },
+            text = { Text(text = stringResource(
+                R.string.person_delete_message,
+                person.Name,
+                person.Surname.toString()
+            )) },
             icon = {
                 Icon(
                     imageVector = Icons.Default.Delete,
@@ -283,14 +288,14 @@ fun AddPersonDialog(
             confirmButton = {
                 TextButton(
                     onClick = {
-                        var new_person = Persons(0, name, surname, 0)
-                        var new_contact = Contacts(0, phone, telegram, avito)
+                        val new_person = Persons(0, name, surname, 0)
+                        val new_contact = Contacts(0, phone, telegram, avito)
                         viewModel.deleteComplete.value = true
                         coroutineScope.launch { viewModel.insertContact(new_contact, new_person) }
                         onDismiss()
                     }
                 ) {
-                    Text(text = "Готово")
+                    Text(text = stringResource(R.string.done))
                 }
             },
             text = {
@@ -298,32 +303,32 @@ fun AddPersonDialog(
                     OutlinedTextField(
                         value = name,
                         onValueChange = { name = it },
-                        placeholder = { Text("Имя") }
+                        placeholder = { Text(stringResource(R.string.person_name)) }
                     )
                     Spacer(modifier = Modifier.height(5.dp))
                     OutlinedTextField(
                         value = surname,
                         onValueChange = { surname = it },
-                        placeholder = { Text("Фамилия") }
+                        placeholder = { Text(stringResource(R.string.person_surname)) }
                     )
                     Spacer(modifier = Modifier.height(5.dp))
                     OutlinedTextField(
                         value = phone,
                         onValueChange = { phone = it },
-                        placeholder = { Text("Номер телефона, формат (+7...)") },
+                        placeholder = { Text(stringResource(R.string.phone_number_format)) },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone)
                     )
                     Spacer(modifier = Modifier.height(5.dp))
                     OutlinedTextField(
                         value = telegram,
                         onValueChange = { telegram = it },
-                        placeholder = { Text("Ник телеграмм") }
+                        placeholder = { Text(stringResource(R.string.telegram_tag)) }
                     )
                     Spacer(modifier = Modifier.height(5.dp))
                     OutlinedTextField(
                         value = avito,
                         onValueChange = { avito = it },
-                        placeholder = { Text("Ссылка на авито") }
+                        placeholder = { Text(stringResource(R.string.person_url)) }
                     )
                 }
             },
@@ -333,10 +338,10 @@ fun AddPersonDialog(
                         onDismiss()
                     }
                 ) {
-                    Text(text = "Отмена")
+                    Text(text = stringResource(R.string.cancel))
                 }
             },
-            title = { Text(text = "Добавление нового человека") },
+            title = { Text(text = stringResource(R.string.add_person_message)) },
             icon = {
                 Icon(
                     imageVector = Icons.Default.PersonAdd,

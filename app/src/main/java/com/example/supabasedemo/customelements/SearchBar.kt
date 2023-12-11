@@ -24,9 +24,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.supabasedemo.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -51,7 +53,7 @@ fun SearchBarCustom() {
                 active = it
             },
             placeholder = {
-                Text(text = "Поиск")
+                Text(text = stringResource(R.string.search))
             },
             leadingIcon = {
                 Icon(imageVector = Icons.Default.Search, contentDescription = "Search icon")
@@ -92,7 +94,7 @@ fun SearchBarCustom() {
                     },
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
-                text = "Очистить историю"
+                text = stringResource(R.string.clear_history)
             )
         }
     }

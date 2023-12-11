@@ -17,8 +17,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
+import com.example.supabasedemo.R
 import com.example.supabasedemo.model.Things
 import com.example.supabasedemo.model.Type
 
@@ -36,11 +38,11 @@ fun ThingCard(thing: Things, type: MutableList<Type>) {
             {
                 Text(thing.name, style = MaterialTheme.typography.bodyLarge)
                 Spacer(modifier = Modifier.height(4.dp))
-                Text("В наличии: ${thing.amount}", style = MaterialTheme.typography.bodySmall)
+                Text(stringResource(R.string.in_stock_number, thing.amount), style = MaterialTheme.typography.bodySmall)
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(thing.getTypeName(type), style = MaterialTheme.typography.bodySmall)
             }
-            var photo = thing.photoUrl
+            val photo = thing.photoUrl
 
             Image(
                 painter = rememberAsyncImagePainter(photo),

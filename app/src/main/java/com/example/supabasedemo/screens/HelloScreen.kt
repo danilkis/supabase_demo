@@ -19,8 +19,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.supabasedemo.R
 import com.example.supabasedemo.SharedPreference
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -28,7 +30,7 @@ import kotlinx.coroutines.withContext
 
 @Composable
 fun Hello(navController: NavController) {
-    var nameVis by remember { mutableStateOf(true) }
+    val nameVis by remember { mutableStateOf(true) }
     Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.SpaceEvenly) {
         var userReady by remember {
             mutableStateOf(false)
@@ -40,8 +42,8 @@ fun Hello(navController: NavController) {
             }
 
         }
-        val sharedPreference: SharedPreference = SharedPreference(LocalContext.current)
-        var name = sharedPreference.GetString("Name")
+        val sharedPreference = SharedPreference(LocalContext.current)
+        val name = sharedPreference.GetString("Name")
         if(!userReady)
         {
             AnimatedVisibility(
@@ -50,7 +52,7 @@ fun Hello(navController: NavController) {
                 ), exit = shrinkHorizontally(animationSpec = tween(2000)),
                 modifier = Modifier.padding(top = 10.dp)
             ) {
-            Text(text = "Welcome back " + name.toString(), style = MaterialTheme.typography.bodyLarge)
+            Text(text = stringResource(R.string.welcome_back, name.toString()) , style = MaterialTheme.typography.bodyLarge)
             }
         }
         else

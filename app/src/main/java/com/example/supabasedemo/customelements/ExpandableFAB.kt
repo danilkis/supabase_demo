@@ -5,19 +5,13 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
-import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Inbox
 import androidx.compose.material.icons.outlined.Sell
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -29,10 +23,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.example.supabasedemo.model.Box
-import io.ktor.websocket.Frame
-import java.lang.reflect.Modifier
+import com.example.supabasedemo.R
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
@@ -65,7 +58,7 @@ fun OptionsFAB(OnBoxOpen:() -> Unit, OnThingsOpen:() -> Unit) {
             Column(horizontalAlignment = Alignment.End)
             {
                 ExtendedFloatingActionButton(
-                    text = { Text(text = "Добавить вещь") },
+                    text = { Text(text = stringResource(R.string.add_thing_fab)) },
                     icon = {
                         Icon(
                             imageVector = Icons.Outlined.Sell,
@@ -76,7 +69,7 @@ fun OptionsFAB(OnBoxOpen:() -> Unit, OnThingsOpen:() -> Unit) {
                 )
                 Spacer(modifier = androidx.compose.ui.Modifier.height(16.dp))
                 ExtendedFloatingActionButton(
-                    text = { Text(text = "Добавить коробку") },
+                    text = { Text(text = stringResource(R.string.add_box_fab)) },
                     icon = {
                         Icon(
                             imageVector = Icons.Outlined.Inbox,
@@ -89,7 +82,7 @@ fun OptionsFAB(OnBoxOpen:() -> Unit, OnThingsOpen:() -> Unit) {
             }
         }
         ExtendedFloatingActionButton(
-            text = { Text(text = "Добавить") },
+            text = { Text(text = stringResource(R.string.add)) },
             icon = {
                 Icon(
                     imageVector = Icons.Outlined.Add,
