@@ -247,7 +247,7 @@ fun ThingColumn(navController: NavController, viewModel: ThingsViewmodel = viewM
             .fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)
     )
     {
-        items(things.filter { it.boxId == 0 }) { thing ->
+        items(things.filter { it.boxId == 1 }) { thing ->
             val dismissState = rememberDismissState()
             val coroutineScope = rememberCoroutineScope()
             val dismissDirection = dismissState.dismissDirection
