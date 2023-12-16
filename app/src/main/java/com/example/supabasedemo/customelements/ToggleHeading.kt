@@ -1,12 +1,22 @@
 package com.example.supabasedemo.customelements
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowCircleDown
 import androidx.compose.material.icons.filled.ArrowDownward
@@ -22,6 +32,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.unit.dp
 
 @Composable
 fun ToggleHeading(Content: @Composable () -> Unit, heading: String) {
@@ -43,8 +54,20 @@ fun ToggleHeading(Content: @Composable () -> Unit, heading: String) {
                 modifier = Modifier.rotate(rotationAngle)
             )
         }
-
-        AnimatedVisibility(visible = expanded) {
+        Spacer(modifier = Modifier.height(4.dp))
+        AnimatedVisibility(
+            visible = expanded,
+            exit = fadeOut(
+                animationSpec = spring(Spring.DampingRatioLowBouncy, Spring.StiffnessMedium)
+            ) + scaleOut(
+                animationSpec =  spring(Spring.DampingRatioLowBouncy, Spring.StiffnessMediumLow)
+            ),
+            enter = fadeIn(
+                animationSpec = spring(Spring.DampingRatioLowBouncy, Spring.StiffnessMedium)
+            ) + scaleIn(
+                animationSpec =  spring(Spring.DampingRatioLowBouncy, Spring.StiffnessMediumLow)
+            )
+        ) {
             Content()
         }
     }

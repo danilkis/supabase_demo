@@ -2,6 +2,8 @@ package com.example.supabasedemo.customelements
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -35,24 +37,16 @@ fun OptionsFAB(OnBoxOpen:() -> Unit, OnThingsOpen:() -> Unit) {
         AnimatedVisibility(
             visible = myFABState,
             exit = fadeOut(
-                animationSpec = tween(
-                    durationMillis = 300,
-                )
+                animationSpec = spring(Spring.DampingRatioLowBouncy, Spring.StiffnessMediumLow)
             ) + slideOutVertically (
                 targetOffsetY  = { fullHeight -> fullHeight },
-                animationSpec = tween(
-                    durationMillis = 300
-                )
+                animationSpec = spring(Spring.DampingRatioLowBouncy, Spring.StiffnessMediumLow)
             ),
             enter = fadeIn(
-                animationSpec = tween(
-                    durationMillis = 300
-                )
+                animationSpec = spring(Spring.DampingRatioLowBouncy, Spring.StiffnessMediumLow)
             ) + slideInVertically(
                 initialOffsetY = { fullHeight -> fullHeight },
-                animationSpec = tween(
-                    durationMillis = 300
-                )
+                animationSpec = spring(Spring.DampingRatioLowBouncy, Spring.StiffnessMediumLow)
             )
         ) {
             Column(horizontalAlignment = Alignment.End)

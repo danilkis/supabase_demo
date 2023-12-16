@@ -3,7 +3,10 @@ package com.example.supabasedemo.screens
 import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -121,7 +124,7 @@ fun PersonColumn(navController: NavController, viewModel: PersonsViewmodel = vie
     }
     LazyColumn(
         modifier = Modifier
-            .fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)
+            .fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(4.dp)
     )
     {
         items(persons) { person ->
@@ -152,22 +155,14 @@ fun PersonColumn(navController: NavController, viewModel: PersonsViewmodel = vie
             AnimatedVisibility(
                 visible = itemAppeared && !viewModel.deleteComplete.value,
                 exit = fadeOut(
-                    animationSpec = tween(
-                        durationMillis = 300,
-                    )
+                    animationSpec = spring(Spring.DampingRatioLowBouncy, Spring.StiffnessMedium)
                 ) + scaleOut(
-                    animationSpec = tween(
-                        durationMillis = 300
-                    )
+                    animationSpec =  spring(Spring.DampingRatioMediumBouncy, Spring.StiffnessMedium)
                 ),
                 enter = fadeIn(
-                    animationSpec = tween(
-                        durationMillis = 300
-                    )
+                    animationSpec = spring(Spring.DampingRatioLowBouncy, Spring.StiffnessMedium)
                 ) + scaleIn(
-                    animationSpec = tween(
-                        durationMillis = 300
-                    )
+                    animationSpec =  spring(Spring.DampingRatioLowBouncy, Spring.StiffnessMediumLow)
                 )
             ) {
                 SwipeToDismiss(

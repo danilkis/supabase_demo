@@ -5,7 +5,9 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -139,7 +141,7 @@ fun BoxColumn(navController: NavController, viewModel: ThingsViewmodel = viewMod
     }
     LazyColumn(
         modifier = Modifier
-            .fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)
+            .fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(5.dp)
     )
     {
         items(boxes.filter { it.id != 0 }) { box ->
@@ -170,22 +172,14 @@ fun BoxColumn(navController: NavController, viewModel: ThingsViewmodel = viewMod
             AnimatedVisibility(
                 visible = itemAppeared && !viewModel.deleteComplete.value,
                 exit = fadeOut(
-                    animationSpec = tween(
-                        durationMillis = 300,
-                    )
+                    animationSpec = spring(Spring.DampingRatioLowBouncy, Spring.StiffnessMedium)
                 ) + scaleOut(
-                    animationSpec = tween(
-                        durationMillis = 300
-                    )
+                    animationSpec = spring(Spring.DampingRatioLowBouncy, Spring.StiffnessMediumLow)
                 ),
                 enter = fadeIn(
-                    animationSpec = tween(
-                        durationMillis = 300
-                    )
+                    animationSpec = spring(Spring.DampingRatioLowBouncy, Spring.StiffnessMedium)
                 ) + scaleIn(
-                    animationSpec = tween(
-                        durationMillis = 300
-                    )
+                    animationSpec = spring(Spring.DampingRatioLowBouncy, Spring.StiffnessMediumLow)
                 )
             ) {
                 SwipeToDismiss(
@@ -246,7 +240,7 @@ fun ThingColumn(navController: NavController, viewModel: ThingsViewmodel = viewM
     }
     LazyColumn(
         modifier = Modifier
-            .fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)
+            .fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(5.dp)
     )
     {
         items(things.filter { it.boxId == 1 }) { thing ->
