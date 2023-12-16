@@ -26,8 +26,8 @@ import com.example.supabasedemo.model.Type
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ThingCard(thing: Things, type: MutableList<Type>) {
-    OutlinedCard(onClick = { /*TODO*/ }, modifier = Modifier.fillMaxWidth()) {
+fun ThingCard(thing: Things, type: MutableList<Type>,onClick: () -> Unit ) {
+    OutlinedCard(onClick = {  onClick()  }, modifier = Modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,

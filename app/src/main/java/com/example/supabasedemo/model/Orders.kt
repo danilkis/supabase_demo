@@ -2,6 +2,7 @@ package com.example.supabasedemo.model
 
 import kotlinx.datetime.DateTimePeriod
 import kotlinx.serialization.Serializable
+import java.sql.Timestamp
 
 /** Модель серериализацией для заказов
  * @param id ID заказа
@@ -13,8 +14,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Orders(
     val id: Int,
-    val created_at: Long,
-    val deadline: Long, //TODO: Поставить обычный timestamp
-    val billingId: Int,
-    val status: Int
+    val created_at: String,
+    val deadline: String,
+    val status: Int, //TODO: Убрать таблицу person orders, просто сделать id person
+    val BillingId: Int
 )

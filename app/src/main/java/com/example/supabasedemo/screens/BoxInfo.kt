@@ -12,9 +12,14 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -25,6 +30,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SwipeToDismiss
+import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -38,10 +44,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.supabasedemo.R
 import com.example.supabasedemo.customelements.ThingCard
+import com.example.supabasedemo.customelements.ThingSheet
+import com.example.supabasedemo.customelements.UserHead
 import com.example.supabasedemo.model.Box
 import com.example.supabasedemo.viewmodel.BoxViewmodel
 import com.example.supabasedemo.viewmodel.ThingsViewmodel
@@ -62,97 +72,135 @@ fun BoxInfoScreen(
     LaunchedEffect(Unit) {
         columnAppeared = true
     }
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)
-    )
-    {
-        items(things.filter { it.boxId == box.id }) { thing ->
-            val dismissState = rememberDismissState()
-            val coroutineScope = rememberCoroutineScope()
-            val dismissDirection = dismissState.dismissDirection
-            var isDismissed = dismissState.isDismissed(DismissDirection.EndToStart)
-            // check if the user swiped
-            if (isDismissed && dismissDirection == DismissDirection.EndToStart) {
-                DeleteThingDialog(
-                    thing,
-                    viewModel,
-                    onDismiss = {
-                        isDismissed = true; coroutineScope.launch { dismissState.reset() }
-                    },
-                    onCancel = {
-                        isDismissed = false; coroutineScope.launch { dismissState.reset() }
-                    })
-            }
-
-            var itemAppeared by remember { mutableStateOf(!columnAppeared) }
-            LaunchedEffect(Unit) {
-                itemAppeared = true
-            }
-            if (viewModel.deleteComplete.value && itemAppeared && !isDismissed) {
-                viewModel.deleteComplete.value = false
-            }
-            AnimatedVisibility(
-                visible = itemAppeared && !viewModel.deleteComplete.value,
-                exit = fadeOut(
-                    animationSpec = tween(
-                        durationMillis = 300,
-                    )
-                ) + scaleOut(
-                    animationSpec = tween(
-                        durationMillis = 300
-                    )
-                ),
-                enter = fadeIn(
-                    animationSpec = tween(
-                        durationMillis = 300
-                    )
-                ) + scaleIn(
-                    animationSpec = tween(
-                        durationMillis = 300
-                    )
+    Column {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Start,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            UserHead(
+                id = box.id.toString(),
+                firstName = box.name,
+                lastName = " ",
+                size = 80.dp,
+                textStyle = MaterialTheme.typography.headlineLarge
+            )
+            Spacer(modifier = Modifier.width(10.dp))
+            Column(modifier = Modifier.padding(5.dp), verticalArrangement = Arrangement.Center) {
+                Text(
+                    text = box.name,
+                    style = MaterialTheme.typography.headlineLarge
                 )
-            ) {
-                SwipeToDismiss(
-                    state = dismissState,
-                    directions = setOf(
-                        DismissDirection.EndToStart
+                Spacer(modifier = Modifier.height(5.dp))
+                Text(
+                    text = box.barcode.toString(),
+                    style = MaterialTheme.typography.headlineSmall
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(10.dp))
+        Text(
+            text = stringResource(R.string.things),
+            style = MaterialTheme.typography.displaySmall
+        )
+        Spacer(modifier = Modifier.height(10.dp))
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)
+        )
+        {
+            items(things.filter { it.boxId == box.id }) { thing ->
+                val dismissState = rememberDismissState()
+                val ModalSheetState = remember { mutableStateOf(false) }
+                val coroutineScope = rememberCoroutineScope()
+                val dismissDirection = dismissState.dismissDirection
+                var isDismissed = dismissState.isDismissed(DismissDirection.EndToStart)
+                // check if the user swiped
+                if (isDismissed && dismissDirection == DismissDirection.EndToStart) {
+                    DeleteThingDialog(
+                        thing,
+                        viewModel,
+                        onDismiss = {
+                            isDismissed = true; coroutineScope.launch { dismissState.reset() }
+                        },
+                        onCancel = {
+                            isDismissed = false; coroutineScope.launch { dismissState.reset() }
+                        })
+                }
+
+                var itemAppeared by remember { mutableStateOf(!columnAppeared) }
+                LaunchedEffect(Unit) {
+                    itemAppeared = true
+                }
+                if (viewModel.deleteComplete.value && itemAppeared && !isDismissed) {
+                    viewModel.deleteComplete.value = false
+                }
+                AnimatedVisibility(
+                    visible = itemAppeared && !viewModel.deleteComplete.value,
+                    exit = fadeOut(
+                        animationSpec = tween(
+                            durationMillis = 300,
+                        )
+                    ) + scaleOut(
+                        animationSpec = tween(
+                            durationMillis = 300
+                        )
                     ),
-                    background = {
-                        val backgroundColor by animateColorAsState(
-                            when (dismissState.targetValue) {
-                                DismissValue.DismissedToStart -> MaterialTheme.colorScheme.error.copy(
-                                    alpha = 0.8f
-                                )
-
-                                else -> MaterialTheme.colorScheme.background
-                            }
+                    enter = fadeIn(
+                        animationSpec = tween(
+                            durationMillis = 300
                         )
-
-                        // icon size
-                        val iconScale by animateFloatAsState(
-                            targetValue = if (dismissState.targetValue == DismissValue.DismissedToStart) 1.3f else 0.5f
+                    ) + scaleIn(
+                        animationSpec = tween(
+                            durationMillis = 300
                         )
+                    )
+                ) {
+                    SwipeToDismiss(
+                        state = dismissState,
+                        directions = setOf(
+                            DismissDirection.EndToStart
+                        ),
+                        background = {
+                            val backgroundColor by animateColorAsState(
+                                when (dismissState.targetValue) {
+                                    DismissValue.DismissedToStart -> MaterialTheme.colorScheme.error.copy(
+                                        alpha = 0.8f
+                                    )
 
-                        Box(
-                            Modifier
-                                .fillMaxSize()
-                                .background(color = backgroundColor)
-                                .padding(end = 16.dp), // inner padding
-                            contentAlignment = Alignment.CenterEnd // place the icon at the end (left)
-                        ) {
-                            Icon(
-                                modifier = Modifier.scale(iconScale),
-                                imageVector = Icons.Outlined.Delete,
-                                contentDescription = "Delete",
-                                tint = Color.White
+                                    else -> MaterialTheme.colorScheme.background
+                                }
                             )
-                        }
-                    },
-                    dismissContent =
-                    {
-                        ThingCard(thing, types)
-                    })
+
+                            // icon size
+                            val iconScale by animateFloatAsState(
+                                targetValue = if (dismissState.targetValue == DismissValue.DismissedToStart) 1.3f else 0.5f
+                            )
+
+                            Box(
+                                Modifier
+                                    .fillMaxSize()
+                                    .background(color = backgroundColor)
+                                    .padding(end = 16.dp), // inner padding
+                                contentAlignment = Alignment.CenterEnd // place the icon at the end (left)
+                            ) {
+                                Icon(
+                                    modifier = Modifier.scale(iconScale),
+                                    imageVector = Icons.Outlined.Delete,
+                                    contentDescription = "Delete",
+                                    tint = Color.White
+                                )
+                            }
+                        },
+                        dismissContent =
+                        {
+                            ThingCard(thing, types, {ModalSheetState.value = true})
+                            if (ModalSheetState.value)
+                            {
+                                ThingSheet(thing = thing, types, {ModalSheetState.value = false})
+                            }
+                        })
+                }
             }
         }
     }

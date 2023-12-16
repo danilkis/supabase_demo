@@ -69,6 +69,7 @@ import com.example.supabasedemo.customelements.BoxCard
 import com.example.supabasedemo.customelements.OptionsFAB
 import com.example.supabasedemo.customelements.SearchBarCustom
 import com.example.supabasedemo.customelements.ThingCard
+import com.example.supabasedemo.customelements.ThingSheet
 import com.example.supabasedemo.customelements.ToggleHeading
 import com.example.supabasedemo.model.Box
 import com.example.supabasedemo.model.Things
@@ -233,6 +234,7 @@ fun BoxColumn(navController: NavController, viewModel: ThingsViewmodel = viewMod
 }
 
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ThingColumn(navController: NavController, viewModel: ThingsViewmodel = viewModel()) {
@@ -248,6 +250,7 @@ fun ThingColumn(navController: NavController, viewModel: ThingsViewmodel = viewM
     )
     {
         items(things.filter { it.boxId == 1 }) { thing ->
+            val ModalSheetState = remember { mutableStateOf(false) }
             val dismissState = rememberDismissState()
             val coroutineScope = rememberCoroutineScope()
             val dismissDirection = dismissState.dismissDirection
@@ -331,7 +334,13 @@ fun ThingColumn(navController: NavController, viewModel: ThingsViewmodel = viewM
                     },
                     dismissContent =
                     {
-                        ThingCard(thing, types)
+                            ThingCard(thing, types, {ModalSheetState.value = true})
+                            /*
+                            AnimatedVisibility(visible = ModalSheetState.value)
+                            {
+                                ThingSheet(thing = thing, types, {ModalSheetState.value = false}) TODO: ПОЧИНИТЬ
+                            }
+                             */
                     })
             }
         }

@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.supabasedemo.customelements.OrderCard
 import com.example.supabasedemo.customelements.SearchBarCustom
 import com.example.supabasedemo.customelements.UserHead
 import com.example.supabasedemo.model.Orders
@@ -49,48 +50,8 @@ fun OrdersMainScreen(navController: NavController, viewModel: OrderViewmodel = v
         Column(modifier = Modifier.fillMaxSize()) {
             SearchBarCustom()
             Spacer(modifier = Modifier.height(8.dp))
-            OrderColumn(orders)
-        }
-    }
-}
-
-@Composable
-fun OrderColumn(orders: List<Orders>)
-{
-    Column()
-    {
-        for (order in orders)
-        {
-            OrdersCard(order)
-        }
-    }
-}
-
-@Composable
-fun OrdersCard(Order: Orders) {
-    OutlinedCard(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 12.dp, top = 4.dp, end = 12.dp, bottom = 4.dp)
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 4.dp, top = 4.dp, end = 4.dp, bottom = 4.dp),
-            horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.Start),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-
-            Spacer(modifier = Modifier.width(4.dp))
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(2.dp),
-            ) {
-                Text(
-                    text = Order.deadline.toString(),
-                    style = MaterialTheme.typography.headlineMedium,
-                )
+            Column {
+                OrderCard(Order = orders[0], navController = navController)
             }
         }
     }
