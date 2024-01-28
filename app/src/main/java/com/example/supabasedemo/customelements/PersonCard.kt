@@ -1,7 +1,5 @@
 package com.example.supabasedemo.customelements
 
-import android.app.Application
-import android.content.Context
 import android.os.VibrationEffect
 import android.os.Vibrator
 import androidx.compose.foundation.clickable
@@ -24,7 +22,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.supabasedemo.model.ExpandShapeState
 import com.example.supabasedemo.model.Persons
-import com.example.supabasedemo.viewmodel.ExpandViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 

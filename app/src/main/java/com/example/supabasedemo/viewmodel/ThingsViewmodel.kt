@@ -4,8 +4,6 @@ import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.example.supabasedemo.model.Box
-import com.example.supabasedemo.model.Contacts
-import com.example.supabasedemo.model.Persons
 import com.example.supabasedemo.model.Things
 import com.example.supabasedemo.model.Type
 import com.example.supabasedemo.supa.supaHelper

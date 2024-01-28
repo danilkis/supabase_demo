@@ -1,13 +1,11 @@
 package com.example.supabasedemo.customelements
 
-import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.rememberCoroutineScope
 import com.example.supabasedemo.model.Things
 import com.example.supabasedemo.model.Type

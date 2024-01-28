@@ -71,7 +71,6 @@ import com.example.supabasedemo.customelements.BoxCard
 import com.example.supabasedemo.customelements.OptionsFAB
 import com.example.supabasedemo.customelements.SearchBarCustom
 import com.example.supabasedemo.customelements.ThingCard
-import com.example.supabasedemo.customelements.ThingSheet
 import com.example.supabasedemo.customelements.ToggleHeading
 import com.example.supabasedemo.model.Box
 import com.example.supabasedemo.model.Things
