@@ -1,6 +1,8 @@
 package com.example.supabasedemo.screens
 
 import android.annotation.SuppressLint
+import android.os.VibrationEffect
+import android.os.Vibrator
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.LinearOutSlowInEasing
@@ -56,6 +58,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -65,6 +68,7 @@ import com.example.supabasedemo.R
 import com.example.supabasedemo.customelements.PersonCard
 import com.example.supabasedemo.customelements.SearchBarCustom
 import com.example.supabasedemo.model.Contacts
+import com.example.supabasedemo.model.ExpandShapeState
 import com.example.supabasedemo.model.Persons
 import com.example.supabasedemo.viewmodel.PersonsViewmodel
 import kotlinx.coroutines.launch
@@ -117,6 +121,7 @@ fun PersonScreen(navController: NavController, viewModel: PersonsViewmodel = vie
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PersonColumn(navController: NavController, viewModel: PersonsViewmodel = viewModel()) {
+    var currentState by remember { mutableStateOf(ExpandShapeState.Collapsed) }
     val persons by viewModel.newPersons.collectAsState(initial = mutableListOf())
     var columnAppeared by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
@@ -129,11 +134,13 @@ fun PersonColumn(navController: NavController, viewModel: PersonsViewmodel = vie
     {
         items(persons) { person ->
             val dismissState = rememberDismissState()
+            val vibrator = LocalContext.current.getSystemService(Vibrator::class.java)
             val coroutineScope = rememberCoroutineScope()
             val dismissDirection = dismissState.dismissDirection
             var isDismissed = dismissState.isDismissed(DismissDirection.EndToStart)
             // check if the user swiped
             if (isDismissed && dismissDirection == DismissDirection.EndToStart) {
+// Create an array of timings in milliseconds
                 DeleteDialog(
                     person,
                     viewModel,
@@ -141,6 +148,7 @@ fun PersonColumn(navController: NavController, viewModel: PersonsViewmodel = vie
                         isDismissed = true; coroutineScope.launch { dismissState.reset() }
                     },
                     onCancel = {
+                        vibrator.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_TICK));
                         isDismissed = false; coroutineScope.launch { dismissState.reset() }
                     })
             }
@@ -203,7 +211,7 @@ fun PersonColumn(navController: NavController, viewModel: PersonsViewmodel = vie
                     },
                     dismissContent =
                     {
-                        PersonCard(person, navController = navController)
+                        PersonCard(person, navController = navController, currentState)
                     })
             }
         }

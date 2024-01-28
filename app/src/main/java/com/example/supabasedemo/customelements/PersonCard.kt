@@ -1,5 +1,9 @@
 package com.example.supabasedemo.customelements
 
+import android.app.Application
+import android.content.Context
+import android.os.VibrationEffect
+import android.os.Vibrator
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -15,20 +19,26 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.supabasedemo.model.ExpandShapeState
 import com.example.supabasedemo.model.Persons
+import com.example.supabasedemo.viewmodel.ExpandViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Composable
-fun PersonCard(Person: Persons, navController: NavController) {
+fun PersonCard(Person: Persons, navController: NavController, currState: ExpandShapeState) {
     val coroutineScope = rememberCoroutineScope()
+    val vibrator = LocalContext.current.getSystemService(Vibrator::class.java)
+    var currentState = currState
     OutlinedCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = 4.dp, top = 2.dp, end = 4.dp, bottom = 2.dp)
             .clickable {
+                vibrator.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK))
                 coroutineScope.launch(Dispatchers.Main) {
                     navController.navigate("person/${Person.id}")
                 }

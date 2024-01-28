@@ -48,7 +48,7 @@ fun OrderCard(Order: Orders, navController: NavController) {  //
             horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.Start),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            UserHead(id = "a", firstName = "Test", lastName = "", size = 40.dp)
+            UserHead(id = "a", firstName = Order.name, lastName = "", size = 40.dp)
             Spacer(modifier = Modifier.width(4.dp))
             Column(
                 modifier = Modifier
@@ -57,7 +57,7 @@ fun OrderCard(Order: Orders, navController: NavController) {  //
                 verticalArrangement = Arrangement.SpaceAround
             ) {
                 Text(
-                    text = "Demo Order",
+                    text = Order.name,
                     style = MaterialTheme.typography.headlineMedium,
                 )
                 Spacer(modifier = Modifier.height(4.dp))

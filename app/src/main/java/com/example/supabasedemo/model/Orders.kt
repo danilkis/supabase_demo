@@ -16,6 +16,8 @@ data class Orders(
     val id: Int,
     val created_at: String,
     val deadline: String,
-    val status: Int, //TODO: Убрать таблицу person orders, просто сделать id person
-    val BillingId: Int
+    val status: Int,
+    val BillingId: Int,
+    val name: String,
+    val personId: Int
 )

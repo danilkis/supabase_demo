@@ -1,6 +1,9 @@
 package com.example.supabasedemo.customelements
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,10 +27,17 @@ import com.example.supabasedemo.R
 import com.example.supabasedemo.model.Things
 import com.example.supabasedemo.model.Type
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-fun ThingCard(thing: Things, type: MutableList<Type>,onClick: () -> Unit ) {
-    OutlinedCard(onClick = {  onClick()  }, modifier = Modifier.fillMaxWidth()) {
+fun ThingCard(thing: Things, type: MutableList<Type>,onClick: () -> Unit, LongClickAction: () -> Unit ) {
+    OutlinedCard(modifier = Modifier.fillMaxWidth().combinedClickable(
+            onClick = {
+                onClick()
+            },
+        onLongClick = {
+            LongClickAction()
+        }
+    )) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,

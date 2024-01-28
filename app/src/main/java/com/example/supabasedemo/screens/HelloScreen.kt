@@ -52,7 +52,7 @@ fun Hello(navController: NavController) {
                 ), exit = shrinkHorizontally(animationSpec = tween(2000)),
                 modifier = Modifier.padding(top = 10.dp)
             ) {
-            Text(text = stringResource(R.string.welcome_back, name.toString()) , style = MaterialTheme.typography.bodyLarge)
+            Text(text = stringResource(R.string.welcome_back, name.toString()) , style = MaterialTheme.typography.displayMedium)
             }
         }
         else

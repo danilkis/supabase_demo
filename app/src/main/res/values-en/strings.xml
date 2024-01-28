@@ -39,4 +39,5 @@
     <string name="persons">Persons</string>
     <string name="things">Things</string>
     <string name="orders">Orders</string>
+    <string name="vibration_not_supported">Vibtation effects are not supported</string>
 </resources>

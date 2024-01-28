@@ -12,7 +12,9 @@ import com.example.supabasedemo.screens.Auth
 import com.example.supabasedemo.screens.BoxInfoScreen
 import com.example.supabasedemo.screens.Hello
 import com.example.supabasedemo.screens.MainScreen
+import com.example.supabasedemo.screens.OrderInfoScreen
 import com.example.supabasedemo.screens.PersonInfoScreen
+import com.example.supabasedemo.viewmodel.OrderViewmodel
 import com.example.supabasedemo.viewmodel.PersonsViewmodel
 import com.example.supabasedemo.viewmodel.ThingsViewmodel
 
@@ -23,8 +25,10 @@ fun GeneralNavigation() {
     val navController = rememberNavController()
     val personVm = PersonsViewmodel()
     val thingVm = ThingsViewmodel()
+    val ordersVm = OrderViewmodel()
     val persons by personVm.newPersons.collectAsState(initial = listOf())
     val boxes by thingVm.boxes.collectAsState(initial = listOf())
+    val orders by ordersVm.orders.collectAsState(initial = listOf())
     NavHost(navController = navController, startDestination = "auth") {
         composable("auth") {
             Auth(navController)
@@ -57,6 +61,17 @@ fun GeneralNavigation() {
             boxes.forEach { it ->
                 if (it.id == personInfoId) {
                     BoxInfoScreen(it, navController)
+                }
+            }
+        }
+        composable(
+            "order/{orderId}",
+            arguments = listOf(navArgument("orderId") { type = NavType.IntType })
+        ) {
+            val orderID: Int = it.arguments?.getInt("orderId") ?: 0
+            orders.forEach { it ->
+                if (it.id == orderID) {
+                    OrderInfoScreen(it, navController)
                 }
             }
         }

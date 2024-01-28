@@ -5,6 +5,7 @@ import android.content.Context
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
+import id.zelory.compressor.Compressor
 import io.github.jan.supabase.storage.UploadData
 import io.github.jan.supabase.storage.storage
 import kotlinx.coroutines.CoroutineScope
@@ -14,32 +15,51 @@ import java.io.File
 import kotlin.time.Duration.Companion.minutes
 
 class BucketWorker {
-    fun UploadFile(file_path: String, contentResolver: ContentResolver): String {
+    fun UploadFile(file_path: String, contentResolver: ContentResolver, ctx: Context): String {
         CoroutineScope(Dispatchers.Main).launch {
-            try
-            {
-            val client = supaHelper.getAsyncClient()
-            val bucket = client.storage["photos"]
+            try {
+                val client = supaHelper.getAsyncClient()
+                val bucket = client.storage["photos"]
 
-            // Get the file URI from the file path
-            val uri = Uri.parse(file_path)
+                // Get the file URI from the file path
+                val uri = Uri.parse(file_path)
 
-            // Use contentResolver to open an input stream to read the file bytes
-            contentResolver.openInputStream(uri)?.use { inputStream ->
-                // Read the file bytes from the input stream
-                val fileBytes = inputStream.readBytes()
-                // Upload the file to the bucket
-                bucket.upload("${file_path.substring(file_path.lastIndexOf("/") + 1)}.jpg", fileBytes, upsert = false)
-                bucket.createSignedUrl(path = "${file_path.substring(file_path.lastIndexOf("/") + 1)}.jpg", expiresIn = 52590000.minutes)
-            }
-            }
-            catch (e: Exception)
-            {
+                // Use contentResolver to open an input stream to read the file bytes
+                contentResolver.openInputStream(uri)?.use { inputStream ->
+                    // Read the file bytes from the input stream
+                    val fileBytes = inputStream.readBytes()
+                    // Create a temporary file from the file bytes
+                    val tempFile = File.createTempFile("image", "jpg")
+                    tempFile.writeBytes(fileBytes)
+                    // Compress the temporary file using Compressor library
+                    val compressedImageFile = Compressor.compress(ctx, tempFile)
+                    // Read the compressed file bytes
+                    val compressedFileBytes = compressedImageFile.readBytes()
+                    // Upload the compressed file to the bucket
+                    bucket.upload(
+                        "${file_path.substring(file_path.lastIndexOf("/") + 1)}.jpg",
+                        compressedFileBytes,
+                        upsert = false
+                    )
+                    bucket.createSignedUrl(
+                        path = "${file_path.substring(file_path.lastIndexOf("/") + 1)}.jpg",
+                        expiresIn = 52590000.minutes
+                    )
+                    // Delete the temporary file
+                    tempFile.delete()
+                }
+            } catch (e: Exception) {
                 Log.e("BUCKET", e.toString())
             }
         }
-        val url = supaHelper.client.storage["photos"].publicUrl("${file_path.substring(file_path.lastIndexOf("/") + 1)}.jpg")
-        Log.e("BUCKET",url)
+        val url = supaHelper.client.storage["photos"].publicUrl(
+            "${
+                file_path.substring(
+                    file_path.lastIndexOf("/") + 1
+                )
+            }.jpg"
+        )
+        Log.e("BUCKET", url)
         return url
     }
 }
