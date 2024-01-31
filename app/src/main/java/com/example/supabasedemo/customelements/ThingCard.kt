@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
@@ -34,6 +35,7 @@ fun ThingCard(
     onClick: () -> Unit,
     LongClickAction: () -> Unit
 ) {
+    val ctx = LocalContext.current
     OutlinedCard(modifier = Modifier
         .fillMaxWidth()
         .combinedClickable(
@@ -59,7 +61,7 @@ fun ThingCard(
                     style = MaterialTheme.typography.bodySmall
                 )
                 Spacer(modifier = Modifier.height(4.dp))
-                Text(thing.getTypeName(type), style = MaterialTheme.typography.bodySmall)
+                Text(stringResource(thing.getTypeName(type, ctx)), style = MaterialTheme.typography.bodySmall)
             }
             val photo = thing.photoUrl
 

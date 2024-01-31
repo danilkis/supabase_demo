@@ -97,7 +97,7 @@ fun OrderInfoScreen(order: Orders, navController: NavController) {
             }
         }
         Spacer(Modifier.height(16.dp))
-        PersonCard(Person = person?: Persons(0, "0", "0", 0), navController = navController, currentState )
+        PersonCard(Person = person?: Persons(0, "0", "0", 0), navController = navController )
         Spacer(Modifier.height(16.dp))
         ToggleHeading(Content = { reporting() }, heading = "Отчетность")
     }

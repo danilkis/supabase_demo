@@ -15,6 +15,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.lang.reflect.Array.set
+import kotlin.reflect.KProperty1
+import kotlin.reflect.full.memberProperties
 
 open class ThingsViewmodel : ViewModel() {
     private val _things = MutableStateFlow<MutableList<Things>>(mutableListOf())
@@ -38,7 +41,7 @@ open class ThingsViewmodel : ViewModel() {
     suspend fun getThings(): MutableList<Things> {
         return withContext(Dispatchers.Main) {
             try {
-                var asyncClient = supaHelper.getAsyncClient()
+                val asyncClient = supaHelper.getAsyncClient()
                 return@withContext asyncClient.postgrest["Things"].select().decodeList<Things>()
             } catch (e: Exception) {
                 Log.e("SUPA", e.toString())
@@ -50,7 +53,7 @@ open class ThingsViewmodel : ViewModel() {
     suspend fun deleteThing(thingId: Int) {
         CoroutineScope(Dispatchers.Main).launch {
             try {
-                var asyncClient = supaHelper.getAsyncClient()
+                val asyncClient = supaHelper.getAsyncClient()
                 asyncClient.postgrest["Things"].delete {
                     eq("id", thingId)
                 }
@@ -64,8 +67,8 @@ open class ThingsViewmodel : ViewModel() {
     suspend fun insertThing(thing: Things) {
         CoroutineScope(Dispatchers.Main).launch {
             try {
-                var asyncClient = supaHelper.getAsyncClient()
-                var info = asyncClient.postgrest["Things"].select().decodeList<Things>()
+                val asyncClient = supaHelper.getAsyncClient()
+                val info = asyncClient.postgrest["Things"].select().decodeList<Things>()
                 val new_thing =
                     Things(
                         info.last().id + 1,
@@ -87,6 +90,23 @@ open class ThingsViewmodel : ViewModel() {
         }
 
     }
+
+    suspend fun updateThing(thing: Things) {
+        CoroutineScope(Dispatchers.Main).launch {
+            try {
+                val asyncClient = supaHelper.getAsyncClient()
+
+                asyncClient.postgrest["Things"].update(thing)
+                {
+                    eq("id", thing.id)
+                }
+                reloadThings()
+            } catch (e: Exception) {
+                Log.e("SUPA", e.toString())
+            }
+        }
+    }
+
 
     suspend fun getTypes(): MutableList<Type> {
         return withContext(Dispatchers.Main) {
@@ -131,7 +151,7 @@ open class ThingsViewmodel : ViewModel() {
     suspend fun deleteBox(boxId: Int) {
         CoroutineScope(Dispatchers.Main).launch {
             try {
-                var asyncClient = supaHelper.getAsyncClient()
+                val asyncClient = supaHelper.getAsyncClient()
                 asyncClient.postgrest["Box"].delete {
                     eq("id", boxId)
                 }

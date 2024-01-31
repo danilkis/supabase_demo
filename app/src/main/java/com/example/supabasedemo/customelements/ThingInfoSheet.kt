@@ -21,6 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
@@ -36,7 +37,7 @@ fun ThingSheet(thing: Things, types: MutableList<Type>, onDismiss: () -> Unit) {
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
     val painter = rememberAsyncImagePainter(model = thing.photoUrl)
-
+    val ctx = LocalContext.current
     ModalBottomSheet(
         onDismissRequest = {
             onDismiss()
@@ -64,7 +65,7 @@ fun ThingSheet(thing: Things, types: MutableList<Type>, onDismiss: () -> Unit) {
             )
             Text(text = stringResource(R.string.amount_thinginfo, thing.amount), style = MaterialTheme.typography.bodyMedium)
             Text(
-                text = stringResource(R.string.type_thinginfo, thing.getTypeName(types)),
+                text = stringResource(R.string.type_thinginfo, stringResource(thing.getTypeName(types, ctx))),
                 style = MaterialTheme.typography.bodyMedium
             )
             Text(text = stringResource(R.string.boxID_thinginfo, thing.boxId), style = MaterialTheme.typography.bodyMedium)

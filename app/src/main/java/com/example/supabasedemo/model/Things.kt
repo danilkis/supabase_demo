@@ -1,5 +1,9 @@
 package com.example.supabasedemo.model
 
+import android.annotation.SuppressLint
+import android.content.Context
+import androidx.compose.ui.res.stringResource
+import com.example.supabasedemo.R
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -12,7 +16,15 @@ data class Things(
     val photoUrl: String?,
     val boxId: Int
 ) {
-    fun getTypeName(types: MutableList<Type>): String {
-        return types.find { it.id == type }?.Name ?: "nothing"
+    @SuppressLint("DiscouragedApi")
+    fun getTypeName(types: MutableList<Type>, ctx: Context): Int {
+        val stringKey = types.find { it.id == type }?.Name ?: "nothing"
+
+        var res = ctx.getResources().getIdentifier(stringKey, "string", ctx.packageName)
+        if (res == 0)
+        {
+            res = R.string.yes
+        }
+        return res
     }
 }

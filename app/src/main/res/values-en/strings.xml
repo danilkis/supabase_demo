@@ -47,4 +47,17 @@
     <string name="boxID_thinginfo">Box: %1$s</string>
     <string name="usedInOrders">Used in orders</string>
     <string name="type_tools">Tools</string>
+    <string name="modify_thing">Edit thing</string>
+    <string name="type_adheseve">Adheseve</string>
+    <string name="type_3dprintersupplies">3D printer supplies</string>
+    <string name="type_ppe">PPE</string>
+    <string name="type_crafting">Crafting materials</string>
+    <string name="type_solderingSupples">Soldering Supplies</string>
+    <string name="type_paints">Paints and Pigments</string>
+    <string name="type_disposable">Consumables</string>
+    <string name="type_solvents">Solvents</string>
+    <string name="type_electronics">Electronic Components</string>
+    <string name="type_handtools">Hand Tools</string>
+    <string name="type_electrictools">Electric Tools</string>
+    <string name="type_other">Others</string>
 </resources>

@@ -46,4 +46,17 @@
     <string name="boxID_thinginfo">Коробка: %1$s</string>
     <string name="usedInOrders">Используется в заказах</string>
     <string name="type_tools">Инструмент</string>
+    <string name="type_adheseve">Адгезив</string>
+    <string name="type_3dprintersupplies">Для 3Д принтера</string>
+    <string name="type_ppe">СПЗ</string>
+    <string name="type_crafting">Материалы для мастерства</string>
+    <string name="modify_thing">Изменение вещи</string>
+    <string name="type_solderingSupples">Паяльные принадлежности</string>
+    <string name="type_paints">Краски и пигменты</string>
+    <string name="type_disposable">Расходники</string>
+    <string name="type_solvents">Растворители</string>
+    <string name="type_electronics">Электронные компоненты</string>
+    <string name="type_handtools">Ручной инструмент</string>
+    <string name="type_electrictools">Электроинструмент</string>
+    <string name="type_other">Остальное</string>
 </resources>

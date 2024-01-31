@@ -34,7 +34,7 @@ import com.example.supabasedemo.R
 import com.example.supabasedemo.model.MainScreenDest
 import com.example.supabasedemo.screens.OrdersMainScreen
 import com.example.supabasedemo.screens.PersonScreen
-import com.example.supabasedemo.screens.ThingsMainScreen
+import com.example.supabasedemo.screens.Things.ThingsMainScreen
 
 
 @Composable

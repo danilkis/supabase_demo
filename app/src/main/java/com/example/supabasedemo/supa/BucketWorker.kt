@@ -5,13 +5,10 @@ import android.content.Context
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
-import id.zelory.compressor.Compressor
-import io.github.jan.supabase.storage.UploadData
 import io.github.jan.supabase.storage.storage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.io.File
 import kotlin.time.Duration.Companion.minutes
 
 class BucketWorker {

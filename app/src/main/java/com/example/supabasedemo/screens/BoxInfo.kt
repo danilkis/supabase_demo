@@ -53,6 +53,8 @@ import com.example.supabasedemo.customelements.ThingCard
 import com.example.supabasedemo.customelements.ThingSheet
 import com.example.supabasedemo.customelements.UserHead
 import com.example.supabasedemo.model.Box
+import com.example.supabasedemo.screens.Things.Dialogs.DeleteThingDialog
+import com.example.supabasedemo.screens.Things.Dialogs.UpdateThingDialog
 import com.example.supabasedemo.viewmodel.ThingsViewmodel
 import kotlinx.coroutines.launch
 
@@ -65,8 +67,7 @@ fun BoxInfoScreen(
     Log.e("BoxInfo", box.name + "  " + box.id)
     val things by viewModel.things.collectAsState(initial = mutableListOf())
     val types by viewModel.types.collectAsState(initial = mutableListOf())
-    Log.e("Things", things.toString())
-    Log.e("Types", types.toString())
+    val EditDialogState = remember { mutableStateOf(false) }
     var columnAppeared by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         columnAppeared = true
@@ -197,9 +198,13 @@ fun BoxInfoScreen(
                                 thing,
                                 types,
                                 { ModalSheetState.value = true },
-                                { ModalSheetState.value = true })
+                                { EditDialogState.value = true })
                             if (ModalSheetState.value) {
                                 ThingSheet(thing = thing, types, { ModalSheetState.value = false })
+                            }
+                            if (EditDialogState.value)
+                            {
+                                UpdateThingDialog(open = EditDialogState.value, onDismiss = { EditDialogState.value = false }, thing = thing)
                             }
                         })
                 }
