@@ -39,6 +39,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -84,30 +85,25 @@ import kotlinx.coroutines.launch
 @Composable
 fun ThingsMainScreen(navController: NavController, viewModel: ThingsViewmodel = viewModel()) {
     val things by viewModel.things.collectAsState(initial = mutableListOf())
+    val openDialogThing = remember { mutableStateOf(false) }
+    val openDialogBox = remember { mutableStateOf(false) }
+    Scaffold(topBar = { SearchBarCustom(navController) }, floatingActionButton = {
+        OptionsFAB({openDialogBox.value = true}, {openDialogThing.value = true})
+    })
+    { paddingValues ->
     if (things.isEmpty()) {
-        Column(modifier = Modifier.fillMaxSize()) {
-            SearchBarCustom()
+        Column(modifier = Modifier.fillMaxSize().padding(top = paddingValues.calculateTopPadding())) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator(modifier = Modifier.size(60.dp))
             }
         }
     } else {
-        val openDialogThing = remember { mutableStateOf(false) }
-        val openDialogBox = remember { mutableStateOf(false) }
-        Scaffold(modifier = Modifier
-            .fillMaxSize()
-            .padding(start = 4.dp, top = 0.dp, end = 4.dp, bottom = 70.dp),
-            floatingActionButton = {
-                                   OptionsFAB({openDialogBox.value = true}, {openDialogThing.value = true})
-            },
-            content = {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
+                        .padding(top = paddingValues.calculateTopPadding(), start = 6.dp, end = 6.dp)
                         .fillMaxWidth()
                 ) {
-                    SearchBarCustom()
-                    Spacer(modifier = Modifier.height(8.dp))
                     ToggleHeading({ BoxColumn(navController = navController, viewModel) },
                         stringResource(
                             R.string.boxes
@@ -121,7 +117,6 @@ fun ThingsMainScreen(navController: NavController, viewModel: ThingsViewmodel = 
                     )
                 }
             }
-        )
         if (openDialogThing.value) {
             AddThingDialog(openDialogThing.value, onDismiss = { openDialogThing.value = false }, viewModel)
         }
@@ -129,7 +124,7 @@ fun ThingsMainScreen(navController: NavController, viewModel: ThingsViewmodel = 
             AddBoxDialog(openDialogBox.value, onDismiss = { openDialogBox.value = false }, viewModel)
         }
     }
-}
+    }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

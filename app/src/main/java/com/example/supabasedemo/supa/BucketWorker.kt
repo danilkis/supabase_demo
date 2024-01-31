@@ -5,7 +5,6 @@ import android.content.Context
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
-import id.zelory.compressor.Compressor
 import io.github.jan.supabase.storage.UploadData
 import io.github.jan.supabase.storage.storage
 import kotlinx.coroutines.CoroutineScope
@@ -28,25 +27,16 @@ class BucketWorker {
                 contentResolver.openInputStream(uri)?.use { inputStream ->
                     // Read the file bytes from the input stream
                     val fileBytes = inputStream.readBytes()
-                    // Create a temporary file from the file bytes
-                    val tempFile = File.createTempFile("image", "jpg")
-                    tempFile.writeBytes(fileBytes)
-                    // Compress the temporary file using Compressor library
-                    val compressedImageFile = Compressor.compress(ctx, tempFile)
-                    // Read the compressed file bytes
-                    val compressedFileBytes = compressedImageFile.readBytes()
-                    // Upload the compressed file to the bucket
+                    // Create a temporary file from the file byte
                     bucket.upload(
                         "${file_path.substring(file_path.lastIndexOf("/") + 1)}.jpg",
-                        compressedFileBytes,
+                        fileBytes,
                         upsert = false
                     )
                     bucket.createSignedUrl(
                         path = "${file_path.substring(file_path.lastIndexOf("/") + 1)}.jpg",
                         expiresIn = 52590000.minutes
                     )
-                    // Delete the temporary file
-                    tempFile.delete()
                 }
             } catch (e: Exception) {
                 Log.e("BUCKET", e.toString())

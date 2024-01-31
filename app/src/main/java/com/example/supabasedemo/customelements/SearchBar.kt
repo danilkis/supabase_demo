@@ -18,26 +18,34 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.supabasedemo.R
+import com.example.supabasedemo.SharedPreference
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun SearchBarCustom() {
+fun SearchBarCustom(navController: NavController) {
     var text by remember { mutableStateOf("") } // Query for SearchBar
     var active by remember { mutableStateOf(false) } // Active state for SearchBar
     val searchHistory = remember { mutableStateListOf("") }
-
+    val sharedPreference: SharedPreference = SharedPreference(LocalContext.current)
+    LaunchedEffect(Unit) {
+        val savedHistory = sharedPreference.sharedPref.getStringSet("searchHistory", emptySet())
+        searchHistory.addAll(savedHistory ?: emptySet())
+    }
     Column(modifier = Modifier.padding(5.dp)) {
         SearchBar(modifier = Modifier.fillMaxWidth(),
             query = text,
@@ -47,6 +55,11 @@ fun SearchBarCustom() {
             onSearch = {
                 searchHistory.add(text)
                 active = false
+                navController.navigate("searchResults/$text")
+                with(sharedPreference.sharedPref.edit()) {
+                    putStringSet("searchHistory", searchHistory.toSet())
+                    apply()
+                }
             },
             active = active,
             onActiveChange = {
@@ -74,12 +87,20 @@ fun SearchBarCustom() {
                 }
             }
         ) {
-            searchHistory.forEach {
-                if (it.isNotEmpty()) {
-                    Row(modifier = Modifier.padding(all = 14.dp)) {
+            searchHistory.forEach { historyItem ->
+                if (historyItem.isNotEmpty()) {
+                    Row(
+                        modifier = Modifier
+                            .padding(all = 14.dp)
+                            .clickable {
+                                text = historyItem
+                                active = false
+                                navController.navigate("searchResults/$historyItem")
+                            }
+                    ) {
                         Icon(imageVector = Icons.Default.History, contentDescription = null)
                         Spacer(modifier = Modifier.width(10.dp))
-                        Text(text = it)
+                        Text(text = historyItem)
                     }
                 }
             }
@@ -91,6 +112,10 @@ fun SearchBarCustom() {
                     .fillMaxWidth()
                     .clickable {
                         searchHistory.clear()
+                        with(sharedPreference.sharedPref.edit()) {
+                            putStringSet("searchHistory", searchHistory.toSet())
+                            apply()
+                        }
                     },
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,

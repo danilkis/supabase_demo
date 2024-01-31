@@ -39,4 +39,5 @@
     <string name="things">Вещи</string>
     <string name="orders">Заказы</string>
     <string name="vibration_not_supported">Эффекты вибрации не поддерживаются</string>
+    <string name="nothing_found">По запросу ничего не найдено</string>
 </resources>

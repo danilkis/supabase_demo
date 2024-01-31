@@ -113,11 +113,11 @@ fun MainScreenNavigation(navControllerGeneral: NavHostController) { //
                     label = { Text(text = dest.name) })
             }
         }
-    }) { innerPadding ->
+    }) { paddingValues ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(5.dp)
+                .padding(bottom = paddingValues.calculateBottomPadding())
         ) {
             NavHost(
                 navController = navController,

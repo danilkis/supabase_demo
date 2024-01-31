@@ -17,7 +17,6 @@ class BoxViewmodel : ThingsViewmodel() {
             return@withContext getThings().filter { thing -> thing.boxId == boxId }
         }.toMutableList()
     }
-
     suspend fun reloadFilteredDevices() {
         _filterThings.emit(getBoxThings())
     }
