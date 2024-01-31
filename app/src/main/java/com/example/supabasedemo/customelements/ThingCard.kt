@@ -2,7 +2,6 @@ package com.example.supabasedemo.customelements
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -29,15 +28,22 @@ import com.example.supabasedemo.model.Type
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-fun ThingCard(thing: Things, type: MutableList<Type>,onClick: () -> Unit, LongClickAction: () -> Unit ) {
-    OutlinedCard(modifier = Modifier.fillMaxWidth().combinedClickable(
+fun ThingCard(
+    thing: Things,
+    type: MutableList<Type>,
+    onClick: () -> Unit,
+    LongClickAction: () -> Unit
+) {
+    OutlinedCard(modifier = Modifier
+        .fillMaxWidth()
+        .combinedClickable(
             onClick = {
                 onClick()
             },
-        onLongClick = {
-            LongClickAction()
-        }
-    )) {
+            onLongClick = {
+                LongClickAction()
+            }
+        )) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -48,7 +54,10 @@ fun ThingCard(thing: Things, type: MutableList<Type>,onClick: () -> Unit, LongCl
             {
                 Text(thing.name, style = MaterialTheme.typography.bodyLarge)
                 Spacer(modifier = Modifier.height(4.dp))
-                Text(stringResource(R.string.in_stock_number, thing.amount), style = MaterialTheme.typography.bodySmall)
+                Text(
+                    stringResource(R.string.in_stock_number, thing.amount),
+                    style = MaterialTheme.typography.bodySmall
+                )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(thing.getTypeName(type), style = MaterialTheme.typography.bodySmall)
             }

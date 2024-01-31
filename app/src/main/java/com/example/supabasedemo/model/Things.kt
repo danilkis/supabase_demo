@@ -1,8 +1,5 @@
 package com.example.supabasedemo.model
 
-import androidx.compose.runtime.collectAsState
-import com.example.supabasedemo.viewmodel.ThingsViewmodel
-import kotlinx.datetime.DateTimePeriod
 import kotlinx.serialization.Serializable
 
 @Serializable

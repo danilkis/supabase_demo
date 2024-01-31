@@ -1,7 +1,5 @@
 package com.example.supabasedemo.customelements
 
-import android.app.Application
-import android.content.Context
 import android.os.VibrationEffect
 import android.os.Vibrator
 import androidx.compose.foundation.clickable
@@ -22,7 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.supabasedemo.model.ExpandShapeState
 import com.example.supabasedemo.model.Persons
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -49,7 +46,12 @@ fun PersonCard(Person: Persons, navController: NavController) {
             horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.Start),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            UserHead(id = "a", firstName = Person.Name, lastName = Person.Surname.toString(), size = 40.dp)
+            UserHead(
+                id = "a",
+                firstName = Person.Name,
+                lastName = Person.Surname.toString(),
+                size = 40.dp
+            )
             Spacer(modifier = Modifier.width(4.dp))
             Column(
                 modifier = Modifier

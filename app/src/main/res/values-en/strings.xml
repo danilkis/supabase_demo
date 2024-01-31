@@ -3,7 +3,7 @@
     <string name="app_name">WorkMan</string>
     <string name="boxes">Boxes</string>
     <string name="unsorted">Unsorted</string>
-    <string name="confirmation_question">Aru you sure?</string>
+    <string name="confirmation_question">Are you sure?</string>
     <string name="thing_delete_message">You are about to delete thing: %1$s?</string>
     <string name="box_delete_message">You are about to delete box: %1$s?</string>
     <string name="done">Done</string>
@@ -39,5 +39,12 @@
     <string name="persons">Persons</string>
     <string name="things">Things</string>
     <string name="orders">Orders</string>
-    <string name="vibration_not_supported">Vibtation effects are not supported</string>
+    <string name="nothing_found">Nothing was found by your query</string>
+    <string name="name_thingInfo">Name: %1$s</string>
+    <string name="store_thinginfo">Store: %1$s</string>
+    <string name="amount_thinginfo">Amount: %1$s</string>
+    <string name="type_thinginfo">Type: %1$s</string>
+    <string name="boxID_thinginfo">Box: %1$s</string>
+    <string name="usedInOrders">Used in orders</string>
+    <string name="type_tools">Tools</string>
 </resources>

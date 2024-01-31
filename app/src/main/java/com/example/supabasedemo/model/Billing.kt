@@ -2,10 +2,6 @@ package com.example.supabasedemo.model
 
 import kotlinx.datetime.DateTimePeriod
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.JsonObject
-import java.sql.Timestamp
-
-
 
 
 /** Модель с рериализацией для таблицы с чеками

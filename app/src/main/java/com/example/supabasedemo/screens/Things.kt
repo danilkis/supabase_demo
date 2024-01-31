@@ -39,7 +39,6 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -72,7 +71,6 @@ import com.example.supabasedemo.customelements.BoxCard
 import com.example.supabasedemo.customelements.OptionsFAB
 import com.example.supabasedemo.customelements.SearchBarCustom
 import com.example.supabasedemo.customelements.ThingCard
-import com.example.supabasedemo.customelements.ThingSheet
 import com.example.supabasedemo.customelements.ToggleHeading
 import com.example.supabasedemo.model.Box
 import com.example.supabasedemo.model.Things
@@ -88,43 +86,57 @@ fun ThingsMainScreen(navController: NavController, viewModel: ThingsViewmodel = 
     val openDialogThing = remember { mutableStateOf(false) }
     val openDialogBox = remember { mutableStateOf(false) }
     Scaffold(topBar = { SearchBarCustom(navController) }, floatingActionButton = {
-        OptionsFAB({openDialogBox.value = true}, {openDialogThing.value = true})
+        OptionsFAB({ openDialogBox.value = true }, { openDialogThing.value = true })
     })
     { paddingValues ->
-    if (things.isEmpty()) {
-        Column(modifier = Modifier.fillMaxSize().padding(top = paddingValues.calculateTopPadding())) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator(modifier = Modifier.size(60.dp))
-            }
-        }
-    } else {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(top = paddingValues.calculateTopPadding(), start = 6.dp, end = 6.dp)
-                        .fillMaxWidth()
-                ) {
-                    ToggleHeading({ BoxColumn(navController = navController, viewModel) },
-                        stringResource(
-                            R.string.boxes
-                        )
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    ToggleHeading({ ThingColumn(navController = navController, viewModel) },
-                        stringResource(
-                            R.string.unsorted
-                        )
-                    )
+        if (things.isEmpty()) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = paddingValues.calculateTopPadding())
+            ) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator(modifier = Modifier.size(60.dp))
                 }
             }
+        } else {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = paddingValues.calculateTopPadding(), start = 6.dp, end = 6.dp)
+                    .fillMaxWidth()
+            ) {
+                ToggleHeading(
+                    { BoxColumn(navController = navController, viewModel) },
+                    stringResource(
+                        R.string.boxes
+                    )
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                ToggleHeading(
+                    { ThingColumn(navController = navController, viewModel) },
+                    stringResource(
+                        R.string.unsorted
+                    )
+                )
+            }
+        }
         if (openDialogThing.value) {
-            AddThingDialog(openDialogThing.value, onDismiss = { openDialogThing.value = false }, viewModel)
+            AddThingDialog(
+                openDialogThing.value,
+                onDismiss = { openDialogThing.value = false },
+                viewModel
+            )
         }
         if (openDialogBox.value) {
-            AddBoxDialog(openDialogBox.value, onDismiss = { openDialogBox.value = false }, viewModel)
+            AddBoxDialog(
+                openDialogBox.value,
+                onDismiss = { openDialogBox.value = false },
+                viewModel
+            )
         }
     }
-    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -324,17 +336,20 @@ fun ThingColumn(navController: NavController, viewModel: ThingsViewmodel = viewM
                     },
                     dismissContent =
                     {
-                            ThingCard(thing, types, {ModalSheetState.value = true}, {EditDialogState.value = true})
-                            if (EditDialogState.value)
-                            {
+                        ThingCard(
+                            thing,
+                            types,
+                            { ModalSheetState.value = true },
+                            { EditDialogState.value = true })
+                        if (EditDialogState.value) {
 
-                            }
-                            /*
-                            AnimatedVisibility(visible = ModalSheetState.value)
-                            {
-                                ThingSheet(thing = thing, types, {ModalSheetState.value = false}) TODO: ПОЧИНИТЬ
-                            }
-                             */
+                        }
+                        /*
+                        AnimatedVisibility(visible = ModalSheetState.value)
+                        {
+                            ThingSheet(thing = thing, types, {ModalSheetState.value = false}) TODO: ПОЧИНИТЬ
+                        }
+                         */
                     })
             }
         }

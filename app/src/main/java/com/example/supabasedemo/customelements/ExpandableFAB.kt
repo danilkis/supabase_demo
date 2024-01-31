@@ -4,7 +4,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
@@ -31,15 +30,15 @@ import com.example.supabasedemo.R
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun OptionsFAB(OnBoxOpen:() -> Unit, OnThingsOpen:() -> Unit) {
+fun OptionsFAB(OnBoxOpen: () -> Unit, OnThingsOpen: () -> Unit) {
     var myFABState by remember { mutableStateOf(false) }
     Column(horizontalAlignment = Alignment.End) {
         AnimatedVisibility(
             visible = myFABState,
             exit = fadeOut(
                 animationSpec = spring(Spring.DampingRatioLowBouncy, Spring.StiffnessMediumLow)
-            ) + slideOutVertically (
-                targetOffsetY  = { fullHeight -> fullHeight },
+            ) + slideOutVertically(
+                targetOffsetY = { fullHeight -> fullHeight },
                 animationSpec = spring(Spring.DampingRatioLowBouncy, Spring.StiffnessMediumLow)
             ),
             enter = fadeIn(

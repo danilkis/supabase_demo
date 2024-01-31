@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
 
-class OrderThingsViewmodel: ViewModel() {
+class OrderThingsViewmodel : ViewModel() {
     var thingId = 0
     var OrderThings: Flow<List<Orders>> = flow {
         val cont = getOrderThings()
@@ -23,15 +23,14 @@ class OrderThingsViewmodel: ViewModel() {
             // Ensure SupabaseClient is initialized on the main thread
             val asyncClient = supaHelper.getAsyncClient()
             withContext(Dispatchers.Main) {
-                try
-                {
+                try {
                     val orderThings = asyncClient.postgrest["Order_things"].select()
                     {
                         eq("ThingId", thingId)
                     }.decodeList<Order_things>()
                     // Get the Orders related to the OrderIds
                     val relatedOrders = mutableListOf<Orders>()
-                    orderThings?.forEach { orderThing ->
+                    orderThings.forEach { orderThing ->
                         val order = asyncClient.postgrest["Orders"].select()
                         {
                             eq("id", orderThing.OrderId)
@@ -41,9 +40,7 @@ class OrderThingsViewmodel: ViewModel() {
                         }
                     }
                     relatedOrders
-                }
-                catch (e: Exception)
-                {
+                } catch (e: Exception) {
                     Log.e("MVVM", e.toString())
                     return@withContext emptyList()
                 }

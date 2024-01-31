@@ -1,8 +1,6 @@
 package com.example.supabasedemo.model
 
-import kotlinx.datetime.DateTimePeriod
 import kotlinx.serialization.Serializable
-import java.sql.Timestamp
 
 /** Модель серериализацией для заказов
  * @param id ID заказа

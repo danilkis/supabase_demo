@@ -115,10 +115,12 @@ fun SearchResultScreen(query: String, navController: NavController) {
         navController.navigate("mainScreen")
     }
 }
+
 val boxViewModel = BoxViewmodel()
 val ordersViewModel = OrderViewmodel()
 val thingsViewModel = ThingsViewmodel()
 val personsViewModel = PersonsViewmodel()
+
 @Composable
 fun ThingsResults(query: String, onResult: (Int) -> Unit) {
     val types by thingsViewModel.types.collectAsState(initial = mutableListOf())

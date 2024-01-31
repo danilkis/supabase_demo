@@ -53,7 +53,6 @@ import com.example.supabasedemo.customelements.ThingCard
 import com.example.supabasedemo.customelements.ThingSheet
 import com.example.supabasedemo.customelements.UserHead
 import com.example.supabasedemo.model.Box
-import com.example.supabasedemo.viewmodel.BoxViewmodel
 import com.example.supabasedemo.viewmodel.ThingsViewmodel
 import kotlinx.coroutines.launch
 
@@ -194,10 +193,13 @@ fun BoxInfoScreen(
                         },
                         dismissContent =
                         {
-                            ThingCard(thing, types, {ModalSheetState.value = true}, {ModalSheetState.value = true})
-                            if (ModalSheetState.value)
-                            {
-                                ThingSheet(thing = thing, types, {ModalSheetState.value = false})
+                            ThingCard(
+                                thing,
+                                types,
+                                { ModalSheetState.value = true },
+                                { ModalSheetState.value = true })
+                            if (ModalSheetState.value) {
+                                ThingSheet(thing = thing, types, { ModalSheetState.value = false })
                             }
                         })
                 }

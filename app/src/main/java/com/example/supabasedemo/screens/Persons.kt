@@ -66,7 +66,6 @@ import com.example.supabasedemo.R
 import com.example.supabasedemo.customelements.PersonCard
 import com.example.supabasedemo.customelements.SearchBarCustom
 import com.example.supabasedemo.model.Contacts
-import com.example.supabasedemo.model.ExpandShapeState
 import com.example.supabasedemo.model.Persons
 import com.example.supabasedemo.viewmodel.PersonsViewmodel
 import kotlinx.coroutines.launch
@@ -147,7 +146,7 @@ fun PersonColumn(navController: NavController, viewModel: PersonsViewmodel = vie
                         isDismissed = true; coroutineScope.launch { dismissState.reset() }
                     },
                     onCancel = {
-                        vibrator.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_TICK));
+                        vibrator.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_TICK))
                         isDismissed = false; coroutineScope.launch { dismissState.reset() }
                     })
             }

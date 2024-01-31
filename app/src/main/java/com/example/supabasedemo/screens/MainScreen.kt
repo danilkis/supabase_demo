@@ -6,5 +6,5 @@ import com.example.supabasedemo.navs.MainScreenNavigation
 
 @Composable
 fun MainScreen(navController: NavHostController) {
-    MainScreenNavigation(navController, )
+    MainScreenNavigation(navController)
 }

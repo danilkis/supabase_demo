@@ -21,22 +21,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.supabasedemo.R
 import com.example.supabasedemo.customelements.PersonCard
 import com.example.supabasedemo.customelements.ToggleHeading
 import com.example.supabasedemo.customelements.UserHead
-import com.example.supabasedemo.model.Box
-import com.example.supabasedemo.model.Contacts
 import com.example.supabasedemo.model.ExpandShapeState
 import com.example.supabasedemo.model.Orders
 import com.example.supabasedemo.model.Persons
-import com.example.supabasedemo.viewmodel.PersonInfoViewmodel
-import com.example.supabasedemo.viewmodel.PersonInfoViewmodelFactory
 import com.example.supabasedemo.viewmodel.PersonsViewmodel
 
 @Composable
@@ -80,19 +73,22 @@ fun OrderInfoScreen(order: Orders, navController: NavController) {
             }
         }
         Spacer(Modifier.height(16.dp))
-        PersonCard(Person = person?: Persons(0, "0", "0", 0), navController = rememberNavController() )
+        PersonCard(
+            Person = person ?: Persons(0, "0", "0", 0),
+            navController = rememberNavController()
+        )
         Spacer(Modifier.height(16.dp))
         ToggleHeading(Content = { reporting() }, heading = "Отчетность")
     }
 }
 
 @Composable
-fun reporting()
-{
+fun reporting() {
     Box(
         Modifier
             .fillMaxWidth()
-            .padding(16.dp))
+            .padding(16.dp)
+    )
     {
         //Caurucel placeholder
     }
@@ -100,7 +96,8 @@ fun reporting()
     Row(
         Modifier
             .fillMaxWidth()
-            .padding(8.dp))
+            .padding(8.dp)
+    )
     {
         OutlinedButton(onClick = { /*TODO*/ }) {
             Text("Добавить вещь")

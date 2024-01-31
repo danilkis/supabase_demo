@@ -18,7 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.supabasedemo.model.Box
-import com.example.supabasedemo.model.Persons
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
