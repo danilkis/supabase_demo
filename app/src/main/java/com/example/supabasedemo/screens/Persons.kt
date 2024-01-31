@@ -66,7 +66,6 @@ import com.example.supabasedemo.R
 import com.example.supabasedemo.customelements.PersonCard
 import com.example.supabasedemo.customelements.SearchBarCustom
 import com.example.supabasedemo.model.Contacts
-import com.example.supabasedemo.model.ExpandShapeState
 import com.example.supabasedemo.model.Persons
 import com.example.supabasedemo.viewmodel.PersonsViewmodel
 import kotlinx.coroutines.launch
@@ -75,41 +74,43 @@ import kotlinx.coroutines.launch
 @Composable
 fun PersonScreen(navController: NavController, viewModel: PersonsViewmodel = viewModel()) {
     val persons by viewModel.newPersons.collectAsState(initial = mutableListOf())
-    if (persons.isEmpty()) {
-        Column(modifier = Modifier.fillMaxSize()) {
-            SearchBarCustom()
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator(modifier = Modifier.size(60.dp))
+    val openDialog = remember { mutableStateOf(false) }
+    Scaffold(topBar = { SearchBarCustom(navController) }, floatingActionButton = {
+        FloatingActionButton(
+            onClick = {
+                openDialog.value = true
             }
+        ) {
+            Icon(imageVector = Icons.Default.Add, contentDescription = "add icon")
         }
-    } else {
-        val openDialog = remember { mutableStateOf(false) }
-        Scaffold(modifier = Modifier
-            .fillMaxSize()
-            .padding(start = 8.dp, top = 0.dp, end = 8.dp, bottom = 70.dp),
-            floatingActionButton = {
-                FloatingActionButton(
-                    onClick = {
-                        openDialog.value = true
-                    }
-                ) {
-                    Icon(imageVector = Icons.Default.Add, contentDescription = "add icon")
-                }
-            },
-            content = {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .fillMaxWidth()
-                ) {
-                    SearchBarCustom()
-                    Spacer(modifier = Modifier.height(8.dp))
-                    PersonColumn(navController, viewModel)
+    })
+    { paddingValues ->
+        if (persons.isEmpty()) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = paddingValues.calculateTopPadding())
+            ) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator(modifier = Modifier.size(60.dp))
                 }
             }
-        )
-        if (openDialog.value) {
-            AddPersonDialog(openDialog.value, onDismiss = { openDialog.value = false }, viewModel)
+        } else {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = paddingValues.calculateTopPadding(), start = 6.dp, end = 6.dp)
+                    .fillMaxWidth()
+            ) {
+                PersonColumn(navController, viewModel)
+            }
+            if (openDialog.value) {
+                AddPersonDialog(
+                    openDialog.value,
+                    onDismiss = { openDialog.value = false },
+                    viewModel
+                )
+            }
         }
     }
 }
@@ -119,7 +120,6 @@ fun PersonScreen(navController: NavController, viewModel: PersonsViewmodel = vie
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PersonColumn(navController: NavController, viewModel: PersonsViewmodel = viewModel()) {
-    var currentState by remember { mutableStateOf(ExpandShapeState.Collapsed) }
     val persons by viewModel.newPersons.collectAsState(initial = mutableListOf())
     var columnAppeared by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
@@ -146,7 +146,7 @@ fun PersonColumn(navController: NavController, viewModel: PersonsViewmodel = vie
                         isDismissed = true; coroutineScope.launch { dismissState.reset() }
                     },
                     onCancel = {
-                        vibrator.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_TICK));
+                        vibrator.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_TICK))
                         isDismissed = false; coroutineScope.launch { dismissState.reset() }
                     })
             }
@@ -163,12 +163,12 @@ fun PersonColumn(navController: NavController, viewModel: PersonsViewmodel = vie
                 exit = fadeOut(
                     animationSpec = spring(Spring.DampingRatioLowBouncy, Spring.StiffnessMedium)
                 ) + scaleOut(
-                    animationSpec =  spring(Spring.DampingRatioMediumBouncy, Spring.StiffnessMedium)
+                    animationSpec = spring(Spring.DampingRatioMediumBouncy, Spring.StiffnessMedium)
                 ),
                 enter = fadeIn(
                     animationSpec = spring(Spring.DampingRatioLowBouncy, Spring.StiffnessMedium)
                 ) + scaleIn(
-                    animationSpec =  spring(Spring.DampingRatioLowBouncy, Spring.StiffnessMediumLow)
+                    animationSpec = spring(Spring.DampingRatioLowBouncy, Spring.StiffnessMediumLow)
                 )
             ) {
                 SwipeToDismiss(
@@ -209,7 +209,7 @@ fun PersonColumn(navController: NavController, viewModel: PersonsViewmodel = vie
                     },
                     dismissContent =
                     {
-                        PersonCard(person, navController = navController, currentState)
+                        PersonCard(person, navController = navController)
                     })
             }
         }
@@ -254,11 +254,15 @@ fun DeleteDialog(
                 }
             },
             title = { Text(text = stringResource(R.string.confirmation_question)) },
-            text = { Text(text = stringResource(
-                R.string.person_delete_message,
-                person.Name,
-                person.Surname.toString()
-            )) },
+            text = {
+                Text(
+                    text = stringResource(
+                        R.string.person_delete_message,
+                        person.Name,
+                        person.Surname.toString()
+                    )
+                )
+            },
             icon = {
                 Icon(
                     imageVector = Icons.Default.Delete,

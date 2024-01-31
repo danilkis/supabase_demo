@@ -3,7 +3,7 @@ package com.example.supabasedemo.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.supabasedemo.model.Orders
-import com.example.supabasedemo.model.Status
+import com.example.supabasedemo.model.Persons
 import com.example.supabasedemo.supa.supaHelper
 import io.github.jan.supabase.postgrest.postgrest
 import kotlinx.coroutines.Dispatchers

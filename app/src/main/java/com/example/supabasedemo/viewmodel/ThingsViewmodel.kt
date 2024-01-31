@@ -51,7 +51,7 @@ open class ThingsViewmodel : ViewModel() {
         CoroutineScope(Dispatchers.Main).launch {
             try {
                 var asyncClient = supaHelper.getAsyncClient()
-                asyncClient.postgrest["Things"].delete() {
+                asyncClient.postgrest["Things"].delete {
                     eq("id", thingId)
                 }
                 reloadThings()
@@ -67,7 +67,15 @@ open class ThingsViewmodel : ViewModel() {
                 var asyncClient = supaHelper.getAsyncClient()
                 var info = asyncClient.postgrest["Things"].select().decodeList<Things>()
                 val new_thing =
-                    Things(info.last().id!! + 1, thing.name, thing.store, thing.amount, thing.type, thing.photoUrl, thing.boxId)
+                    Things(
+                        info.last().id + 1,
+                        thing.name,
+                        thing.store,
+                        thing.amount,
+                        thing.type,
+                        thing.photoUrl,
+                        thing.boxId
+                    )
                 asyncClient.postgrest["Things"].insert(
                     new_thing,
                     returning = Returning.HEADERS_ONLY
@@ -108,7 +116,7 @@ open class ThingsViewmodel : ViewModel() {
                 var asyncClient = supaHelper.getAsyncClient()
                 var info = asyncClient.postgrest["Box"].select().decodeList<Box>()
                 val new_thing =
-                    Box(info.last().id!! + 1, box.name, box.barcode)
+                    Box(info.last().id + 1, box.name, box.barcode)
                 asyncClient.postgrest["Box"].insert(
                     new_thing,
                     returning = Returning.HEADERS_ONLY
@@ -124,7 +132,7 @@ open class ThingsViewmodel : ViewModel() {
         CoroutineScope(Dispatchers.Main).launch {
             try {
                 var asyncClient = supaHelper.getAsyncClient()
-                asyncClient.postgrest["Box"].delete() {
+                asyncClient.postgrest["Box"].delete {
                     eq("id", boxId)
                 }
                 reloadThings()

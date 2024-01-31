@@ -15,22 +15,24 @@ class PersonInfoViewmodel(persons: Persons) : ViewModel() {
         val cont = getContacts(persons)
         emit(cont)
     }
+
     suspend fun getContacts(person: Persons): Contacts {
-            try {
-                Log.e("Supabase", person.toString())
-                val asyncClient = supaHelper.getAsyncClient()
-                val contact = asyncClient.postgrest["Contacts"]
-                    .select()
-                    {
-                        eq("id", person.contactsId)
-                    }
-                    .decodeSingle<Contacts>()
-                return contact
-            } catch (e: Exception) {
-                return Contacts(0, "0", "0", "0")
-            }
+        try {
+            Log.e("Supabase", person.toString())
+            val asyncClient = supaHelper.getAsyncClient()
+            val contact = asyncClient.postgrest["Contacts"]
+                .select()
+                {
+                    eq("id", person.contactsId)
+                }
+                .decodeSingle<Contacts>()
+            return contact
+        } catch (e: Exception) {
+            return Contacts(0, "0", "0", "0")
+        }
     }
 }
+
 class PersonInfoViewmodelFactory(val persons: Persons) : ViewModelProvider.NewInstanceFactory() {
     override fun <T : ViewModel> create(modelClass: Class<T>): T = PersonInfoViewmodel(persons) as T
 }

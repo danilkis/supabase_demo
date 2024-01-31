@@ -14,6 +14,7 @@ import com.example.supabasedemo.screens.Hello
 import com.example.supabasedemo.screens.MainScreen
 import com.example.supabasedemo.screens.OrderInfoScreen
 import com.example.supabasedemo.screens.PersonInfoScreen
+import com.example.supabasedemo.screens.SearchResultScreen
 import com.example.supabasedemo.viewmodel.OrderViewmodel
 import com.example.supabasedemo.viewmodel.PersonsViewmodel
 import com.example.supabasedemo.viewmodel.ThingsViewmodel
@@ -74,6 +75,13 @@ fun GeneralNavigation() {
                     OrderInfoScreen(it, navController)
                 }
             }
+        }
+        composable(
+            "searchResults/{query}",
+            arguments = listOf(navArgument("query") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val query = backStackEntry.arguments?.getString("query")
+            SearchResultScreen(query = query!!, navController = navController)
         }
     }
 }

@@ -30,15 +30,15 @@ import com.example.supabasedemo.R
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun OptionsFAB(OnBoxOpen:() -> Unit, OnThingsOpen:() -> Unit) {
+fun OptionsFAB(OnBoxOpen: () -> Unit, OnThingsOpen: () -> Unit) {
     var myFABState by remember { mutableStateOf(false) }
     Column(horizontalAlignment = Alignment.End) {
         AnimatedVisibility(
             visible = myFABState,
             exit = fadeOut(
                 animationSpec = spring(Spring.DampingRatioLowBouncy, Spring.StiffnessMediumLow)
-            ) + slideOutVertically (
-                targetOffsetY  = { fullHeight -> fullHeight },
+            ) + slideOutVertically(
+                targetOffsetY = { fullHeight -> fullHeight },
                 animationSpec = spring(Spring.DampingRatioLowBouncy, Spring.StiffnessMediumLow)
             ),
             enter = fadeIn(

@@ -30,8 +30,12 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun ToggleHeading(Content: @Composable () -> Unit, heading: String) {
-    var expanded by remember { mutableStateOf(false) }
+fun ToggleHeading(
+    Content: @Composable () -> Unit,
+    heading: String,
+    expandByDefault: Boolean = false
+) {
+    var expanded by remember { mutableStateOf(expandByDefault) }
     val rotationAngle by animateFloatAsState(if (expanded) 180f else 0f)
 
     Column {
@@ -55,12 +59,12 @@ fun ToggleHeading(Content: @Composable () -> Unit, heading: String) {
             exit = fadeOut(
                 animationSpec = spring(Spring.DampingRatioLowBouncy, Spring.StiffnessMedium)
             ) + scaleOut(
-                animationSpec =  spring(Spring.DampingRatioLowBouncy, Spring.StiffnessMediumLow)
+                animationSpec = spring(Spring.DampingRatioLowBouncy, Spring.StiffnessMediumLow)
             ),
             enter = fadeIn(
                 animationSpec = spring(Spring.DampingRatioLowBouncy, Spring.StiffnessMedium)
             ) + scaleIn(
-                animationSpec =  spring(Spring.DampingRatioLowBouncy, Spring.StiffnessMediumLow)
+                animationSpec = spring(Spring.DampingRatioLowBouncy, Spring.StiffnessMediumLow)
             )
         ) {
             Content()

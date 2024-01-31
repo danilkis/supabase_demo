@@ -31,7 +31,11 @@ import kotlinx.coroutines.withContext
 @Composable
 fun Hello(navController: NavController) {
     val nameVis by remember { mutableStateOf(true) }
-    Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.SpaceEvenly) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.SpaceEvenly
+    ) {
         var userReady by remember {
             mutableStateOf(false)
         }
@@ -44,19 +48,19 @@ fun Hello(navController: NavController) {
         }
         val sharedPreference = SharedPreference(LocalContext.current)
         val name = sharedPreference.GetString("Name")
-        if(!userReady)
-        {
+        if (!userReady) {
             AnimatedVisibility(
                 nameVis, enter = expandHorizontally(
                     animationSpec = tween(2000)
                 ), exit = shrinkHorizontally(animationSpec = tween(2000)),
                 modifier = Modifier.padding(top = 10.dp)
             ) {
-            Text(text = stringResource(R.string.welcome_back, name.toString()) , style = MaterialTheme.typography.displayMedium)
+                Text(
+                    text = stringResource(R.string.welcome_back, name.toString()),
+                    style = MaterialTheme.typography.displayMedium
+                )
             }
-        }
-        else
-        {
+        } else {
             LaunchedEffect(true)
             {
                 navController.navigate("mainScreen")

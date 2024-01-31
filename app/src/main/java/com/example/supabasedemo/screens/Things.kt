@@ -83,49 +83,57 @@ import kotlinx.coroutines.launch
 @Composable
 fun ThingsMainScreen(navController: NavController, viewModel: ThingsViewmodel = viewModel()) {
     val things by viewModel.things.collectAsState(initial = mutableListOf())
-    if (things.isEmpty()) {
-        Column(modifier = Modifier.fillMaxSize()) {
-            SearchBarCustom()
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator(modifier = Modifier.size(60.dp))
-            }
-        }
-    } else {
-        val openDialogThing = remember { mutableStateOf(false) }
-        val openDialogBox = remember { mutableStateOf(false) }
-        Scaffold(modifier = Modifier
-            .fillMaxSize()
-            .padding(start = 4.dp, top = 0.dp, end = 4.dp, bottom = 70.dp),
-            floatingActionButton = {
-                                   OptionsFAB({openDialogBox.value = true}, {openDialogThing.value = true})
-            },
-            content = {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .fillMaxWidth()
-                ) {
-                    SearchBarCustom()
-                    Spacer(modifier = Modifier.height(8.dp))
-                    ToggleHeading({ BoxColumn(navController = navController, viewModel) },
-                        stringResource(
-                            R.string.boxes
-                        )
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    ToggleHeading({ ThingColumn(navController = navController, viewModel) },
-                        stringResource(
-                            R.string.unsorted
-                        )
-                    )
+    val openDialogThing = remember { mutableStateOf(false) }
+    val openDialogBox = remember { mutableStateOf(false) }
+    Scaffold(topBar = { SearchBarCustom(navController) }, floatingActionButton = {
+        OptionsFAB({ openDialogBox.value = true }, { openDialogThing.value = true })
+    })
+    { paddingValues ->
+        if (things.isEmpty()) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = paddingValues.calculateTopPadding())
+            ) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator(modifier = Modifier.size(60.dp))
                 }
             }
-        )
+        } else {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = paddingValues.calculateTopPadding(), start = 6.dp, end = 6.dp)
+                    .fillMaxWidth()
+            ) {
+                ToggleHeading(
+                    { BoxColumn(navController = navController, viewModel) },
+                    stringResource(
+                        R.string.boxes
+                    )
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                ToggleHeading(
+                    { ThingColumn(navController = navController, viewModel) },
+                    stringResource(
+                        R.string.unsorted
+                    )
+                )
+            }
+        }
         if (openDialogThing.value) {
-            AddThingDialog(openDialogThing.value, onDismiss = { openDialogThing.value = false }, viewModel)
+            AddThingDialog(
+                openDialogThing.value,
+                onDismiss = { openDialogThing.value = false },
+                viewModel
+            )
         }
         if (openDialogBox.value) {
-            AddBoxDialog(openDialogBox.value, onDismiss = { openDialogBox.value = false }, viewModel)
+            AddBoxDialog(
+                openDialogBox.value,
+                onDismiss = { openDialogBox.value = false },
+                viewModel
+            )
         }
     }
 }
@@ -328,17 +336,20 @@ fun ThingColumn(navController: NavController, viewModel: ThingsViewmodel = viewM
                     },
                     dismissContent =
                     {
-                            ThingCard(thing, types, {ModalSheetState.value = true}, {EditDialogState.value = true})
-                            if (EditDialogState.value)
-                            {
+                        ThingCard(
+                            thing,
+                            types,
+                            { ModalSheetState.value = true },
+                            { EditDialogState.value = true })
+                        if (EditDialogState.value) {
 
-                            }
-                            /*
-                            AnimatedVisibility(visible = ModalSheetState.value)
-                            {
-                                ThingSheet(thing = thing, types, {ModalSheetState.value = false}) TODO: ПОЧИНИТЬ
-                            }
-                             */
+                        }
+                        /*
+                        AnimatedVisibility(visible = ModalSheetState.value)
+                        {
+                            ThingSheet(thing = thing, types, {ModalSheetState.value = false}) TODO: ПОЧИНИТЬ
+                        }
+                         */
                     })
             }
         }

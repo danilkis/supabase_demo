@@ -20,16 +20,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.supabasedemo.model.ExpandShapeState
 import com.example.supabasedemo.model.Persons
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Composable
-fun PersonCard(Person: Persons, navController: NavController, currState: ExpandShapeState) {
+fun PersonCard(Person: Persons, navController: NavController) {
     val coroutineScope = rememberCoroutineScope()
     val vibrator = LocalContext.current.getSystemService(Vibrator::class.java)
-    var currentState = currState
     OutlinedCard(
         modifier = Modifier
             .fillMaxWidth()
@@ -48,7 +46,12 @@ fun PersonCard(Person: Persons, navController: NavController, currState: ExpandS
             horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.Start),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            UserHead(id = "a", firstName = Person.Name, lastName = Person.Surname.toString(), size = 40.dp)
+            UserHead(
+                id = "a",
+                firstName = Person.Name,
+                lastName = Person.Surname.toString(),
+                size = 40.dp
+            )
             Spacer(modifier = Modifier.width(4.dp))
             Column(
                 modifier = Modifier

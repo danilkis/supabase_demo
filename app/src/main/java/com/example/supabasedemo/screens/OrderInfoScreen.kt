@@ -22,15 +22,23 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.example.supabasedemo.R
 import com.example.supabasedemo.customelements.PersonCard
 import com.example.supabasedemo.customelements.ToggleHeading
 import com.example.supabasedemo.customelements.UserHead
+import com.example.supabasedemo.model.Box
+import com.example.supabasedemo.model.Contacts
 import com.example.supabasedemo.model.ExpandShapeState
 import com.example.supabasedemo.model.Orders
 import com.example.supabasedemo.model.Persons
 import com.example.supabasedemo.viewmodel.OrderViewmodel
+import com.example.supabasedemo.viewmodel.PersonInfoViewmodel
+import com.example.supabasedemo.viewmodel.PersonInfoViewmodelFactory
 import com.example.supabasedemo.viewmodel.PersonsViewmodel
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
@@ -83,7 +91,7 @@ fun OrderInfoScreen(order: Orders, navController: NavController) {
                 val formatter = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, Locale.getDefault())
                 val formattedDeadline = formatter.format(deadline.toInstant(TimeZone.of("America/Los_Angeles")).toEpochMilliseconds())
                 Text(
-                    text = "Срок: " + formattedDeadline,
+                    text = "Срок: 01.12.2023",
                     style = MaterialTheme.typography.headlineSmall
                 )
             }
@@ -95,14 +103,13 @@ fun OrderInfoScreen(order: Orders, navController: NavController) {
     }
 }
 
-
 @Composable
-fun reporting()
-{
+fun reporting() {
     Box(
         Modifier
             .fillMaxWidth()
-            .padding(16.dp))
+            .padding(16.dp)
+    )
     {
         //Caurucel placeholder
     }
@@ -110,10 +117,15 @@ fun reporting()
     Row(
         Modifier
             .fillMaxWidth()
-            .padding(8.dp))
+            .padding(8.dp)
+    )
     {
         OutlinedButton(onClick = { /*TODO*/ }) {
             Text("Добавить вещь")
+        }
+        Spacer(modifier = Modifier.width(8.dp))
+        OutlinedButton(onClick = { /*TODO*/ }) {
+            Text("Добавить фото")
         }
     }
 }

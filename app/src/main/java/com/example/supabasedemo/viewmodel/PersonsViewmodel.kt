@@ -46,10 +46,10 @@ class PersonsViewmodel : ViewModel() {
         CoroutineScope(Dispatchers.Main).launch {
             try {
                 val asyncClient = getAsyncClient()
-                val info_person = asyncClient.postgrest["Persons"].select() {
+                val info_person = asyncClient.postgrest["Persons"].select {
                     eq("id", personId)
                 }.decodeSingle<Persons>()
-                asyncClient.postgrest["Contacts"].delete() {
+                asyncClient.postgrest["Contacts"].delete {
                     eq("id", info_person.contactsId)
                 }
                 reloadPersons()

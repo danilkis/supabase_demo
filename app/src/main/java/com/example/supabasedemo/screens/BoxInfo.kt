@@ -193,10 +193,13 @@ fun BoxInfoScreen(
                         },
                         dismissContent =
                         {
-                            ThingCard(thing, types, {ModalSheetState.value = true}, {ModalSheetState.value = true})
-                            if (ModalSheetState.value)
-                            {
-                                ThingSheet(thing = thing, types, {ModalSheetState.value = false})
+                            ThingCard(
+                                thing,
+                                types,
+                                { ModalSheetState.value = true },
+                                { ModalSheetState.value = true })
+                            if (ModalSheetState.value) {
+                                ThingSheet(thing = thing, types, { ModalSheetState.value = false })
                             }
                         })
                 }

@@ -3,11 +3,15 @@ package com.example.supabasedemo.supa
 import android.content.ContentResolver
 import android.content.Context
 import android.net.Uri
+import android.provider.MediaStore
 import android.util.Log
+import id.zelory.compressor.Compressor
+import io.github.jan.supabase.storage.UploadData
 import io.github.jan.supabase.storage.storage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.io.File
 import kotlin.time.Duration.Companion.minutes
 
 class BucketWorker {
@@ -24,7 +28,7 @@ class BucketWorker {
                 contentResolver.openInputStream(uri)?.use { inputStream ->
                     // Read the file bytes from the input stream
                     val fileBytes = inputStream.readBytes()
-                    // Upload the compressed file to the bucket
+                    // Create a temporary file from the file byte
                     bucket.upload(
                         "${file_path.substring(file_path.lastIndexOf("/") + 1)}.jpg",
                         fileBytes,
