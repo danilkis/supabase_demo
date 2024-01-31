@@ -157,7 +157,7 @@ fun BoxColumn(navController: NavController, viewModel: ThingsViewmodel = viewMod
             .fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(5.dp)
     )
     {
-        items(boxes.filter { it.id != 0 }) { box ->
+        items(boxes.filter { it.id != 1 }) { box ->
             val dismissState = rememberDismissState()
             val coroutineScope = rememberCoroutineScope()
             val dismissDirection = dismissState.dismissDirection
@@ -348,7 +348,7 @@ fun ThingColumn(navController: NavController, viewModel: ThingsViewmodel = viewM
                             { ModalSheetState.value = true },
                             { EditDialogState.value = true })
                         if (ModalSheetState.value) {
-                            ThingSheet(thing = thing, types, { ModalSheetState.value = false })
+                            ThingSheet(thing = thing, types, { ModalSheetState.value = false },navController)
                         }
                         if (EditDialogState.value)
                         {

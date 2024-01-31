@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.withContext
 
-class BoxViewmodel : ThingsViewmodel() {
+class BoxViewmodel : ThingsViewmodel() { //TODO: При удалении перенести все вещи и Unsorted
     private val _filterThings = MutableStateFlow<MutableList<Things>>(mutableListOf())
 
     var FilteredThings: StateFlow<MutableList<Things>> = _filterThings

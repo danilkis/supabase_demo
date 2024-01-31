@@ -24,6 +24,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.supabasedemo.R
@@ -33,9 +34,7 @@ import com.example.supabasedemo.viewmodel.OrderThingsViewmodel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ThingSheet(thing: Things, types: MutableList<Type>, onDismiss: () -> Unit) {
-    val sheetState = rememberModalBottomSheetState()
-    val scope = rememberCoroutineScope()
+fun ThingSheet(thing: Things, types: MutableList<Type>, onDismiss: () -> Unit, navController: NavController) {
     val painter = rememberAsyncImagePainter(model = thing.photoUrl)
     val ctx = LocalContext.current
     ModalBottomSheet(
@@ -79,7 +78,7 @@ fun ThingSheet(thing: Things, types: MutableList<Type>, onDismiss: () -> Unit) {
             {
                 items(orders)
                 { order ->
-                    OrderCard(Order = order, navController = rememberNavController())
+                    OrderCard(Order = order, navController = navController)
                 }
             }
         }

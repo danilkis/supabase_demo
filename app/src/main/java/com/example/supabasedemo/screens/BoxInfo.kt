@@ -61,7 +61,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BoxInfoScreen(
+fun BoxInfoScreen( //TODO: Если пусто показать надпись что пусто
     box: Box, navController: NavController, viewModel: ThingsViewmodel = viewModel()
 ) {
     Log.e("BoxInfo", box.name + "  " + box.id)
@@ -115,7 +115,6 @@ fun BoxInfoScreen(
                 val coroutineScope = rememberCoroutineScope()
                 val dismissDirection = dismissState.dismissDirection
                 var isDismissed = dismissState.isDismissed(DismissDirection.EndToStart)
-                // check if the user swiped
                 if (isDismissed && dismissDirection == DismissDirection.EndToStart) {
                     DeleteThingDialog(
                         thing,
@@ -200,7 +199,7 @@ fun BoxInfoScreen(
                                 { ModalSheetState.value = true },
                                 { EditDialogState.value = true })
                             if (ModalSheetState.value) {
-                                ThingSheet(thing = thing, types, { ModalSheetState.value = false })
+                                ThingSheet(thing = thing, types, { ModalSheetState.value = false }, navController)
                             }
                             if (EditDialogState.value)
                             {
