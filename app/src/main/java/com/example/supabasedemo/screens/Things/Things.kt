@@ -1,8 +1,6 @@
 package com.example.supabasedemo.screens.Things
 
 import android.annotation.SuppressLint
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Spring
@@ -25,28 +23,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.AllInbox
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DismissDirection
 import androidx.compose.material3.DismissValue
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SwipeToDismiss
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -60,28 +46,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.supabasedemo.R
-import com.example.supabasedemo.customelements.BoxCard
+import com.example.supabasedemo.customelements.Cards.BoxCard
+import com.example.supabasedemo.customelements.Cards.ThingCard
 import com.example.supabasedemo.customelements.OptionsFAB
 import com.example.supabasedemo.customelements.SearchBarCustom
-import com.example.supabasedemo.customelements.ThingCard
 import com.example.supabasedemo.customelements.ThingSheet
 import com.example.supabasedemo.customelements.ToggleHeading
-import com.example.supabasedemo.model.Box
-import com.example.supabasedemo.model.Things
-import com.example.supabasedemo.model.Type
 import com.example.supabasedemo.screens.Things.Dialogs.AddBoxDialog
 import com.example.supabasedemo.screens.Things.Dialogs.AddThingDialog
 import com.example.supabasedemo.screens.Things.Dialogs.DeleteBoxDialog
 import com.example.supabasedemo.screens.Things.Dialogs.DeleteThingDialog
 import com.example.supabasedemo.screens.Things.Dialogs.UpdateThingDialog
-import com.example.supabasedemo.supa.BucketWorker
 import com.example.supabasedemo.viewmodel.ThingsViewmodel
 import kotlinx.coroutines.launch
 
@@ -348,11 +328,19 @@ fun ThingColumn(navController: NavController, viewModel: ThingsViewmodel = viewM
                             { ModalSheetState.value = true },
                             { EditDialogState.value = true })
                         if (ModalSheetState.value) {
-                            ThingSheet(thing = thing, types, { ModalSheetState.value = false },navController)
+                            ThingSheet(
+                                thing = thing,
+                                types,
+                                { ModalSheetState.value = false },
+                                navController
+                            )
                         }
-                        if (EditDialogState.value)
-                        {
-                            UpdateThingDialog(open = EditDialogState.value, onDismiss = { EditDialogState.value = false }, thing = thing)
+                        if (EditDialogState.value) {
+                            UpdateThingDialog(
+                                open = EditDialogState.value,
+                                onDismiss = { EditDialogState.value = false },
+                                thing = thing
+                            )
                         }
                     })
             }

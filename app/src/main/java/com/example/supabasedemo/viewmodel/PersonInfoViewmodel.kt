@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.supabasedemo.model.Contacts
 import com.example.supabasedemo.model.Persons
-import com.example.supabasedemo.supa.supaHelper
+import com.example.supabasedemo.supabase.supaHelper
 import io.github.jan.supabase.postgrest.postgrest
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -17,7 +17,7 @@ class PersonInfoViewmodel(persons: Persons) : ViewModel() {
     }
 
     suspend fun getContacts(person: Persons): Contacts {
-        try {
+        return try {
             Log.e("Supabase", person.toString())
             val asyncClient = supaHelper.getAsyncClient()
             val contact = asyncClient.postgrest["Contacts"]
@@ -26,9 +26,9 @@ class PersonInfoViewmodel(persons: Persons) : ViewModel() {
                     eq("id", person.contactsId)
                 }
                 .decodeSingle<Contacts>()
-            return contact
+            contact
         } catch (e: Exception) {
-            return Contacts(0, "0", "0", "0")
+            Contacts(0, "0", "0", "0")
         }
     }
 }

@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.supabasedemo.model.Order_things
 import com.example.supabasedemo.model.Orders
-import com.example.supabasedemo.supa.supaHelper
+import com.example.supabasedemo.supabase.supaHelper
 import io.github.jan.supabase.postgrest.postgrest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow

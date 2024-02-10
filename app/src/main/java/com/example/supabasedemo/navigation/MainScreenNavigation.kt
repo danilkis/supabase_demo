@@ -1,4 +1,4 @@
-package com.example.supabasedemo.navs
+package com.example.supabasedemo.navigation
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.MutableTransitionState
@@ -32,8 +32,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.supabasedemo.R
 import com.example.supabasedemo.model.MainScreenDest
-import com.example.supabasedemo.screens.OrdersMainScreen
-import com.example.supabasedemo.screens.PersonScreen
+import com.example.supabasedemo.screens.Orders.OrdersMainScreen
+import com.example.supabasedemo.screens.Persons.PersonScreen
 import com.example.supabasedemo.screens.Things.ThingsMainScreen
 
 

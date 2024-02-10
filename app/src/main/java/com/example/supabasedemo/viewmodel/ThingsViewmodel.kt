@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import com.example.supabasedemo.model.Box
 import com.example.supabasedemo.model.Things
 import com.example.supabasedemo.model.Type
-import com.example.supabasedemo.supa.supaHelper
+import com.example.supabasedemo.supabase.supaHelper
 import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.postgrest.query.Returning
 import kotlinx.coroutines.CoroutineScope
@@ -15,9 +15,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.lang.reflect.Array.set
-import kotlin.reflect.KProperty1
-import kotlin.reflect.full.memberProperties
 
 open class ThingsViewmodel : ViewModel() {
     private val _things = MutableStateFlow<MutableList<Things>>(mutableListOf())

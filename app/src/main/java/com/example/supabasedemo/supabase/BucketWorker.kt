@@ -1,9 +1,8 @@
-package com.example.supabasedemo.supa
+package com.example.supabasedemo.supabase
 
 import android.content.ContentResolver
 import android.content.Context
 import android.net.Uri
-import android.provider.MediaStore
 import android.util.Log
 import io.github.jan.supabase.storage.storage
 import kotlinx.coroutines.CoroutineScope
@@ -12,7 +11,7 @@ import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.minutes
 
 class BucketWorker {
-    fun UploadFile(file_path: String, contentResolver: ContentResolver, ctx: Context): String {
+    fun UploadFile(file_path: String, contentResolver: ContentResolver): String {
         CoroutineScope(Dispatchers.Main).launch {
             try {
                 val client = supaHelper.getAsyncClient()

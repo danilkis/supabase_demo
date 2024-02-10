@@ -1,4 +1,4 @@
-package com.example.supabasedemo.screens
+package com.example.supabasedemo.screens.Booting
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween

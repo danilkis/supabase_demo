@@ -1,4 +1,4 @@
-package com.example.supabasedemo.screens
+package com.example.supabasedemo.screens.Persons
 
 import android.annotation.SuppressLint
 import android.os.VibrationEffect
@@ -16,21 +16,15 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DismissDirection
 import androidx.compose.material3.DismissValue
@@ -38,11 +32,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SwipeToDismiss
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -57,16 +48,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.supabasedemo.R
-import com.example.supabasedemo.customelements.PersonCard
+import com.example.supabasedemo.customelements.Cards.PersonCard
 import com.example.supabasedemo.customelements.SearchBarCustom
-import com.example.supabasedemo.model.Contacts
-import com.example.supabasedemo.model.Persons
+import com.example.supabasedemo.screens.Persons.Dialogs.AddPersonDialog
+import com.example.supabasedemo.screens.Persons.Dialogs.DeleteDialog
 import com.example.supabasedemo.viewmodel.PersonsViewmodel
 import kotlinx.coroutines.launch
 
@@ -213,146 +201,5 @@ fun PersonColumn(navController: NavController, viewModel: PersonsViewmodel = vie
                     })
             }
         }
-    }
-}
-
-
-@Composable
-fun DeleteDialog(
-    person: Persons,
-    viewModel: PersonsViewmodel = viewModel(),
-    onDismiss: () -> Unit,
-    onCancel: () -> Unit
-) {
-    val coroutineScope = rememberCoroutineScope()
-    var openDialog by remember { mutableStateOf(true) }
-    if (openDialog) {
-        AlertDialog(
-            onDismissRequest = {
-                openDialog = false
-                onCancel()
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        coroutineScope.launch { viewModel.deletePerson(person.id) }
-                        openDialog = false
-                        onDismiss()
-                    }
-                ) {
-                    Text(text = stringResource(R.string.yes))
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = {
-                        openDialog = false
-                        onCancel()
-                    }
-                ) {
-                    Text(text = stringResource(R.string.cancel))
-                }
-            },
-            title = { Text(text = stringResource(R.string.confirmation_question)) },
-            text = {
-                Text(
-                    text = stringResource(
-                        R.string.person_delete_message,
-                        person.Name,
-                        person.Surname.toString()
-                    )
-                )
-            },
-            icon = {
-                Icon(
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = null
-                )
-            } // add icon
-        )
-    }
-}
-
-@Composable
-fun AddPersonDialog(
-    open: Boolean,
-    onDismiss: () -> Unit,
-    viewModel: PersonsViewmodel = viewModel()
-) {
-    val coroutineScope = rememberCoroutineScope()
-    var name by remember { mutableStateOf("") }
-    var surname by remember { mutableStateOf("") }
-    var phone by remember { mutableStateOf("") }
-    var telegram by remember { mutableStateOf("") }
-    var avito by remember { mutableStateOf("") }
-    if (open) {
-        AlertDialog(
-            onDismissRequest = {
-                onDismiss()
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        val new_person = Persons(0, name, surname, 0)
-                        val new_contact = Contacts(0, phone, telegram, avito)
-                        viewModel.deleteComplete.value = true
-                        coroutineScope.launch { viewModel.insertContact(new_contact, new_person) }
-                        onDismiss()
-                    }
-                ) {
-                    Text(text = stringResource(R.string.done))
-                }
-            },
-            text = {
-                Column {
-                    OutlinedTextField(
-                        value = name,
-                        onValueChange = { name = it },
-                        placeholder = { Text(stringResource(R.string.person_name)) }
-                    )
-                    Spacer(modifier = Modifier.height(5.dp))
-                    OutlinedTextField(
-                        value = surname,
-                        onValueChange = { surname = it },
-                        placeholder = { Text(stringResource(R.string.person_surname)) }
-                    )
-                    Spacer(modifier = Modifier.height(5.dp))
-                    OutlinedTextField(
-                        value = phone,
-                        onValueChange = { phone = it },
-                        placeholder = { Text(stringResource(R.string.phone_number_format)) },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone)
-                    )
-                    Spacer(modifier = Modifier.height(5.dp))
-                    OutlinedTextField(
-                        value = telegram,
-                        onValueChange = { telegram = it },
-                        placeholder = { Text(stringResource(R.string.telegram_tag)) }
-                    )
-                    Spacer(modifier = Modifier.height(5.dp))
-                    OutlinedTextField(
-                        value = avito,
-                        onValueChange = { avito = it },
-                        placeholder = { Text(stringResource(R.string.person_url)) }
-                    )
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = {
-                        onDismiss()
-                    }
-                ) {
-                    Text(text = stringResource(R.string.cancel))
-                }
-            },
-            title = { Text(text = stringResource(R.string.add_person_message)) },
-            icon = {
-                Icon(
-                    imageVector = Icons.Default.PersonAdd,
-                    contentDescription = null
-                )
-            } // add icon
-        )
     }
 }

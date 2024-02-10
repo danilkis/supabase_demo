@@ -2,7 +2,6 @@ package com.example.supabasedemo.model
 
 import android.annotation.SuppressLint
 import android.content.Context
-import androidx.compose.ui.res.stringResource
 import com.example.supabasedemo.R
 import kotlinx.serialization.Serializable
 
@@ -20,9 +19,8 @@ data class Things(
     fun getTypeName(types: MutableList<Type>, ctx: Context): Int {
         val stringKey = types.find { it.id == type }?.Name ?: "nothing"
 
-        var res = ctx.getResources().getIdentifier(stringKey, "string", ctx.packageName)
-        if (res == 0)
-        {
+        var res = ctx.resources.getIdentifier(stringKey, "string", ctx.packageName)
+        if (res == 0) {
             res = R.string.yes
         }
         return res

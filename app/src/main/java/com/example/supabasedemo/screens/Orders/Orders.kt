@@ -1,7 +1,6 @@
-package com.example.supabasedemo.screens
+package com.example.supabasedemo.screens.Orders
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,7 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.supabasedemo.customelements.OrderCard
+import com.example.supabasedemo.customelements.Cards.OrderCard
 import com.example.supabasedemo.customelements.SearchBarCustom
 import com.example.supabasedemo.viewmodel.OrderViewmodel
 

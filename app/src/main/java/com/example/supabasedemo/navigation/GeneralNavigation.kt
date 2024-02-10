@@ -1,4 +1,4 @@
-package com.example.supabasedemo.navs
+package com.example.supabasedemo.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -8,13 +8,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.supabasedemo.screens.Auth
-import com.example.supabasedemo.screens.BoxInfoScreen
-import com.example.supabasedemo.screens.Hello
-import com.example.supabasedemo.screens.MainScreen
-import com.example.supabasedemo.screens.OrderInfoScreen
-import com.example.supabasedemo.screens.PersonInfoScreen
-import com.example.supabasedemo.screens.SearchResultScreen
+import com.example.supabasedemo.screens.Booting.Auth
+import com.example.supabasedemo.screens.Booting.Hello
+import com.example.supabasedemo.screens.Booting.MainScreen
+import com.example.supabasedemo.screens.Orders.OrderInfoScreen
+import com.example.supabasedemo.screens.Persons.PersonInfoScreen
+import com.example.supabasedemo.screens.Search.SearchResultScreen
+import com.example.supabasedemo.screens.Things.BoxInfoScreen
 import com.example.supabasedemo.viewmodel.OrderViewmodel
 import com.example.supabasedemo.viewmodel.PersonsViewmodel
 import com.example.supabasedemo.viewmodel.ThingsViewmodel

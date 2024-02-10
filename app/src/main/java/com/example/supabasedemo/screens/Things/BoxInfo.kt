@@ -1,4 +1,4 @@
-package com.example.supabasedemo.screens
+package com.example.supabasedemo.screens.Things
 
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
@@ -49,7 +49,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.supabasedemo.R
-import com.example.supabasedemo.customelements.ThingCard
+import com.example.supabasedemo.customelements.Cards.ThingCard
 import com.example.supabasedemo.customelements.ThingSheet
 import com.example.supabasedemo.customelements.UserHead
 import com.example.supabasedemo.model.Box
@@ -199,11 +199,19 @@ fun BoxInfoScreen( //TODO: Если пусто показать надпись �
                                 { ModalSheetState.value = true },
                                 { EditDialogState.value = true })
                             if (ModalSheetState.value) {
-                                ThingSheet(thing = thing, types, { ModalSheetState.value = false }, navController)
+                                ThingSheet(
+                                    thing = thing,
+                                    types,
+                                    { ModalSheetState.value = false },
+                                    navController
+                                )
                             }
-                            if (EditDialogState.value)
-                            {
-                                UpdateThingDialog(open = EditDialogState.value, onDismiss = { EditDialogState.value = false }, thing = thing)
+                            if (EditDialogState.value) {
+                                UpdateThingDialog(
+                                    open = EditDialogState.value,
+                                    onDismiss = { EditDialogState.value = false },
+                                    thing = thing
+                                )
                             }
                         })
                 }

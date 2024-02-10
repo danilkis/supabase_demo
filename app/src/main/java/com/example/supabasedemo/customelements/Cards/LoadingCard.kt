@@ -1,4 +1,4 @@
-package com.example.supabasedemo.customelements
+package com.example.supabasedemo.customelements.Cards
 
 import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.RepeatMode

@@ -36,7 +36,7 @@ import com.example.supabasedemo.R
 import com.example.supabasedemo.model.Box
 import com.example.supabasedemo.model.Things
 import com.example.supabasedemo.model.Type
-import com.example.supabasedemo.supa.BucketWorker
+import com.example.supabasedemo.supabase.BucketWorker
 import com.example.supabasedemo.viewmodel.ThingsViewmodel
 import kotlinx.coroutines.launch
 
@@ -65,7 +65,7 @@ fun AddThingDialog(
                 TextButton(
                     onClick = {
                         coroutineScope.launch {
-                            val photo = BucketWorker().UploadFile(filePath, contentResolver, ctx)
+                            val photo = BucketWorker().UploadFile(filePath, contentResolver)
                             if (!photo.isNullOrBlank()) {
                                 viewModel.insertThing(
                                     Things(

@@ -1,4 +1,4 @@
-package com.example.supabasedemo.customelements
+package com.example.supabasedemo.customelements.Cards
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
@@ -17,12 +18,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.supabasedemo.model.Box
+import com.example.supabasedemo.customelements.UserHead
+import com.example.supabasedemo.model.Orders
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @Composable
-fun BoxCard(box: Box, navController: NavController) {
+fun OrderCard(Order: Orders, navController: NavController) {  //
     val coroutineScope = rememberCoroutineScope()
     OutlinedCard(
         modifier = Modifier
@@ -30,7 +34,7 @@ fun BoxCard(box: Box, navController: NavController) {
             .padding(start = 4.dp, top = 2.dp, end = 4.dp, bottom = 2.dp)
             .clickable {
                 coroutineScope.launch(Dispatchers.Main) {
-                    navController.navigate("box/${box.id}")
+                    navController.navigate("order/${Order.id}")
                 }
             }
     ) {
@@ -41,17 +45,30 @@ fun BoxCard(box: Box, navController: NavController) {
             horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.Start),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            UserHead(id = "a", firstName = box.name, "", size = 40.dp)
+            UserHead(id = "a", firstName = Order.name, lastName = "", size = 40.dp)
             Spacer(modifier = Modifier.width(4.dp))
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(2.dp),
+                verticalArrangement = Arrangement.SpaceAround
             ) {
                 Text(
-                    text = box.name,
+                    text = Order.name,
                     style = MaterialTheme.typography.headlineMedium,
                 )
+                Spacer(modifier = Modifier.height(4.dp))
+                Row()
+                {
+                    val dateFormat_yyyyMMddHHmmss = SimpleDateFormat(
+                        "yyyy-MM-dd HH:mm:ss", Locale.ENGLISH
+                    )
+                    val date = dateFormat_yyyyMMddHHmmss.parse(Order.deadline.replace("T", " "))
+                    Text(
+                        text = "Срок: ${date}",
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
+                }
             }
         }
     }

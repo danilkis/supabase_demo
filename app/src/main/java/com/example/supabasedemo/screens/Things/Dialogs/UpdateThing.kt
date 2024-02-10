@@ -1,5 +1,3 @@
-@file:Suppress("UNREACHABLE_CODE")
-
 package com.example.supabasedemo.screens.Things.Dialogs
 
 import android.annotation.SuppressLint
@@ -8,7 +6,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenuItem
@@ -20,7 +17,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -38,11 +34,11 @@ import com.example.supabasedemo.R
 import com.example.supabasedemo.model.Box
 import com.example.supabasedemo.model.Things
 import com.example.supabasedemo.model.Type
-import com.example.supabasedemo.supa.BucketWorker
+import com.example.supabasedemo.supabase.BucketWorker
 import com.example.supabasedemo.viewmodel.ThingsViewmodel
 import kotlinx.coroutines.launch
 
-@SuppressLint("UnrememberedMutableState")
+@SuppressLint("UnrememberedMutableState", "DiscouragedApi")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UpdateThingDialog(
@@ -51,21 +47,21 @@ fun UpdateThingDialog(
     viewModel: ThingsViewmodel = viewModel(),
     thing: Things //TODO: Воткнуть
 ) {
-    var boxesList = viewModel.boxes.collectAsState(initial = listOf<Box>()).value
-    var typesList = viewModel.types.collectAsState(initial = listOf<Type>()).value
+    val boxesList = viewModel.boxes.collectAsState(initial = listOf<Box>()).value
+    val typesList = viewModel.types.collectAsState(initial = listOf<Type>()).value
 
     val coroutineScope = rememberCoroutineScope()
     val contentResolver = LocalContext.current.contentResolver
     var name by remember { mutableStateOf("") }
     var amount by remember { mutableStateOf("") }
     var storeUrl by remember { mutableStateOf("") }
-    var filePath by remember { mutableStateOf("") }
+    val filePath by remember { mutableStateOf("") }
     val chosenType by remember { mutableStateOf(mutableStateOf(Type(0, ""))) }
     val chosenBox by remember { mutableStateOf(mutableStateOf(Box(0, "", null))) }
     val ctx = LocalContext.current
     name = thing.name
     amount = thing.amount.toString()
-    storeUrl = thing.store?: ""
+    storeUrl = thing.store ?: ""
 
     if (open) {
         AlertDialog(
@@ -77,17 +73,22 @@ fun UpdateThingDialog(
                     onClick = {
                         coroutineScope.launch {
                             var photo = ""
-                            if(filePath.isNullOrBlank())
-                            {
-                                photo = BucketWorker().UploadFile(filePath, contentResolver, ctx)
+                            photo = if (filePath.isNullOrBlank()) {
+                                BucketWorker().UploadFile(filePath, contentResolver)
+                            } else {
+                                thing.photoUrl ?: ""
                             }
-                            else
-                            {
-                                photo = thing.photoUrl?: ""
-                            }
-                                viewModel.updateThing(
-                                    Things(thing.id, name, storeUrl, amount.toInt(), chosenType.value.id, photo, chosenBox.value.id)
+                            viewModel.updateThing(
+                                Things(
+                                    thing.id,
+                                    name,
+                                    storeUrl,
+                                    amount.toInt(),
+                                    chosenType.value.id,
+                                    photo,
+                                    chosenBox.value.id
                                 )
+                            )
                         }
                         onDismiss()
                     }
@@ -192,11 +193,13 @@ fun UpdateThingDialog(
                             ) {
                                 filteringOptions.forEach { selectedMovie_ ->
 
-                                    val stringKey = typesList.find { it.id == selectedMovie_.id }?.Name ?: "nothing" //TODO: Переработать
+                                    val stringKey =
+                                        typesList.find { it.id == selectedMovie_.id }?.Name
+                                            ?: "nothing" //TODO: Переработать
 
-                                    var res = ctx.getResources().getIdentifier(stringKey, "string", ctx.packageName)
-                                    if (res == 0)
-                                    {
+                                    var res = ctx.resources
+                                        .getIdentifier(stringKey, "string", ctx.packageName)
+                                    if (res == 0) {
                                         res = R.string.yes
                                     }
 

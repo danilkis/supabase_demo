@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.example.supabasedemo.model.Contacts
 import com.example.supabasedemo.model.Persons
-import com.example.supabasedemo.supa.supaHelper.Companion.getAsyncClient
+import com.example.supabasedemo.supabase.supaHelper.Companion.getAsyncClient
 import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.postgrest.query.Returning
 import kotlinx.coroutines.CoroutineScope

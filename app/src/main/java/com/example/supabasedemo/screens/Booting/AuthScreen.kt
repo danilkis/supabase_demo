@@ -1,4 +1,4 @@
-package com.example.supabasedemo.screens
+package com.example.supabasedemo.screens.Booting
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.supabasedemo.R
 import com.example.supabasedemo.SharedPreference
-import com.example.supabasedemo.supa.supaHelper
+import com.example.supabasedemo.supabase.supaHelper
 
 @Composable
 fun Auth(navController: NavController) {

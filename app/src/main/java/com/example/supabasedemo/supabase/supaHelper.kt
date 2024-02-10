@@ -1,4 +1,4 @@
-package com.example.supabasedemo.supa
+package com.example.supabasedemo.supabase
 
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.createSupabaseClient

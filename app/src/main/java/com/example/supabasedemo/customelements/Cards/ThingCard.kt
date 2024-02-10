@@ -1,4 +1,4 @@
-package com.example.supabasedemo.customelements
+package com.example.supabasedemo.customelements.Cards
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -61,7 +61,10 @@ fun ThingCard(
                     style = MaterialTheme.typography.bodySmall
                 )
                 Spacer(modifier = Modifier.height(4.dp))
-                Text(stringResource(thing.getTypeName(type, ctx)), style = MaterialTheme.typography.bodySmall)
+                Text(
+                    stringResource(thing.getTypeName(type, ctx)),
+                    style = MaterialTheme.typography.bodySmall
+                )
             }
             val photo = thing.photoUrl
 

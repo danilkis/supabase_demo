@@ -1,4 +1,4 @@
-package com.example.supabasedemo.screens
+package com.example.supabasedemo.screens.Orders
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,23 +22,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import com.example.supabasedemo.R
-import com.example.supabasedemo.customelements.PersonCard
+import com.example.supabasedemo.customelements.Cards.PersonCard
 import com.example.supabasedemo.customelements.ToggleHeading
 import com.example.supabasedemo.customelements.UserHead
-import com.example.supabasedemo.model.Box
-import com.example.supabasedemo.model.Contacts
-import com.example.supabasedemo.model.ExpandShapeState
 import com.example.supabasedemo.model.Orders
 import com.example.supabasedemo.model.Persons
 import com.example.supabasedemo.viewmodel.OrderViewmodel
-import com.example.supabasedemo.viewmodel.PersonInfoViewmodel
-import com.example.supabasedemo.viewmodel.PersonInfoViewmodelFactory
 import com.example.supabasedemo.viewmodel.PersonsViewmodel
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
@@ -57,7 +48,6 @@ fun OrderInfoScreen(order: Orders, navController: NavController) {
             person = persons.find { it.id == order.personId }
         }
     }
-    var currentState by remember { mutableStateOf(ExpandShapeState.Collapsed) }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -83,13 +73,19 @@ fun OrderInfoScreen(order: Orders, navController: NavController) {
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "Статус: " + statuses.find { it.id == order.status }?.name ,
+                    text = "Статус: " + statuses.find { it.id == order.status }?.name,
                     style = MaterialTheme.typography.headlineSmall
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 val deadline = LocalDateTime.parse(order.deadline)
-                val formatter = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, Locale.getDefault())
-                val formattedDeadline = formatter.format(deadline.toInstant(TimeZone.of("America/Los_Angeles")).toEpochMilliseconds())
+                val formatter = DateFormat.getDateTimeInstance(
+                    DateFormat.MEDIUM,
+                    DateFormat.SHORT,
+                    Locale.getDefault()
+                )
+                val formattedDeadline = formatter.format(
+                    deadline.toInstant(TimeZone.of("America/Los_Angeles")).toEpochMilliseconds()
+                )
                 Text(
                     text = "Срок: 01.12.2023",
                     style = MaterialTheme.typography.headlineSmall
@@ -97,7 +93,7 @@ fun OrderInfoScreen(order: Orders, navController: NavController) {
             }
         }
         Spacer(Modifier.height(16.dp))
-        PersonCard(Person = person?: Persons(0, "0", "0", 0), navController = navController )
+        PersonCard(Person = person ?: Persons(0, "0", "0", 0), navController = navController)
         Spacer(Modifier.height(16.dp))
         ToggleHeading(Content = { reporting() }, heading = "Отчетность")
     }
