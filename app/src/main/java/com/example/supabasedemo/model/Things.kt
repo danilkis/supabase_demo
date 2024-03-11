@@ -5,6 +5,18 @@ import android.content.Context
 import com.example.supabasedemo.R
 import kotlinx.serialization.Serializable
 
+
+/** Модель таблицы для вещей (Things)
+ * @param id ID вещи
+ * @param name Название вещи
+ * @param store Ссылка на магазин
+ * @param amount Количество
+ * @param type Тип вещи -> [Type]
+ * @param photoUrl Ссылка на фото в S3 supabase
+ * @param boxId ID коробки
+ * getTypeName(types: MutableList<Type>, ctx: Context) - возращает название типа в правильной локализации
+ */
+
 @Serializable
 data class Things(
     val id: Int,

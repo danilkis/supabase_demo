@@ -2,7 +2,7 @@ package com.example.supabasedemo.model
 
 import kotlinx.serialization.Serializable
 
-/** Модель серериализацией для заказов
+/** Модель заказов (Orders)
  * @param id ID заказа
  * @param created_at дата создания
  * @param deadline срок закрытия заказа
