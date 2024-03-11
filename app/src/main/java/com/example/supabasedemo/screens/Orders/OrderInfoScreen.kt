@@ -38,7 +38,7 @@ import java.text.DateFormat
 import java.util.Locale
 
 @Composable
-fun OrderInfoScreen(order: Orders, navController: NavController) {
+fun OrderInfoScreen(order: Orders, navController: NavController) { //TODO: Удалить
     val personsViewModel = PersonsViewmodel()
     val statusVM = OrderViewmodel()
     val statuses by statusVM.statuses.collectAsState(initial = listOf())

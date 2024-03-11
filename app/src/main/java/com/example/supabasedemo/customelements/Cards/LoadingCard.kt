@@ -26,7 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun LoadingCard() {
+fun LoadingCard() { //TODO: Удалить
     val infiniteTransition = rememberInfiniteTransition()
     val color by infiniteTransition.animateColor(
         initialValue = MaterialTheme.colorScheme.primary,

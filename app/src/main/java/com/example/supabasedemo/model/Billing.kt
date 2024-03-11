@@ -12,7 +12,7 @@ import kotlinx.serialization.Serializable
  * @param status статус опллаты
  */
 @Serializable
-data class Billing(
+data class Billing( //TODO: Удалить
     val id: Int,
     val created_at: DateTimePeriod,
     val payment_recieved: DateTimePeriod?, //TODO: Поставить обычный timestamp
