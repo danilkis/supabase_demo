@@ -1,11 +1,11 @@
-package com.example.supabasedemo.viewmodel
+package com.example.supabasedemo.viewmodel.Things
 
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import com.example.supabasedemo.model.Box
-import com.example.supabasedemo.model.Things
-import com.example.supabasedemo.model.Type
+import com.example.supabasedemo.model.Things.Box
+import com.example.supabasedemo.model.Things.Things
+import com.example.supabasedemo.model.Things.Type
 import com.example.supabasedemo.supabase.supaHelper
 import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.postgrest.query.Returning

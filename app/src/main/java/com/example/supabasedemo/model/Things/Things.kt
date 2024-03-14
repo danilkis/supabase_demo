@@ -1,4 +1,4 @@
-package com.example.supabasedemo.model
+package com.example.supabasedemo.model.Things
 
 import android.annotation.SuppressLint
 import android.content.Context

@@ -1,14 +1,6 @@
 package com.example.supabasedemo.screens.Persons
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,10 +13,10 @@ import androidx.navigation.NavController
 import com.example.supabasedemo.R
 import com.example.supabasedemo.customelements.Cards.ContactCard
 import com.example.supabasedemo.customelements.UserHead
-import com.example.supabasedemo.model.Contacts
-import com.example.supabasedemo.model.Persons
-import com.example.supabasedemo.viewmodel.PersonInfoViewmodel
-import com.example.supabasedemo.viewmodel.PersonInfoViewmodelFactory
+import com.example.supabasedemo.model.Persons.Contacts
+import com.example.supabasedemo.model.Persons.Persons
+import com.example.supabasedemo.viewmodel.Person.PersonInfoViewmodel
+import com.example.supabasedemo.viewmodel.Person.PersonInfoViewmodelFactory
 
 
 @Composable

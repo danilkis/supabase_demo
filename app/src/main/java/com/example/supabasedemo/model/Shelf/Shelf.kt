@@ -1,4 +1,4 @@
-package com.example.supabasedemo.model
+package com.example.supabasedemo.model.Shelf
 
 import kotlinx.serialization.Serializable
 

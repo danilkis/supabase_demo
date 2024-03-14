@@ -11,13 +11,14 @@ import androidx.navigation.navArgument
 import com.example.supabasedemo.screens.Booting.Auth
 import com.example.supabasedemo.screens.Booting.Hello
 import com.example.supabasedemo.screens.Booting.MainScreen
-import com.example.supabasedemo.screens.Orders.OrderInfoScreen
 import com.example.supabasedemo.screens.Persons.PersonInfoScreen
 import com.example.supabasedemo.screens.Search.SearchResultScreen
+import com.example.supabasedemo.screens.Shelf.ShelfInfoScreen
 import com.example.supabasedemo.screens.Things.BoxInfoScreen
-import com.example.supabasedemo.viewmodel.OrderViewmodel
-import com.example.supabasedemo.viewmodel.PersonsViewmodel
-import com.example.supabasedemo.viewmodel.ThingsViewmodel
+import com.example.supabasedemo.viewmodel.Order.OrderViewmodel
+import com.example.supabasedemo.viewmodel.Person.PersonsViewmodel
+import com.example.supabasedemo.viewmodel.Shelf.ShelfViewmodel
+import com.example.supabasedemo.viewmodel.Things.ThingsViewmodel
 
 //TODO: Настроить навигацию
 
@@ -27,9 +28,11 @@ fun GeneralNavigation() {
     val personVm = PersonsViewmodel()
     val thingVm = ThingsViewmodel()
     val ordersVm = OrderViewmodel()
+    val shelfVm = ShelfViewmodel()
     val persons by personVm.newPersons.collectAsState(initial = listOf())
     val boxes by thingVm.boxes.collectAsState(initial = listOf())
     val orders by ordersVm.orders.collectAsState(initial = listOf())
+    val shelves by shelfVm.shelves.collectAsState(initial = listOf())
     NavHost(navController = navController, startDestination = "auth") {
         composable("auth") {
             Auth(navController)
@@ -66,13 +69,13 @@ fun GeneralNavigation() {
             }
         }
         composable(
-            "order/{orderId}",
-            arguments = listOf(navArgument("orderId") { type = NavType.IntType })
+            "shelf/{shelfId}",
+            arguments = listOf(navArgument("shelfId") { type = NavType.IntType })
         ) {
-            val orderID: Int = it.arguments?.getInt("orderId") ?: 0
-            orders.forEach { it ->
+            val orderID: Int = it.arguments?.getInt("shelfId") ?: 0
+            shelves.forEach { it ->
                 if (it.id == orderID) {
-                    OrderInfoScreen(it, navController)
+                    ShelfInfoScreen(it, navController)
                 }
             }
         }

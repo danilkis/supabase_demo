@@ -1,9 +1,9 @@
-package com.example.supabasedemo.viewmodel
+package com.example.supabasedemo.viewmodel.Order
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import com.example.supabasedemo.model.Orders
 import com.example.supabasedemo.model.Status
+import com.example.supabasedemo.model.Things.Orders
 import com.example.supabasedemo.supabase.supaHelper
 import io.github.jan.supabase.postgrest.postgrest
 import kotlinx.coroutines.Dispatchers
@@ -21,7 +21,6 @@ class OrderViewmodel : ViewModel() {
         val sts = getStatus()
         emit(sts)
     }
-
 
     private suspend fun getOrders(): List<Orders> {
         return withContext(Dispatchers.IO) {

@@ -1,4 +1,4 @@
-package com.example.supabasedemo.model
+package com.example.supabasedemo.model.Persons
 
 import kotlinx.serialization.Serializable
 

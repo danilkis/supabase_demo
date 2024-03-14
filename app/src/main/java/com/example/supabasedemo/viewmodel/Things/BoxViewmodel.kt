@@ -1,6 +1,6 @@
-package com.example.supabasedemo.viewmodel
+package com.example.supabasedemo.viewmodel.Things
 
-import com.example.supabasedemo.model.Things
+import com.example.supabasedemo.model.Things.Things
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

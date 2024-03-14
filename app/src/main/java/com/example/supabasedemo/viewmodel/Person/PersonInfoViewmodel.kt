@@ -1,10 +1,10 @@
-package com.example.supabasedemo.viewmodel
+package com.example.supabasedemo.viewmodel.Person
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.supabasedemo.model.Contacts
-import com.example.supabasedemo.model.Persons
+import com.example.supabasedemo.model.Persons.Contacts
+import com.example.supabasedemo.model.Persons.Persons
 import com.example.supabasedemo.supabase.supaHelper
 import io.github.jan.supabase.postgrest.postgrest
 import kotlinx.coroutines.flow.Flow
