@@ -13,21 +13,25 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.supabasedemo.customelements.Cards.ShelfCard
 import com.example.supabasedemo.customelements.SearchBarCustom
+import com.example.supabasedemo.qrcode.QrWorker
 import com.example.supabasedemo.viewmodel.Shelf.ShelfViewmodel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun OrdersMainScreen(navController: NavController, viewModel: ShelfViewmodel = viewModel()) {
     val openDialog = remember { mutableStateOf(false) }
+    val ctx = LocalContext.current
     Scaffold(topBar = { SearchBarCustom(navController) }, floatingActionButton = {
         FloatingActionButton(
             onClick = {
                 openDialog.value = true
+                QrWorker().DemoQR(ctx)
             }
         ) {
             Icon(imageVector = Icons.Default.Add, contentDescription = "add icon")

@@ -31,7 +31,6 @@ fun GeneralNavigation() {
     val shelfVm = ShelfViewmodel()
     val persons by personVm.newPersons.collectAsState(initial = listOf())
     val boxes by thingVm.boxes.collectAsState(initial = listOf())
-    val orders by ordersVm.orders.collectAsState(initial = listOf())
     val shelves by shelfVm.shelves.collectAsState(initial = listOf())
     NavHost(navController = navController, startDestination = "auth") {
         composable("auth") {

@@ -65,6 +65,8 @@ dependencies {
     implementation ("androidx.compose.material:material-icons-extended:1.4.3")
     implementation("io.ktor:ktor-client-okhttp:$ktor_version")
 
+    implementation("io.github.g0dkar:qrcode-kotlin:4.1.1")
+
     implementation("io.ktor:ktor-client-android:$ktor_version")
     implementation("androidx.navigation:navigation-compose:2.7.2")
     implementation("io.coil-kt:coil-compose:2.4.0")
