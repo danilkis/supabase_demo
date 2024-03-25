@@ -1,6 +1,7 @@
 package com.example.supabasedemo.viewmodel.Shelf
 
 import android.util.Log
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.supabasedemo.model.Shelf.Shelf
@@ -23,10 +24,13 @@ class ShelfViewmodel: ViewModel() {
             delay(500)
             val cont = getShelves()
             emit(cont)
+            Log.i("ShelfFlow", "REQ")
+            deleteComplete.value = false
         }
     }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), emptyList())
 
+    var deleteComplete = mutableStateOf(false)
     private suspend fun getShelves(): List<Shelf> {
         return withContext(Dispatchers.IO) {
             // Ensure SupabaseClient is initialized on the main thread
@@ -63,6 +67,34 @@ class ShelfViewmodel: ViewModel() {
                 Log.e("SUPA", e.toString())
             }
         }
+    }
 
+    suspend fun deleteShelf(shelfId: Int) {
+        CoroutineScope(Dispatchers.Main).launch {
+            try {
+                val asyncClient = supaHelper.getAsyncClient()
+                asyncClient.postgrest["Shelf"].delete {
+                    eq("id", shelfId)
+                }
+                deleteComplete.value = true
+            } catch (e: Exception) {
+                Log.e("SUPA", e.toString())
+            }
+        }
+    }
+
+    suspend fun updateShelf(shelf: Shelf) {
+        CoroutineScope(Dispatchers.Main).launch {
+            try {
+                val asyncClient = supaHelper.getAsyncClient()
+
+                asyncClient.postgrest["Shelf"].update(shelf)
+                {
+                    eq("id", shelf.id)
+                }
+            } catch (e: Exception) {
+                Log.e("SUPA", e.toString())
+            }
+        }
     }
 }

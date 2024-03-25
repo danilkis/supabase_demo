@@ -22,12 +22,13 @@ import com.example.supabasedemo.viewmodel.Things.ThingsViewmodel
 //TODO: Настроить навигацию
 
 @Composable
-fun GeneralNavigation() {
+fun GeneralNavigation(
+    personVm: PersonsViewmodel = PersonsViewmodel(),
+    thingVm: ThingsViewmodel = ThingsViewmodel(),
+    shelfVm: ShelfViewmodel = ShelfViewmodel()
+) {
     val navController = rememberNavController()
-    val personVm = PersonsViewmodel()
-    val thingVm = ThingsViewmodel()
     val persons by personVm.newPersons.collectAsState(initial = listOf())
-    val boxes by thingVm.boxes.collectAsState(initial = listOf())
     NavHost(navController = navController, startDestination = "auth") {
         composable("auth") {
             Auth(navController)
@@ -56,6 +57,7 @@ fun GeneralNavigation() {
             "box/{boxId}",
             arguments = listOf(navArgument("boxId") { type = NavType.IntType })
         ) {
+            val boxes by thingVm.boxes.collectAsState(initial = listOf())
             val personInfoId: Int = it.arguments?.getInt("boxId") ?: 0
             boxes.forEach { it ->
                 if (it.id == personInfoId) {
@@ -67,7 +69,6 @@ fun GeneralNavigation() {
             "shelf/{shelfId}",
             arguments = listOf(navArgument("shelfId") { type = NavType.IntType })
         ) {
-            val shelfVm = ShelfViewmodel()
             val shelfID: Int = it.arguments?.getInt("shelfId") ?: 0
             val shelves by shelfVm.shelves.collectAsState(initial = listOf())
             shelves.forEach { it ->

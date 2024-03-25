@@ -15,11 +15,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.supabasedemo.customelements.Cards.BoxCard
 import com.example.supabasedemo.customelements.UserHead
@@ -29,10 +29,6 @@ import com.example.supabasedemo.viewmodel.Things.ThingsViewmodel
 
 @Composable
 fun ShelfInfoScreen(shelf: Shelf, navController: NavController) { //TODO: Удалить
-    val thingVm = ThingsViewmodel()
-    val boxes by thingVm.boxes.collectAsState(initial = listOf())
-    val shelfBoxesVm = ShelfBoxesViewmodel()
-    val shelfBoxes by shelfBoxesVm.shelves_boxes.collectAsState(initial = listOf())
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -69,10 +65,23 @@ fun ShelfInfoScreen(shelf: Shelf, navController: NavController) { //TODO: Уда
                         style = MaterialTheme.typography.headlineSmall
                     )
                 }
-
-                Spacer(modifier = Modifier.height(4.dp))
             }
         }
+        Spacer(modifier = Modifier.height(8.dp))
+        Row(horizontalArrangement = Arrangement.Center)
+        {
+            OutlinedButton(onClick = { /*TODO*/ }) {
+                Text("Добавить вещь")
+            }
+            Spacer(modifier = Modifier.width(8.dp))
+            OutlinedButton(onClick = { /*TODO*/ }) {
+                Text("Добавить коробку")
+            }
+        }
+        val thingVm = ThingsViewmodel()
+        val boxes by thingVm.boxes.collectAsStateWithLifecycle(initialValue = listOf())
+        val shelfBoxesVm = ShelfBoxesViewmodel()
+        val shelfBoxes by shelfBoxesVm.shelves_boxes.collectAsStateWithLifecycle(initialValue = listOf())
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -82,12 +91,6 @@ fun ShelfInfoScreen(shelf: Shelf, navController: NavController) { //TODO: Уда
             val CurrentShelf = shelfBoxes.filter { it.ShelfID == shelf.id }
             items(CurrentShelf.flatMap { shelf -> boxes.filter { shelf.BoxID == it.id } }) {
                 BoxCard(it, navController)
-            }
-        }
-        Row(horizontalArrangement = Arrangement.Center)
-        {
-            OutlinedButton(onClick = { /*TODO*/ }) {
-                Text("Добавить вещь")
             }
         }
     }

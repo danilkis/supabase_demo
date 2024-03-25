@@ -12,7 +12,7 @@ import com.example.supabasedemo.screens.Search.boxViewModel
 
 @Composable
 fun BoxResults(query: String, navController: NavController, onResult: (Int) -> Unit) {
-    val boxes by boxViewModel.boxes.collectAsState()
+    val boxes by boxViewModel.boxes.collectAsState(initial = listOf())
     val filteredThings = boxes.filter { box ->
         box.name.contains(query, ignoreCase = true) ||
                 box.barcode?.contains(query, ignoreCase = true) == true

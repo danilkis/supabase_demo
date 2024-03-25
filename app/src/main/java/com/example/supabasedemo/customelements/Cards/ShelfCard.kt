@@ -1,6 +1,8 @@
 package com.example.supabasedemo.customelements.Cards
 
-import androidx.compose.foundation.clickable
+import android.util.Log
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,16 +22,23 @@ import androidx.navigation.NavController
 import com.example.supabasedemo.customelements.UserHead
 import com.example.supabasedemo.model.Shelf.Shelf
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ShelfCard(shelf: Shelf, navController: NavController) {
+fun ShelfCard(shelf: Shelf, navController: NavController, LongClickAction: () -> Unit) {
     //val coroutineScope = rememberCoroutineScope()
     OutlinedCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = 4.dp, top = 2.dp, end = 4.dp, bottom = 2.dp)
-            .clickable {
-                navController.navigate("shelf/${shelf.id}")
-            }
+            .combinedClickable(
+                onClick = {
+                    navController.navigate("shelf/${shelf.id}")
+                    Log.e("NAV", "NAV TO SHELF INFO")
+                },
+                onLongClick = {
+                    LongClickAction()
+                }
+            )
     ) {
         Row(
             modifier = Modifier

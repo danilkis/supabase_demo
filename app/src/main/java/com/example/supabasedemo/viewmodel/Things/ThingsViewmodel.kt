@@ -3,6 +3,7 @@ package com.example.supabasedemo.viewmodel.Things
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.supabasedemo.model.Things.Box
 import com.example.supabasedemo.model.Things.Things
 import com.example.supabasedemo.model.Things.Type
@@ -11,8 +12,13 @@ import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.postgrest.query.Returning
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -25,7 +31,17 @@ open class ThingsViewmodel : ViewModel() {
     var types: StateFlow<MutableList<Type>> = _types
 
     private val _boxes = MutableStateFlow<MutableList<Box>>(mutableListOf())
-    var boxes: StateFlow<MutableList<Box>> = _boxes
+
+    val boxes: Flow<List<Box>> = flow {
+        while (true) {
+            delay(500)
+            val box = getBoxes()
+            emit(box)
+            Log.i("BoxFlow1", "REQ")
+            deleteComplete.value = false
+        }
+    }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), emptyList())
 
     init {
         CoroutineScope(Dispatchers.IO).launch {
@@ -85,7 +101,6 @@ open class ThingsViewmodel : ViewModel() {
                 Log.e("SUPA", e.toString())
             }
         }
-
     }
 
     suspend fun updateThing(thing: Things) {

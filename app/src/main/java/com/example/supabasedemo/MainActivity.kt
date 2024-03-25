@@ -9,6 +9,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.example.supabasedemo.navigation.GeneralNavigation
 import com.example.supabasedemo.ui.theme.SupabaseDemoTheme
+import com.example.supabasedemo.viewmodel.Person.PersonsViewmodel
+import com.example.supabasedemo.viewmodel.Shelf.ShelfViewmodel
+import com.example.supabasedemo.viewmodel.Things.ThingsViewmodel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,7 +23,10 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    GeneralNavigation()
+                    val ShelfVM = ShelfViewmodel() //TODO: Кривая реализация. ПОЧИНИТЬ
+                    val ThingVM = ThingsViewmodel()
+                    val PersonVM = PersonsViewmodel()
+                    GeneralNavigation(PersonVM, ThingVM, ShelfVM)
                 }
             }
         }
