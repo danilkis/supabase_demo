@@ -1,13 +1,14 @@
 package com.example.supabasedemo.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.supabasedemo.qrcode.Scanner.ReaderScreen
 import com.example.supabasedemo.screens.Booting.Auth
 import com.example.supabasedemo.screens.Booting.Hello
 import com.example.supabasedemo.screens.Booting.MainScreen
@@ -28,7 +29,6 @@ fun GeneralNavigation(
     shelfVm: ShelfViewmodel = ShelfViewmodel()
 ) {
     val navController = rememberNavController()
-    val persons by personVm.newPersons.collectAsState(initial = listOf())
     NavHost(navController = navController, startDestination = "auth") {
         composable("auth") {
             Auth(navController)
@@ -38,6 +38,9 @@ fun GeneralNavigation(
             Hello(navController)
             //Авторизация
         }
+        composable("Scanner") {
+            ReaderScreen(navController, thingVm)
+        }
         composable("mainScreen") {
             MainScreen(navController)
             //Переход на главный экран
@@ -46,6 +49,7 @@ fun GeneralNavigation(
             "person/{personInfoId}",
             arguments = listOf(navArgument("personInfoId") { type = NavType.IntType })
         ) {
+            val persons by personVm.newPersons.collectAsStateWithLifecycle(initialValue = listOf())
             val personInfoId: Int = it.arguments?.getInt("personInfoId") ?: 0
             persons.forEach { it ->
                 if (it.id == personInfoId) {
@@ -57,7 +61,7 @@ fun GeneralNavigation(
             "box/{boxId}",
             arguments = listOf(navArgument("boxId") { type = NavType.IntType })
         ) {
-            val boxes by thingVm.boxes.collectAsState(initial = listOf())
+            val boxes by thingVm.boxes.collectAsStateWithLifecycle(initialValue = listOf())
             val personInfoId: Int = it.arguments?.getInt("boxId") ?: 0
             boxes.forEach { it ->
                 if (it.id == personInfoId) {
@@ -70,7 +74,7 @@ fun GeneralNavigation(
             arguments = listOf(navArgument("shelfId") { type = NavType.IntType })
         ) {
             val shelfID: Int = it.arguments?.getInt("shelfId") ?: 0
-            val shelves by shelfVm.shelves.collectAsState(initial = listOf())
+            val shelves by shelfVm.shelves.collectAsStateWithLifecycle(initialValue = listOf())
             shelves.forEach { it ->
                 if (it.id == shelfID) {
                     ShelfInfoScreen(it, navController)

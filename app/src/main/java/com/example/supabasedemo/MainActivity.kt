@@ -12,7 +12,6 @@ import com.example.supabasedemo.ui.theme.SupabaseDemoTheme
 import com.example.supabasedemo.viewmodel.Person.PersonsViewmodel
 import com.example.supabasedemo.viewmodel.Shelf.ShelfViewmodel
 import com.example.supabasedemo.viewmodel.Things.ThingsViewmodel
-
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
