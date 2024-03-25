@@ -37,6 +37,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.supabasedemo.customelements.Cards.ShelfCard
 import com.example.supabasedemo.customelements.SearchBarCustom
+import com.example.supabasedemo.screens.Shelf.Dialog.AddShelfDialog
 import com.example.supabasedemo.screens.Shelf.Dialog.DeleteShelfDialog
 import com.example.supabasedemo.screens.Shelf.Dialog.UpdateShelfDialog
 import com.example.supabasedemo.viewmodel.Shelf.ShelfViewmodel
@@ -179,15 +180,11 @@ fun OrdersMainScreen(navController: NavController, viewModel: ShelfViewmodel = v
             }
         }
         if (openDialog.value) {
-            navController.navigate("Scanner")
-            /*
             AddShelfDialog(
                 openDialog.value,
                 onDismiss = { openDialog.value = false },
                 viewModel
             )
-
-             */
         }
     }
 }

@@ -18,10 +18,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.supabasedemo.customelements.Cards.BoxCard
+import com.example.supabasedemo.customelements.GenerateQRButton
 import com.example.supabasedemo.customelements.UserHead
 import com.example.supabasedemo.model.Shelf.Shelf
 import com.example.supabasedemo.viewmodel.Shelf.ShelfBoxesViewmodel
@@ -53,18 +56,23 @@ fun ShelfInfoScreen(shelf: Shelf, navController: NavController) { //TODO: Уда
                     style = MaterialTheme.typography.displayMedium
                 )
                 Spacer(modifier = Modifier.height(4.dp))
-                Row()
-                {
-                    Text(
-                        text = "Помещение: " + shelf.room,
-                        style = MaterialTheme.typography.headlineSmall
-                    )
-                    Spacer(modifier = Modifier.width(7.dp))
-                    Text(
-                        text = "Этаж" + shelf.floor.toString(),
-                        style = MaterialTheme.typography.headlineSmall
-                    )
-                }
+                Text(
+                    text = "Помещение: " + shelf.room,
+                    style = MaterialTheme.typography.headlineSmall
+                )
+                Spacer(modifier = Modifier.width(7.dp))
+                Text(
+                    text = "Этаж" + shelf.floor.toString(),
+                    style = MaterialTheme.typography.headlineSmall
+                )
+            }
+            Row(
+                Modifier
+                    .padding(10.dp)
+                    .fillMaxWidth(), horizontalArrangement = Arrangement.End
+            )
+            {
+                GenerateQRButton(path = "S" + shelf.id)
             }
         }
         Spacer(modifier = Modifier.height(8.dp))
@@ -94,4 +102,10 @@ fun ShelfInfoScreen(shelf: Shelf, navController: NavController) { //TODO: Уда
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun ShelfPreview() {
+    ShelfInfoScreen(Shelf(0, "Demo", 8, "seu", 1), rememberNavController())
 }

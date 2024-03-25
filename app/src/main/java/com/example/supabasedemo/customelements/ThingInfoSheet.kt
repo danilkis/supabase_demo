@@ -1,9 +1,13 @@
 package com.example.supabasedemo.customelements
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -12,6 +16,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -20,7 +26,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.supabasedemo.R
-import com.example.supabasedemo.customelements.Cards.OrderCard
 import com.example.supabasedemo.model.Things.Things
 import com.example.supabasedemo.model.Things.Type
 import com.example.supabasedemo.viewmodel.Order.OrderThingsViewmodel
@@ -79,20 +84,13 @@ fun ThingSheet(
                 style = MaterialTheme.typography.bodyMedium
             )
             Spacer(modifier = androidx.compose.ui.Modifier.height(16.dp))
-            Text(
-                text = stringResource(R.string.usedInOrders),
-                style = MaterialTheme.typography.headlineMedium
-            )
-            Spacer(modifier = androidx.compose.ui.Modifier.height(16.dp))
-            LazyColumn(
-                modifier = androidx.compose.ui.Modifier
-                    .fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(5.dp)
+            Row(
+                Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
             )
             {
-                items(orders)
-                { order ->
-                    OrderCard(Order = order, navController = navController)
-                }
+                GenerateQRButton(path = "T" + thing.id)
             }
         }
     }
