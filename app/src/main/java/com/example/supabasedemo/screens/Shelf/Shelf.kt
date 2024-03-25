@@ -13,33 +13,32 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.supabasedemo.customelements.Cards.ShelfCard
 import com.example.supabasedemo.customelements.SearchBarCustom
-import com.example.supabasedemo.qrcode.QrWorker
+import com.example.supabasedemo.screens.Shelf.Dialog.AddShelfDialog
 import com.example.supabasedemo.viewmodel.Shelf.ShelfViewmodel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun OrdersMainScreen(navController: NavController, viewModel: ShelfViewmodel = viewModel()) {
     val openDialog = remember { mutableStateOf(false) }
-    val ctx = LocalContext.current
+    //val ctx = LocalContext.current
     Scaffold(topBar = { SearchBarCustom(navController) }, floatingActionButton = {
         FloatingActionButton(
             onClick = {
                 openDialog.value = true
-                QrWorker().DemoQR(ctx)
             }
         ) {
             Icon(imageVector = Icons.Default.Add, contentDescription = "add icon")
         }
     })
     { paddingValues ->
-        val shelf by viewModel.shelves.collectAsState(initial = listOf())
-        if (shelf.isEmpty()) {
+        val shelf = viewModel.shelves.collectAsStateWithLifecycle(initialValue = listOf())
+        if (shelf.value.isEmpty()) {
             Column(modifier = Modifier.fillMaxSize()) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     CircularProgressIndicator(modifier = Modifier.size(60.dp))
@@ -52,10 +51,17 @@ fun OrdersMainScreen(navController: NavController, viewModel: ShelfViewmodel = v
                     .padding(top = paddingValues.calculateTopPadding(), start = 6.dp, end = 6.dp)
             )
             {
-                items(shelf) {
+                items(shelf.value) {
                     ShelfCard(it, navController)
                 }
             }
+        }
+        if (openDialog.value) {
+            AddShelfDialog(
+                openDialog.value,
+                onDismiss = { openDialog.value = false },
+                viewModel
+            )
         }
     }
 }

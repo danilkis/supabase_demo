@@ -1,6 +1,14 @@
 package com.example.supabasedemo.screens.Shelf
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
@@ -49,10 +57,19 @@ fun ShelfInfoScreen(shelf: Shelf, navController: NavController) { //TODO: Уда
                     style = MaterialTheme.typography.displayMedium
                 )
                 Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = "Помещение: " + shelf.room,
-                    style = MaterialTheme.typography.headlineSmall
-                )
+                Row()
+                {
+                    Text(
+                        text = "Помещение: " + shelf.room,
+                        style = MaterialTheme.typography.headlineSmall
+                    )
+                    Spacer(modifier = Modifier.width(7.dp))
+                    Text(
+                        text = "Этаж" + shelf.floor.toString(),
+                        style = MaterialTheme.typography.headlineSmall
+                    )
+                }
+
                 Spacer(modifier = Modifier.height(4.dp))
             }
         }

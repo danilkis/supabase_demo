@@ -20,7 +20,6 @@ class PersonsViewmodel : ViewModel() {
     val _persons = MutableStateFlow<MutableList<Persons>>(mutableListOf())
 
     var newPersons: StateFlow<MutableList<Persons>> = _persons
-
     init {
         CoroutineScope(Dispatchers.IO).launch {
             reloadPersons()
