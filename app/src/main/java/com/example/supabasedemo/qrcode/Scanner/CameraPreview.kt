@@ -15,7 +15,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
@@ -37,6 +39,7 @@ fun CameraPreview(navController: NavController, thingsVM: ThingsViewmodel) {
     val things by thingsVM.things.collectAsStateWithLifecycle(initialValue = listOf())
     val thingID = remember { mutableStateOf("") }
     val types by thingsVM.types.collectAsState(initial = mutableListOf())
+    val haptic = LocalHapticFeedback.current
     AndroidView(
         factory = { AndroidViewContext ->
             PreviewView(AndroidViewContext).apply {
@@ -67,6 +70,7 @@ fun CameraPreview(navController: NavController, thingsVM: ThingsViewmodel) {
                     barcodes.forEach { barcode ->
                         barcode.rawValue?.let { barcodeValue ->
                             barCodeVal.value = barcodeValue
+                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                             when (barcodeValue.first()) {
                                 'B' -> navController.navigate("box/${barcodeValue.substring(1)}")
                                 'S' -> navController.navigate("shelf/${barcodeValue.substring(1)}")

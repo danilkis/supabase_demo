@@ -33,7 +33,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.supabasedemo.R
 import com.example.supabasedemo.model.MainScreenDest
 import com.example.supabasedemo.screens.Persons.PersonScreen
-import com.example.supabasedemo.screens.Shelf.OrdersMainScreen
+import com.example.supabasedemo.screens.Shelf.ShelfScreen
 import com.example.supabasedemo.screens.Things.ThingsMainScreen
 
 
@@ -67,7 +67,7 @@ fun MainScreenNavigation(navControllerGeneral: NavHostController) { //
         },
         MainScreenDest("Стелажи", Icons.Rounded.AllInbox) {
             EnterAnimation {
-                OrdersMainScreen(it)
+                ShelfScreen(it)
             }
         },
     )

@@ -1,5 +1,10 @@
 package com.example.supabasedemo.navigation
 
+import androidx.compose.animation.core.EaseIn
+import androidx.compose.animation.core.EaseOut
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -29,7 +34,10 @@ fun GeneralNavigation(
     shelfVm: ShelfViewmodel = ShelfViewmodel()
 ) {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = "auth") {
+    NavHost(navController = navController,
+        startDestination = "auth",
+        enterTransition = { fadeIn() },
+        exitTransition = { fadeOut() }) {
         composable("auth") {
             Auth(navController)
             //Ввод адреса сервера
@@ -38,7 +46,21 @@ fun GeneralNavigation(
             Hello(navController)
             //Авторизация
         }
-        composable("Scanner") {
+        composable("Scanner",
+            enterTransition = {
+                fadeIn(
+                    animationSpec = tween(
+                        200, easing = EaseIn
+                    )
+                )
+            },
+            exitTransition = {
+                fadeOut(
+                    animationSpec = tween(
+                        200, easing = EaseOut
+                    )
+                )
+            }) {
             ReaderScreen(navController, thingVm)
         }
         composable("mainScreen") {
@@ -47,7 +69,21 @@ fun GeneralNavigation(
         }
         composable(
             "person/{personInfoId}",
-            arguments = listOf(navArgument("personInfoId") { type = NavType.IntType })
+            arguments = listOf(navArgument("personInfoId") { type = NavType.IntType }),
+            enterTransition = {
+                fadeIn(
+                    animationSpec = tween(
+                        200, easing = EaseIn
+                    )
+                )
+            },
+            exitTransition = {
+                fadeOut(
+                    animationSpec = tween(
+                        200, easing = EaseOut
+                    )
+                )
+            }
         ) {
             val persons by personVm.newPersons.collectAsStateWithLifecycle(initialValue = listOf())
             val personInfoId: Int = it.arguments?.getInt("personInfoId") ?: 0
@@ -59,7 +95,21 @@ fun GeneralNavigation(
         }
         composable(
             "box/{boxId}",
-            arguments = listOf(navArgument("boxId") { type = NavType.IntType })
+            arguments = listOf(navArgument("boxId") { type = NavType.IntType }),
+            enterTransition = {
+                fadeIn(
+                    animationSpec = tween(
+                        200, easing = EaseIn
+                    )
+                )
+            },
+            exitTransition = {
+                fadeOut(
+                    animationSpec = tween(
+                        200, easing = EaseOut
+                    )
+                )
+            }
         ) {
             val boxes by thingVm.boxes.collectAsStateWithLifecycle(initialValue = listOf())
             val personInfoId: Int = it.arguments?.getInt("boxId") ?: 0
@@ -71,7 +121,21 @@ fun GeneralNavigation(
         }
         composable(
             "shelf/{shelfId}",
-            arguments = listOf(navArgument("shelfId") { type = NavType.IntType })
+            arguments = listOf(navArgument("shelfId") { type = NavType.IntType }),
+            enterTransition = {
+                fadeIn(
+                    animationSpec = tween(
+                        200, easing = EaseIn
+                    )
+                )
+            },
+            exitTransition = {
+                fadeOut(
+                    animationSpec = tween(
+                        200, easing = EaseOut
+                    )
+                )
+            }
         ) {
             val shelfID: Int = it.arguments?.getInt("shelfId") ?: 0
             val shelves by shelfVm.shelves.collectAsStateWithLifecycle(initialValue = listOf())
@@ -83,10 +147,28 @@ fun GeneralNavigation(
         }
         composable(
             "searchResults/{query}",
-            arguments = listOf(navArgument("query") { type = NavType.StringType })
+            arguments = listOf(navArgument("query") { type = NavType.StringType }),
+            enterTransition = {
+                fadeIn(
+                    animationSpec = tween(
+                        200, easing = EaseIn
+                    )
+                )
+            },
+            exitTransition = {
+                fadeOut(
+                    animationSpec = tween(
+                        200, easing = EaseOut
+                    )
+                )
+            }
         ) { backStackEntry ->
             val query = backStackEntry.arguments?.getString("query")
             SearchResultScreen(query = query!!, navController = navController)
         }
     }
 }
+
+/*
+
+ */
