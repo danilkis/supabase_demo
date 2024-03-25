@@ -18,11 +18,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.supabasedemo.R
 import com.example.supabasedemo.customelements.Cards.BoxCard
 import com.example.supabasedemo.customelements.GenerateQRButton
 import com.example.supabasedemo.customelements.UserHead
@@ -57,12 +59,12 @@ fun ShelfInfoScreen(shelf: Shelf, navController: NavController) { //TODO: Уда
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "Помещение: " + shelf.room,
+                    text = stringResource(R.string.shelf_info_room) + shelf.room,
                     style = MaterialTheme.typography.headlineSmall
                 )
                 Spacer(modifier = Modifier.width(7.dp))
                 Text(
-                    text = "Этаж" + shelf.floor.toString(),
+                    text = stringResource(R.string.shelf_info_floor) + shelf.floor.toString(),
                     style = MaterialTheme.typography.headlineSmall
                 )
             }
@@ -79,11 +81,11 @@ fun ShelfInfoScreen(shelf: Shelf, navController: NavController) { //TODO: Уда
         Row(horizontalArrangement = Arrangement.Center)
         {
             OutlinedButton(onClick = { /*TODO*/ }) {
-                Text("Добавить вещь")
+                Text(stringResource(R.string.add_thing))
             }
             Spacer(modifier = Modifier.width(8.dp))
             OutlinedButton(onClick = { /*TODO*/ }) {
-                Text("Добавить коробку")
+                Text(stringResource(R.string.add_box))
             }
         }
         val thingVm = ThingsViewmodel()

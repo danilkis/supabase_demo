@@ -59,4 +59,15 @@
     <string name="type_handtools">Ручной инструмент</string>
     <string name="type_electrictools">Электроинструмент</string>
     <string name="type_other">Остальное</string>
+    <string name="shelf_name">Название стелажа</string>
+    <string name="shelf_levels">Количество полок</string>
+    <string name="shelf_room">Помещение</string>
+    <string name="shelf_floor">Этаж</string>
+    <string name="shelf_add_new">Добавление нового стелажа</string>
+    <string name="Shelf_edit">Изменение стелажа</string>
+    <string name="add_thing">Добавить вещь</string>
+    <string name="add_box">Добавить коробку</string>
+    <string name="shelf_info_room">"Помещение: "</string>
+    <string name="shelf_info_floor">"Этаж: "</string>
+    <string name="qr_save">Сохраните или отправьте код</string>
 </resources>

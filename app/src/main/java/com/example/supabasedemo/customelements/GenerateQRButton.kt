@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.example.supabasedemo.R
 import com.example.supabasedemo.qrcode.QrWorker
 
 @Composable
@@ -38,5 +39,5 @@ fun generateAndShare(ctx: Context, path: String) {
         this.putExtra(Intent.EXTRA_STREAM, uri)
         this.type = "image/jpeg"
     }
-    ctx.startActivity(Intent.createChooser(intent, "Сохраните или отправьте код"))
+    ctx.startActivity(Intent.createChooser(intent, ctx.getString(R.string.qr_save)))
 }

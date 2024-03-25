@@ -21,7 +21,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -45,7 +44,6 @@ fun UpdateShelfDialog(
     var availableLevels by remember { mutableStateOf("") }
     var room by remember { mutableStateOf("") }
     var floor by remember { mutableStateOf("") }
-    val ctx = LocalContext.current
     name = shelf.name
     availableLevels = shelf.available_levels.toString()
     room = shelf.room
@@ -81,26 +79,26 @@ fun UpdateShelfDialog(
                     OutlinedTextField(
                         value = name,
                         onValueChange = { name = it },
-                        placeholder = { Text(stringResource(R.string.name)) }
+                        placeholder = { Text(stringResource(R.string.shelf_name)) }
                     )
                     Spacer(modifier = Modifier.height(5.dp))
                     OutlinedTextField(
                         value = availableLevels,
                         onValueChange = { availableLevels = it },
-                        placeholder = { Text("Кол-во полок") },
+                        placeholder = { Text(stringResource(R.string.shelf_levels)) },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                     )
                     Spacer(modifier = Modifier.height(5.dp))
                     OutlinedTextField(
                         value = room,
                         onValueChange = { room = it },
-                        placeholder = { Text("Помещение") }
+                        placeholder = { Text(stringResource(R.string.shelf_room)) }
                     )
                     Spacer(modifier = Modifier.height(5.dp))
                     OutlinedTextField(
                         value = floor,
                         onValueChange = { floor = it },
-                        placeholder = { Text("Этаж") },
+                        placeholder = { Text(stringResource(R.string.shelf_floor)) },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                     )
                 }
@@ -114,7 +112,7 @@ fun UpdateShelfDialog(
                     Text(text = stringResource(R.string.cancel))
                 }
             },
-            title = { Text(text = "Изменение стелажа") },
+            title = { Text(text = stringResource(R.string.Shelf_edit)) },
             icon = {
                 Icon(
                     imageVector = Icons.Default.Edit,

@@ -60,4 +60,15 @@
     <string name="type_handtools">Hand Tools</string>
     <string name="type_electrictools">Electric Tools</string>
     <string name="type_other">Others</string>
+    <string name="shelf_name">Shelf name</string>
+    <string name="shelf_levels">Levels</string>
+    <string name="shelf_room">Room</string>
+    <string name="shelf_floor">Floor</string>
+    <string name="shelf_add_new">Adding a new shelf</string>
+    <string name="Shelf_edit">Editing a shelf</string>
+    <string name="add_thing">Add thing</string>
+    <string name="add_box">Add box</string>
+    <string name="shelf_info_room">"Room: "</string>
+    <string name="shelf_info_floor">"Floor: "</string>
+    <string name="qr_save">Save or send a qr code</string>
 </resources>

@@ -59,26 +59,26 @@ fun AddShelfDialog(
                     OutlinedTextField(
                         value = name,
                         onValueChange = { name = it },
-                        placeholder = { Text("Название стелажа") }
+                        placeholder = { Text(stringResource(R.string.shelf_name)) }
                     )
                     Spacer(modifier = Modifier.height(5.dp))
                     OutlinedTextField(
                         value = availablelevels,
                         onValueChange = { availablelevels = it },
-                        placeholder = { Text("Количество полок") },
+                        placeholder = { Text(stringResource(R.string.shelf_levels)) },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                     )
                     Spacer(modifier = Modifier.height(5.dp))
                     OutlinedTextField(
                         value = room,
                         onValueChange = { room = it },
-                        placeholder = { Text("Помещение") }
+                        placeholder = { Text(stringResource(R.string.shelf_room)) }
                     )
                     Spacer(modifier = Modifier.height(5.dp))
                     OutlinedTextField(
                         value = floor,
                         onValueChange = { floor = it },
-                        placeholder = { Text("Этаж") },
+                        placeholder = { Text(stringResource(R.string.shelf_floor)) },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                     )
                 }
@@ -92,7 +92,7 @@ fun AddShelfDialog(
                     Text(text = stringResource(R.string.cancel))
                 }
             },
-            title = { Text(text = "Новый стелаж") },
+            title = { Text(text = stringResource(R.string.shelf_add_new)) },
             icon = {
                 Icon(
                     imageVector = Icons.Default.AllInbox,

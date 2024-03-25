@@ -17,8 +17,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.supabasedemo.R
 import com.example.supabasedemo.customelements.UserHead
 import com.example.supabasedemo.model.Shelf.Shelf
 
@@ -67,12 +69,12 @@ fun ShelfCard(shelf: Shelf, navController: NavController, LongClickAction: () ->
                 Row()
                 {
                     Text(
-                        text = "Помещение: " + shelf.room,
+                        text = stringResource(R.string.shelf_info_room) + shelf.room,
                         style = MaterialTheme.typography.bodyLarge,
                     )
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
-                        text = "Этаж: " + shelf.floor.toString(),
+                        text = stringResource(R.string.shelf_info_floor) + shelf.floor.toString(),
                         style = MaterialTheme.typography.bodyLarge,
                     )
                 }
