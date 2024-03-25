@@ -65,7 +65,7 @@ fun MainScreenNavigation(navControllerGeneral: NavHostController) { //
                 ThingsMainScreen(it)
             }
         },
-        MainScreenDest("Стелажи", Icons.Rounded.AllInbox) {
+        MainScreenDest(stringResource(R.string.shelves), Icons.Rounded.AllInbox) {
             EnterAnimation {
                 ShelfScreen(it)
             }

@@ -40,7 +40,7 @@
     <string name="orders">Заказы</string>
     <string name="nothing_found">По запросу ничего не найдено</string>
     <string name="name_thingInfo">Навзание: %1$s</string>
-    <string name="store_thinginfo">Store: %1$s</string>
+    <string name="store_thinginfo">Магазин: %1$s</string>
     <string name="amount_thinginfo">Количество: %1$s</string>
     <string name="type_thinginfo">Тип: %1$s</string>
     <string name="boxID_thinginfo">Коробка: %1$s</string>
@@ -70,4 +70,5 @@
     <string name="shelf_info_room">"Помещение: "</string>
     <string name="shelf_info_floor">"Этаж: "</string>
     <string name="qr_save">Сохраните или отправьте код</string>
+    <string name="shelves">Стелажи</string>
 </resources>
