@@ -1,6 +1,5 @@
 package com.example.supabasedemo.customelements.Cards
 
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -18,8 +17,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.supabasedemo.R
 import com.example.supabasedemo.customelements.UserHead
 import com.example.supabasedemo.model.Shelf.Shelf
@@ -35,7 +36,6 @@ fun ShelfCard(shelf: Shelf, navController: NavController, LongClickAction: () ->
             .combinedClickable(
                 onClick = {
                     navController.navigate("shelf/${shelf.id}")
-                    Log.e("NAV", "NAV TO SHELF INFO")
                 },
                 onLongClick = {
                     LongClickAction()
@@ -80,5 +80,13 @@ fun ShelfCard(shelf: Shelf, navController: NavController, LongClickAction: () ->
                 }
             }
         }
+    }
+}
+
+@Preview
+@Composable
+fun Prev() {
+    ShelfCard(shelf = Shelf(0, "3", 0, "333", 4), navController = rememberNavController()) {
+
     }
 }

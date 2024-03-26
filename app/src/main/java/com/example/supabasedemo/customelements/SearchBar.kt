@@ -2,15 +2,31 @@ package com.example.supabasedemo.customelements
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SearchBar
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -27,18 +43,19 @@ import com.example.supabasedemo.SharedPreference
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun SearchBarCustom(navController: NavController) {
-    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth())
-    {
-        var text by remember { mutableStateOf("") } // Query for SearchBar
-        var active by remember { mutableStateOf(false) } // Active state for SearchBar
-        val searchHistory = remember { mutableStateListOf("") }
-        val sharedPreference: SharedPreference = SharedPreference(LocalContext.current)
-        LaunchedEffect(Unit) {
-            val savedHistory = sharedPreference.sharedPref.getStringSet("searchHistory", emptySet())
-            searchHistory.addAll(savedHistory ?: emptySet())
-        }
-        Column(modifier = Modifier.padding(5.dp)) {
+    var text by remember { mutableStateOf("") } // Query for SearchBar
+    var active by remember { mutableStateOf(false) } // Active state for SearchBar
+    val searchHistory = remember { mutableStateListOf("") }
+    val sharedPreference: SharedPreference = SharedPreference(LocalContext.current)
+    LaunchedEffect(Unit) {
+        val savedHistory = sharedPreference.sharedPref.getStringSet("searchHistory", emptySet())
+        searchHistory.addAll(savedHistory ?: emptySet())
+    }
+    Column(modifier = Modifier.padding(5.dp)) {
+        Row(modifier = Modifier.fillMaxWidth())
+        {
             SearchBar(
+                modifier = Modifier.fillMaxWidth(),
                 query = text,
                 onQueryChange = {
                     text = it
@@ -75,6 +92,18 @@ fun SearchBarCustom(navController: NavController) {
                             imageVector = Icons.Default.Close,
                             contentDescription = "Close icon"
                         )
+                    } else {
+                        IconButton(
+                            onClick = { navController.navigate("Scanner") },
+                            modifier = Modifier.size(40.dp),
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.QrCodeScanner,
+                                contentDescription = null,
+                                modifier = Modifier.size(95.dp),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
                     }
                 }
             ) {
@@ -95,12 +124,9 @@ fun SearchBarCustom(navController: NavController) {
                         }
                     }
                 }
-
-                Divider()
                 Text(
                     modifier = Modifier
                         .padding(all = 14.dp)
-                        .fillMaxWidth()
                         .clickable {
                             searchHistory.clear()
                             with(sharedPreference.sharedPref.edit()) {
@@ -114,17 +140,6 @@ fun SearchBarCustom(navController: NavController) {
                 )
             }
         }
-        IconButton(
-            onClick = { navController.navigate("Scanner") },
-            modifier = Modifier.size(90.dp),
-        ) {
-            Icon(
-                imageVector = Icons.Filled.QrCodeScanner,
-                contentDescription = null,
-                modifier = Modifier.size(100.dp),
-                tint = MaterialTheme.colorScheme.primary
-            )
-        }
     }
 }
 
@@ -133,3 +148,17 @@ fun SearchBarCustom(navController: NavController) {
 fun SearchTest() {
     SearchBarCustom(navController = rememberNavController())
 }
+/*
+      IconButton(
+          onClick = { navController.navigate("Scanner") },
+          modifier = Modifier.size(90.dp),
+      ) {
+          Icon(
+              imageVector = Icons.Filled.QrCodeScanner,
+              contentDescription = null,
+              modifier = Modifier.size(100.dp),
+              tint = MaterialTheme.colorScheme.primary
+          )
+      }
+
+       */

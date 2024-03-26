@@ -29,9 +29,10 @@ class MainActivity : ComponentActivity() {
                     val ThingVM = ThingsViewmodel()
                     val PersonVM = PersonsViewmodel()
                     GeneralNavigation(PersonVM, ThingVM, ShelfVM)
+                    //val navController = rememberNavController()
+                    //twopane(navController = navController)
                 }
             }
         }
     }
 }
-
