@@ -1,6 +1,8 @@
 package com.example.supabasedemo.screens.Persons
 
 import android.annotation.SuppressLint
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -22,6 +24,7 @@ import com.example.supabasedemo.customelements.SearchBarCustom
 import com.example.supabasedemo.screens.Persons.Dialogs.AddPersonDialog
 import com.example.supabasedemo.viewmodel.Person.PersonsViewmodel
 
+@RequiresApi(Build.VERSION_CODES.Q)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState")
 @Composable
 fun PersonScreen(navController: NavController, viewModel: PersonsViewmodel = viewModel()) {

@@ -24,19 +24,13 @@ import com.example.supabasedemo.screens.Things.ThingsMainScreen
 fun MyAdaptiveApp() {
     val destinations = listOf(
         MainScreenDest(stringResource(id = R.string.persons), Icons.Rounded.Person) {
-            EnterAnimation {
                 PersonScreen(it)
-            }
         },
         MainScreenDest(stringResource(R.string.things), Icons.Rounded.Build) {
-            EnterAnimation {
                 ThingsMainScreen(it)
-            }
         },
         MainScreenDest(stringResource(R.string.shelves), Icons.Rounded.AllInbox) {
-            EnterAnimation {
                 ShelfScreen(it)
-            }
         },
     )
 

@@ -28,6 +28,7 @@ class MainActivity : ComponentActivity() {
                     val ShelfVM = ShelfViewmodel() //TODO: Кривая реализация. ПОЧИНИТЬ
                     val ThingVM = ThingsViewmodel()
                     val PersonVM = PersonsViewmodel()
+                    //MyAdaptiveApp()
                     GeneralNavigation(PersonVM, ThingVM, ShelfVM)
                     //val navController = rememberNavController()
                     //twopane(navController = navController)

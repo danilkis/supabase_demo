@@ -1,9 +1,11 @@
 package com.example.supabasedemo.screens.Persons
 
 import android.annotation.SuppressLint
+import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import androidx.activity.compose.BackHandler
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateColorAsState
@@ -43,6 +45,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,6 +56,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.supabasedemo.customelements.Cards.PersonCard
 import com.example.supabasedemo.model.Persons.Contacts
+import com.example.supabasedemo.model.Persons.HolderSaver
 import com.example.supabasedemo.model.Persons.Persons
 import com.example.supabasedemo.model.States
 import com.example.supabasedemo.screens.Persons.Dialogs.DeleteDialog
@@ -61,14 +65,15 @@ import com.example.supabasedemo.viewmodel.Person.PersonInfoViewmodelFactory
 import com.example.supabasedemo.viewmodel.Person.PersonsViewmodel
 import kotlinx.coroutines.launch
 
+@RequiresApi(Build.VERSION_CODES.Q)
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class, ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 fun PersonPanes(navController: NavController, personsViewmodel: PersonsViewmodel) {
     // Currently selected item
-    //var selectedItem: Persons? by rememberSaveable(stateSaver = Persons) { mutableStateOf(null) }
-    var selectedItem: Persons by remember {
-        mutableStateOf(Persons(0, "", "", 0))
-    }
+    var selectedItem: Persons by rememberSaveable(stateSaver = HolderSaver) { mutableStateOf(Persons(0, "", "", 0)) }
+//    var selectedItem: Persons by remember {
+//        mutableStateOf(Persons(0, "", "", 0))
+//    }
 
 // Create the ListDetailPaneScaffoldState
     val navigator = rememberListDetailPaneScaffoldNavigator<Nothing>()
@@ -134,6 +139,7 @@ fun PersInfo(
 }
 
 
+@RequiresApi(Build.VERSION_CODES.Q)
 @SuppressLint("UnrememberedMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
