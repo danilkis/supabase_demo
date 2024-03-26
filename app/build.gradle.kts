@@ -103,4 +103,11 @@ dependencies {
     implementation("com.google.android.material:material:1.11.0")
 
     implementation("com.google.accompanist:accompanist-permissions:0.28.0")
+
+    implementation("androidx.compose.material3:material3-window-size-class:1.2.1")
+    implementation("androidx.compose.material3:material3-adaptive-navigation-suite:1.0.0-alpha05")
+
+    implementation("androidx.compose.material3.adaptive:adaptive:1.0.0-alpha09")
+    implementation ("androidx.compose.material3.adaptive:adaptive-layout:1.0.0-alpha09")
+    implementation ("androidx.compose.material3.adaptive:adaptive-navigation:1.0.0-alpha09")
 }
