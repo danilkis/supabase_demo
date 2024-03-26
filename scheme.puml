@@ -1,0 +1,119 @@
+@startuml
+class workman.viewmodel.Person.PersonsViewmodel {
++  _persons
++ StateFlow<MutableList<Persons>> newPersons
++  deleteComplete
++ MutableList<Persons> getContacts()
++ void deletePerson(Int)
++ void reloadPersons()
++ void insertContact(Contacts,Persons)
+}
+
+
+class workman.supabase.BucketWorker {
++ String UploadFile(String,ContentResolver)
+}
+
+class workman.viewmodel.Shelf.ShelfViewmodel {
++ Flow<List<Shelf>> shelves
++  deleteComplete
+- List<Shelf> getShelves()
++ void insertShelf(Shelf)
++ void deleteShelf(Int)
++ void updateShelf(Shelf)
+}
+
+
+class workman.MainActivity {
++ void onCreate(Bundle?)
+}
+
+class workman.supabase.supaHelper$Companion {
++ String key
++ String url
++  client
++ void null()
++ SupabaseClient getAsyncClient()
+}
+
+
+class workman.supabase.supaHelper {
+}
+
+
+class workman.viewmodel.Things.ThingsViewmodel {
+-  _things
++ StateFlow<MutableList<Things>> things
+-  _types
++ StateFlow<MutableList<Type>> types
+-  _boxes
++ Flow<List<Box>> boxes
++  deleteComplete
++ MutableList<Things> getThings()
++ void deleteThing(Int)
++ void insertThing(Things)
++ void updateThing(Things)
++ MutableList<Type> getTypes()
++ MutableList<Box> getBoxes()
++ void insertBoxes(Box)
++ void deleteBox(Int)
++ void reloadThings()
+}
+
+class workman.viewmodel.Shelf.ShelfBoxesViewmodel {
++ Flow<List<shelf_boxes>> shelves_boxes
+- List<shelf_boxes> getShelves()
+}
+
+
+class workman.viewmodel.Person.PersonInfoViewmodel {
++ Flow<Contacts> contacts
++ Contacts getContacts(Persons)
+}
+
+
+class workman.viewmodel.Person.PersonInfoViewmodelFactory {
++ T create(Class<T>)
+}
+
+class workman.qrcode.Scanner.Analyser {
+-  lastAnalyzedTimeStamp
++ void analyze(ImageProxy)
+}
+
+
+class workman.viewmodel.Things.BoxViewmodel {
+-  _filterThings
++ StateFlow<MutableList<Things>> FilteredThings
++  boxId
++ MutableList<Things> getBoxThings()
++ void reloadFilteredDevices()
+}
+
+
+class workman.qrcode.Generator.QrWorker {
++ Uri CreateQR(Context,String)
+}
+
+
+
+androidx.lifecycle.ViewModel <|-- workman.viewmodel.Person.PersonsViewmodel
+androidx.lifecycle.ViewModel <|-- workman.viewmodel.Shelf.ShelfViewmodel
+workman.supabase.supaHelper +.. workman.supabase.supaHelper$Companion
+
+workman.viewmodel.Things.ThingsViewmodel --|> workman.supabase.supaHelper
+workman.viewmodel.Things.PersonInfoViewmodel --|> workman.supabase.supaHelper
+workman.viewmodel.Things.BoxViewmodel --|> workman.supabase.supaHelper
+workman.viewmodel.Shelf.ShelfBoxesViewmodel --|> workman.supabase.supaHelper
+workman.viewmodel.Shelf.ShelfViewmodel --|> workman.supabase.supaHelper
+
+workman.viewmodel.Things.ThingsViewmodel --|> workman.supabase.BucketWorker
+
+androidx.lifecycle.ViewModel <|-- workman.viewmodel.Things.ThingsViewmodel
+androidx.lifecycle.ViewModel <|-- workman.viewmodel.Shelf.ShelfBoxesViewmodel
+androidx.lifecycle.ViewModel <|-- workman.viewmodel.Person.PersonInfoViewmodel
+workman.viewmodel.Person.NewInstanceFactory <|-- workman.viewmodel.Person.PersonInfoViewmodelFactory
+workman.qrcode.Scanner.Analyzer <|.. workman.qrcode.Scanner.Analyser
+workman.viewmodel.Things.ThingsViewmodel <|-- workman.viewmodel.Things.BoxViewmodel
+workman.MainActivity <|--  androidx.lifecycle.ViewModel
+@enduml
