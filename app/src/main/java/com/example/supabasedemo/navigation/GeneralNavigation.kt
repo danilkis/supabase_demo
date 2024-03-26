@@ -25,8 +25,6 @@ import com.example.supabasedemo.viewmodel.Person.PersonsViewmodel
 import com.example.supabasedemo.viewmodel.Shelf.ShelfViewmodel
 import com.example.supabasedemo.viewmodel.Things.ThingsViewmodel
 
-//TODO: Настроить навигацию
-
 @Composable
 fun GeneralNavigation(
     personVm: PersonsViewmodel = PersonsViewmodel(),

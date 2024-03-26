@@ -56,7 +56,7 @@ fun PersonScreen(navController: NavController, viewModel: PersonsViewmodel = vie
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            twopane(navController = navController, viewModel)
+            PersonPanes(navController = navController, viewModel)
         }
         if (openDialog.value) {
             AddPersonDialog(

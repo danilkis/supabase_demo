@@ -1,11 +1,10 @@
-package com.example.supabasedemo.screens.Persons
+package com.example.supabasedemo.screens.Shelf
 
 import android.annotation.SuppressLint
 import android.os.VibrationEffect
 import android.os.Vibrator
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.EaseIn
 import androidx.compose.animation.core.EaseOut
@@ -51,23 +50,21 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.supabasedemo.customelements.Cards.PersonCard
-import com.example.supabasedemo.model.Persons.Contacts
+import com.example.supabasedemo.customelements.Cards.ShelfCard
 import com.example.supabasedemo.model.Persons.Persons
+import com.example.supabasedemo.model.Shelf.Shelf
 import com.example.supabasedemo.model.States
-import com.example.supabasedemo.screens.Persons.Dialogs.DeleteDialog
-import com.example.supabasedemo.viewmodel.Person.PersonInfoViewmodel
-import com.example.supabasedemo.viewmodel.Person.PersonInfoViewmodelFactory
-import com.example.supabasedemo.viewmodel.Person.PersonsViewmodel
+import com.example.supabasedemo.screens.Shelf.Dialog.DeleteShelfDialog
+import com.example.supabasedemo.viewmodel.Shelf.ShelfViewmodel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class, ExperimentalMaterial3AdaptiveApi::class)
 @Composable
-fun PersonPanes(navController: NavController, personsViewmodel: PersonsViewmodel) {
+fun ShelfPane(navController: NavController, shelfViewmodel: ShelfViewmodel) {
     // Currently selected item
     //var selectedItem: Persons? by rememberSaveable(stateSaver = Persons) { mutableStateOf(null) }
-    var selectedItem: Persons by remember {
-        mutableStateOf(Persons(0, "", "", 0))
+    var selectedItem: Shelf by remember {
+        mutableStateOf(Shelf(0, "", 0, "0", 0))
     }
 
 // Create the ListDetailPaneScaffoldState
@@ -82,15 +79,15 @@ fun PersonPanes(navController: NavController, personsViewmodel: PersonsViewmodel
         value = navigator.scaffoldValue,
         listPane = {
             AnimatedPane {
-                PersList(
+                ShelfList(
                     onItemClick = { id ->
                         // Set current item
-                        selectedItem = id
+                        //selectedItem = id
                         // Display the detail pane
                         navigator.navigateTo(ListDetailPaneScaffoldRole.Detail)
                     },
                     navController = navController,
-                    viewModel = personsViewmodel
+                    viewModel = shelfViewmodel
                 )
             }
         },
@@ -98,7 +95,7 @@ fun PersonPanes(navController: NavController, personsViewmodel: PersonsViewmodel
             // Show the detail pane content if selected item is available
             selectedItem.let { item ->
                 AnimatedPane(modifier = Modifier.preferredWidth(370.dp)) {
-                    PersInfo(person = item, PersonInfoViewmodel(selectedItem))
+                    ShelfInfo(item, shelfViewmodel)
                 }
             }
         },
@@ -106,43 +103,49 @@ fun PersonPanes(navController: NavController, personsViewmodel: PersonsViewmodel
 }
 
 @Composable
-fun PersInfo(
-    person: Persons,
-    viewModel: PersonInfoViewmodel = viewModel {
-        PersonInfoViewmodelFactory(person).create(PersonInfoViewmodel::class.java)
-    }
+fun ShelfInfo(
+    shelf: Shelf,
+    viewModel: ShelfViewmodel = viewModel()
 ) {
     var currentState by remember { mutableStateOf(States.Empty) }
-    val contact = viewModel.contacts.collectAsState(Contacts(0, "0", "0", "0")).value
-    Crossfade(targetState = currentState, animationSpec = tween(300, 100)) { state ->
-        when (state) {
-            States.Info -> Info()
-            States.Loading -> PersonLoading(person = person)
-            States.Loaded -> PersonLoaded(person = person, contact = contact)
-            States.Empty -> Box {}
-        }
-    }
-    if (person.Name.isNullOrBlank() && person.Surname.isNullOrBlank()) {
-        currentState = States.Info
-    } else {
-        if (contact.id == 0 && contact.phone == "0") {
-            currentState = States.Loading
-        } else {
-            currentState = States.Loaded
-        }
+}
+/*
+val thingVm = ThingsViewmodel()
+val boxes by thingVm.boxes.collectAsStateWithLifecycle(initialValue = listOf())
+val shelfBoxesVm = ShelfBoxesViewmodel()
+val shelfBoxes by shelfBoxesVm.shelves_boxes.collectAsStateWithLifecycle(initialValue = listOf())
+val CurrentShelf = shelfBoxes.filter { it.ShelfID == shelf.id }
+Crossfade(targetState = currentState, animationSpec = tween(300, 100)) { state ->
+    when (state) {
+        States.Info -> Info()
+        States.Loading  -> PersonLoading(person = shelf)
+        States.Loaded -> PersonLoaded(person = shelf, contact = contact)
+        States.Empty -> Box{}
     }
 }
+if (CurrentShelf.first().ShelfID == 0 && CurrentShelf.first().BoxID == 0) { //TODO: Дописать
+    currentState = States.Info
+}
+else {
+    if (contact.id == 0 && contact.phone == "0") {
+        currentState = States.Loading
+    } else {
+        currentState = States.Loaded
+    }
+}
+ */
 
 
 @SuppressLint("UnrememberedMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PersList( //TODO: Уменьшить кол-во рекомпозиций
+fun ShelfList(
     navController: NavController,
-    viewModel: PersonsViewmodel = viewModel(),
+    viewModel: ShelfViewmodel = viewModel(),
     onItemClick: (Persons) -> Unit
 ) {
-    val persons by viewModel.newPersons.collectAsState(initial = mutableListOf()) //TODO: Добавить skeleton loader
+    val EditDialogState = remember { mutableStateOf(false) }
+    val shelves by viewModel.shelves.collectAsState(initial = mutableListOf()) //TODO: Добавить skeleton loader
     var columnAppeared by remember { mutableStateOf(false) }
     var unread by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
@@ -153,7 +156,7 @@ fun PersList( //TODO: Уменьшить кол-во рекомпозиций
             .fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(4.dp)
     )
     {
-        items(persons) { person ->
+        items(shelves) { shelf ->
             val dismissState = rememberSwipeToDismissBoxState(
                 positionalThreshold = { distance -> distance * .25f }
             )
@@ -162,8 +165,8 @@ fun PersList( //TODO: Уменьшить кол-во рекомпозиций
             // check if the user swiped
             if (dismissState.dismissDirection == SwipeToDismissBoxValue.EndToStart) {
 // Create an array of timings in milliseconds
-                DeleteDialog(
-                    person,
+                DeleteShelfDialog(
+                    shelf,
                     viewModel,
                     onDismiss = {
                         unread = false; coroutineScope.launch { dismissState.reset() }
@@ -236,10 +239,7 @@ fun PersList( //TODO: Уменьшить кол-во рекомпозиций
                         }
                     }
                 ) {
-                    PersonCard(
-                        Person = person,
-                        navController = navController
-                    ) { onItemClick(person) }
+                    ShelfCard(shelf, navController, { EditDialogState.value = true })
                 }
             }
         }
