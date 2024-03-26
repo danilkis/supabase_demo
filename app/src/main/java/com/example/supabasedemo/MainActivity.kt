@@ -6,13 +6,16 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.adaptive.navigationsuite.ExperimentalMaterial3AdaptiveNavigationSuiteApi
 import androidx.compose.ui.Modifier
 import com.example.supabasedemo.navigation.GeneralNavigation
 import com.example.supabasedemo.ui.theme.SupabaseDemoTheme
 import com.example.supabasedemo.viewmodel.Person.PersonsViewmodel
 import com.example.supabasedemo.viewmodel.Shelf.ShelfViewmodel
 import com.example.supabasedemo.viewmodel.Things.ThingsViewmodel
+
 class MainActivity : ComponentActivity() {
+    @OptIn(ExperimentalMaterial3AdaptiveNavigationSuiteApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {

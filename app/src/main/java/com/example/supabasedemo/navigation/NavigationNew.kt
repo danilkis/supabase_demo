@@ -1,8 +1,6 @@
 package com.example.supabasedemo.navigation
 
 import androidx.compose.animation.Crossfade
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AllInbox
 import androidx.compose.material.icons.rounded.Build
@@ -10,13 +8,10 @@ import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.navigationsuite.ExperimentalMaterial3AdaptiveNavigationSuiteApi
-import androidx.compose.material3.adaptive.navigationsuite.NavigationSuite
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.example.supabasedemo.R
 import com.example.supabasedemo.model.MainScreenDest
@@ -60,9 +55,7 @@ fun MyAdaptiveApp() {
         }
     ) {
         Crossfade(targetState = selected.intValue, label = "CurrentPage") {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text(text = destinations[it].name)
-            }
+            destinations[it].content
         }
     }
 }

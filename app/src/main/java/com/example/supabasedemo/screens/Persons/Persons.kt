@@ -31,17 +31,17 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DismissDirection
-import androidx.compose.material3.DismissValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SwipeToDismiss
-import androidx.compose.material3.rememberDismissState
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxValue
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -53,7 +53,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
@@ -151,6 +150,7 @@ fun PersonScreen(navController: NavController, viewModel: PersonsViewmodel = vie
 fun PersonColumn(navController: NavController, viewModel: PersonsViewmodel = viewModel()) {
     val persons by viewModel.newPersons.collectAsState(initial = mutableListOf())
     var columnAppeared by remember { mutableStateOf(false) }
+    var unread by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         columnAppeared = true
     }
@@ -160,23 +160,23 @@ fun PersonColumn(navController: NavController, viewModel: PersonsViewmodel = vie
     )
     {
         items(persons) { person ->
-            val dismissState = rememberDismissState()
+            val dismissState = rememberSwipeToDismissBoxState(
+                positionalThreshold = { distance -> distance * .25f }
+            )
             val vibrator = LocalContext.current.getSystemService(Vibrator::class.java)
             val coroutineScope = rememberCoroutineScope()
-            val dismissDirection = dismissState.dismissDirection
-            var isDismissed = dismissState.isDismissed(DismissDirection.EndToStart)
             // check if the user swiped
-            if (isDismissed && dismissDirection == DismissDirection.EndToStart) {
+            if (dismissState.dismissDirection == SwipeToDismissBoxValue.EndToStart) {
 // Create an array of timings in milliseconds
                 DeleteDialog(
                     person,
                     viewModel,
                     onDismiss = {
-                        isDismissed = true; coroutineScope.launch { dismissState.reset() }
+                        unread = false; coroutineScope.launch { dismissState.reset() }
                     },
                     onCancel = {
                         vibrator.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_TICK))
-                        isDismissed = false; coroutineScope.launch { dismissState.reset() }
+                        unread = true; coroutineScope.launch { dismissState.reset() }
                     })
             }
 
@@ -184,7 +184,7 @@ fun PersonColumn(navController: NavController, viewModel: PersonsViewmodel = vie
             LaunchedEffect(Unit) {
                 itemAppeared = true
             }
-            if (viewModel.deleteComplete.value && itemAppeared && !isDismissed) {
+            if (viewModel.deleteComplete.value && itemAppeared && unread) {
                 viewModel.deleteComplete.value = false
             }
             AnimatedVisibility(
@@ -200,47 +200,49 @@ fun PersonColumn(navController: NavController, viewModel: PersonsViewmodel = vie
                     animationSpec = spring(Spring.DampingRatioLowBouncy, Spring.StiffnessMediumLow)
                 )
             ) {
-                SwipeToDismiss(
+                SwipeToDismissBox(
                     state = dismissState,
-                    directions = setOf(
-                        DismissDirection.EndToStart
-                    ),
-                    background = {
-                        val backgroundColor by animateColorAsState(
+                    backgroundContent = {
+                        val direction = dismissState.dismissDirection
+                        val color by animateColorAsState(
                             when (dismissState.targetValue) {
-                                DismissValue.DismissedToStart -> MaterialTheme.colorScheme.error.copy(
-                                    alpha = 0.8f
-                                )
-
-                                else -> MaterialTheme.colorScheme.background
+                                SwipeToDismissBoxValue.Settled -> MaterialTheme.colorScheme.background
+                                SwipeToDismissBoxValue.StartToEnd,
+                                SwipeToDismissBoxValue.EndToStart -> MaterialTheme.colorScheme.error
                             }
                         )
-
-                        // icon size
-                        val iconScale by animateFloatAsState(
-                            targetValue = if (dismissState.targetValue == DismissValue.DismissedToStart) 1.3f else 0.5f
+                        val alignment = when (direction) {
+                            SwipeToDismissBoxValue.StartToEnd -> Alignment.Center
+                            SwipeToDismissBoxValue.EndToStart -> Alignment.CenterEnd
+                            SwipeToDismissBoxValue.Settled -> Alignment.Center
+                        }
+                        val icon = when (direction) {
+                            SwipeToDismissBoxValue.StartToEnd -> Icons.Default.Done
+                            SwipeToDismissBoxValue.EndToStart -> Icons.Default.Delete
+                            SwipeToDismissBoxValue.Settled -> Icons.Default.Done
+                        }
+                        val scale by animateFloatAsState(
+                            if (dismissState.targetValue == SwipeToDismissBoxValue.Settled)
+                                0.75f else 1f
                         )
-
                         Box(
                             Modifier
                                 .fillMaxSize()
-                                .background(color = backgroundColor)
-                                .padding(end = 16.dp), // inner padding
-                            contentAlignment = Alignment.CenterEnd // place the icon at the end (left)
+                                .background(color)
+                                .padding(horizontal = 20.dp),
+                            contentAlignment = alignment
                         ) {
                             Icon(
-                                modifier = Modifier.scale(iconScale),
-                                imageVector = Icons.Outlined.Delete,
-                                contentDescription = "Delete",
-                                tint = Color.White
+                                icon,
+                                contentDescription = "Localized description",
+                                modifier = Modifier.scale(scale)
                             )
                         }
-                    },
-                    dismissContent =
-                    {
-                        PersonCard(person, navController = navController)
-                    })
+                    }
+                ) {
+                    PersonCard(Person = person, navController = navController)
             }
         }
+    }
     }
 }

@@ -51,6 +51,7 @@ android {
 }
 
 dependencies {
+    implementation("androidx.compose.material3:material3-android:1.2.1")
     val supabase_version = "1.3.0"
     val ktor_version = "2.3.4"
 
