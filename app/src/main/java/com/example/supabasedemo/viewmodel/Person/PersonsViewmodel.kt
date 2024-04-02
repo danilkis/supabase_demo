@@ -9,7 +9,6 @@ import com.example.supabasedemo.supabase.supaHelper
 import com.example.supabasedemo.supabase.supaHelper.Companion.getAsyncClient
 import io.github.jan.supabase.gotrue.gotrue
 import io.github.jan.supabase.postgrest.postgrest
-import io.github.jan.supabase.postgrest.query.Returning
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -66,23 +65,31 @@ class PersonsViewmodel : ViewModel() {
         deleteComplete.value = false
     }
 
-    suspend fun insertContact(contacts: Contacts, person: Persons) { //TODO: Проблема с RLS. Не работает вставка
+    suspend fun insertContact(contacts: Contacts, person: Persons) {
         CoroutineScope(Dispatchers.Main).launch {
             try {
-//                val newContact = asyncClient.postgrest["Contacts"].insert(
-//                    Contacts(UUID.randomUUID().toString(), contacts.phone, contacts.telegram, contacts.url)
-//                ).decodeSingle<Contacts>()
+                val newContact = asyncClient.postgrest["Contacts"].insert(
+                    Contacts(
+                        UUID.randomUUID().toString(),
+                        contacts.phone,
+                        contacts.telegram,
+                        contacts.url
+                    )
+                ).decodeSingle<Contacts>()
                 val new_person = Persons(
                     UUID.randomUUID().toString(),
                     person.Name,
                     person.Surname,
-                    "b9033035-7d21-4431-9fc0-a22a18c86cc6",
+                    newContact.id,
                     supaHelper.userUUID
                 )
 
                 Log.e("Session stats: Session", supaHelper.client.gotrue.sessionManager.loadSession().toString())
                 Log.e("Session stats: Sess val", supaHelper.client.gotrue.sessionStatus.value.toString())
                 Log.e("Pers info", new_person.toString())
+
+                Log.e("API Info", supaHelper.client.gotrue.currentSessionOrNull().toString())
+
                 asyncClient.postgrest["Persons"].insert(new_person)
                 reloadPersons()
             } catch (e: Exception) {

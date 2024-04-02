@@ -5,7 +5,7 @@
     <string name="confirmation_question">Вы уверенны?</string>
     <string name="thing_delete_message">Вы собираетесь удалить %1$s?</string>
     <string name="box_delete_message">Вы собираетесь удалить коробку %1$s?</string>
-    <string name="done">Готово</string>
+    <string name="done">Добавить</string>
     <string name="yes">Да</string>
     <string name="name">Название</string>
     <string name="barcode">Штрихкод</string>

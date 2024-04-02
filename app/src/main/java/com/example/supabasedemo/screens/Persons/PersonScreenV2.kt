@@ -1,11 +1,9 @@
 package com.example.supabasedemo.screens.Persons
 
 import android.annotation.SuppressLint
-import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import androidx.activity.compose.BackHandler
-import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateColorAsState
@@ -65,11 +63,20 @@ import com.example.supabasedemo.viewmodel.Person.PersonInfoViewmodelFactory
 import com.example.supabasedemo.viewmodel.Person.PersonsViewmodel
 import kotlinx.coroutines.launch
 
-@RequiresApi(Build.VERSION_CODES.Q)
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class, ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 fun PersonPanes(navController: NavController, personsViewmodel: PersonsViewmodel) {
-    var selectedItem: Persons by rememberSaveable(stateSaver = HolderSaver) { mutableStateOf(Persons("", "", "", "")) }
+    var selectedItem: Persons by rememberSaveable(stateSaver = HolderSaver) {
+        mutableStateOf(
+            Persons(
+                "",
+                "",
+                "",
+                "",
+                ""
+            )
+        )
+    }
     val navigator = rememberListDetailPaneScaffoldNavigator<Nothing>()
 
     BackHandler(navigator.canNavigateBack()) {
@@ -121,19 +128,17 @@ fun PersInfo(
             States.Empty -> Box {}
         }
     }
-    if (person.Name.isNullOrBlank() && person.Surname.isNullOrBlank()) {
-        currentState = States.Info
+    currentState = if (person.Name.isBlank() && person.Surname.isNullOrBlank()) {
+        States.Info
     } else {
         if (contact.id == "" && contact.phone == "0") {
-            currentState = States.Loading
+            States.Loading
         } else {
-            currentState = States.Loaded
+            States.Loaded
         }
     }
 }
 
-
-@RequiresApi(Build.VERSION_CODES.Q)
 @SuppressLint("UnrememberedMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

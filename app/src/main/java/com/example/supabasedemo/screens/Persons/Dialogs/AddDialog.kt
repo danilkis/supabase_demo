@@ -25,6 +25,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.supabasedemo.R
 import com.example.supabasedemo.model.Persons.Contacts
 import com.example.supabasedemo.model.Persons.Persons
+import com.example.supabasedemo.supabase.supaHelper
 import com.example.supabasedemo.viewmodel.Person.PersonsViewmodel
 import kotlinx.coroutines.launch
 
@@ -48,7 +49,7 @@ fun AddPersonDialog(
             confirmButton = {
                 TextButton(
                     onClick = {
-                        val new_person = Persons("", name, surname, "")
+                        val new_person = Persons("", name, surname, "", supaHelper.userUUID)
                         val new_contact = Contacts("", phone, telegram, avito)
                         viewModel.deleteComplete.value = true
                         coroutineScope.launch { viewModel.insertContact(new_contact, new_person) }

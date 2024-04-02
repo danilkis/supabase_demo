@@ -20,7 +20,7 @@
     <string name="add_thing_message">Ajouter une nouvelle chose</string>
     <string name="add_person_message">Ajouter une nouvelle personne</string>
     <string name="person_name">Nom</string>
-    <string name="person_surname">Patronyme</string>
+    <string name="person_surname">Surnom</string>
     <string name="phone_number_format">Numéro de téléphone formaté (+XX.....)</string>
     <string name="telegram_tag">Telegram @</string>
     <string name="person_url">URL de la personne</string>

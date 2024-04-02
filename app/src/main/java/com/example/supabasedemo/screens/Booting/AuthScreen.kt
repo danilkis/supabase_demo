@@ -1,6 +1,5 @@
 package com.example.supabasedemo.screens.Booting
 
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -27,7 +26,7 @@ import com.example.supabasedemo.supabase.supaHelper
 @Composable
 fun Auth(navController: NavController) {
     val ctx = LocalContext.current
-    val sharedPreference: SharedPreference = SharedPreference(ctx)
+    val sharedPreference = SharedPreference(ctx)
     if (!sharedPreference.GetBool("Init_setup")) {
         var serverURL by remember { mutableStateOf("") }
         var APIkey by remember { mutableStateOf("") }
@@ -71,6 +70,10 @@ fun Auth(navController: NavController) {
             if (UserReady) {
                 LaunchedEffect(true)
                 {
+                    supaHelper.userUUID = supaHelper.userSignIn(
+                        sharedPreference.GetString("Server_URL").toString(),
+                        sharedPreference.GetString("API_key").toString()
+                    ).id
                     navController.navigate("helloScreen")
                 }
             }
