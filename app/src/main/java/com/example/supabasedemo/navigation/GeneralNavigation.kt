@@ -84,7 +84,7 @@ fun GeneralNavigation(
             }
         ) {
             val persons by personVm.newPersons.collectAsStateWithLifecycle(initialValue = listOf())
-            val personInfoId: Int = it.arguments?.getInt("personInfoId") ?: 0
+            val personInfoId: String = it.arguments?.getString("personInfoId") ?: ""
             persons.forEach { it ->
                 if (it.id == personInfoId) {
                     PersonInfoScreen(person = it, navController)

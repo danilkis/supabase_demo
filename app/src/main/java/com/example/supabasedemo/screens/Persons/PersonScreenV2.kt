@@ -69,13 +69,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class, ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 fun PersonPanes(navController: NavController, personsViewmodel: PersonsViewmodel) {
-    // Currently selected item
-    var selectedItem: Persons by rememberSaveable(stateSaver = HolderSaver) { mutableStateOf(Persons(0, "", "", 0)) }
-//    var selectedItem: Persons by remember {
-//        mutableStateOf(Persons(0, "", "", 0))
-//    }
-
-// Create the ListDetailPaneScaffoldState
+    var selectedItem: Persons by rememberSaveable(stateSaver = HolderSaver) { mutableStateOf(Persons("", "", "", "")) }
     val navigator = rememberListDetailPaneScaffoldNavigator<Nothing>()
 
     BackHandler(navigator.canNavigateBack()) {
@@ -118,7 +112,7 @@ fun PersInfo(
     }
 ) {
     var currentState by remember { mutableStateOf(States.Empty) }
-    val contact = viewModel.contacts.collectAsState(Contacts(0, "0", "0", "0")).value
+    val contact = viewModel.contacts.collectAsState(Contacts("", "0", "0", "0")).value
     Crossfade(targetState = currentState, animationSpec = tween(300, 100)) { state ->
         when (state) {
             States.Info -> Info()
@@ -130,7 +124,7 @@ fun PersInfo(
     if (person.Name.isNullOrBlank() && person.Surname.isNullOrBlank()) {
         currentState = States.Info
     } else {
-        if (contact.id == 0 && contact.phone == "0") {
+        if (contact.id == "" && contact.phone == "0") {
             currentState = States.Loading
         } else {
             currentState = States.Loaded

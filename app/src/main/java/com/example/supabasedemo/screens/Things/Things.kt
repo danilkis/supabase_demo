@@ -1,8 +1,13 @@
 package com.example.supabasedemo.screens.Things
 
 import android.annotation.SuppressLint
+import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.activity.compose.BackHandler
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Spring
@@ -34,15 +39,20 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
+import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.material3.adaptive.layout.AnimatedPane
+import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
+import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
+import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
 import androidx.compose.material3.rememberSwipeToDismissBoxState
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -59,13 +69,51 @@ import com.example.supabasedemo.customelements.OptionsFAB
 import com.example.supabasedemo.customelements.SearchBarCustom
 import com.example.supabasedemo.customelements.ThingSheet
 import com.example.supabasedemo.customelements.ToggleHeading
+import com.example.supabasedemo.model.Persons.HolderSaver
+import com.example.supabasedemo.model.Persons.Persons
+import com.example.supabasedemo.model.Things.HolderSaverThings
+import com.example.supabasedemo.model.Things.Things
+import com.example.supabasedemo.screens.Persons.PersInfo
+import com.example.supabasedemo.screens.Persons.PersList
 import com.example.supabasedemo.screens.Things.Dialogs.AddBoxDialog
 import com.example.supabasedemo.screens.Things.Dialogs.AddThingDialog
 import com.example.supabasedemo.screens.Things.Dialogs.DeleteBoxDialog
 import com.example.supabasedemo.screens.Things.Dialogs.DeleteThingDialog
 import com.example.supabasedemo.screens.Things.Dialogs.UpdateThingDialog
+import com.example.supabasedemo.viewmodel.Person.PersonInfoViewmodel
+import com.example.supabasedemo.viewmodel.Person.PersonsViewmodel
 import com.example.supabasedemo.viewmodel.Things.ThingsViewmodel
 import kotlinx.coroutines.launch
+
+//@RequiresApi(Build.VERSION_CODES.Q)
+//@OptIn(ExperimentalMaterial3WindowSizeClassApi::class, ExperimentalMaterial3AdaptiveApi::class)
+//@Composable
+//fun ThingPanes(navController: NavController, thingsViewmodel: ThingsViewmodel) {
+//    //var selec3tedItem: Things by rememberSaveable(stateSaver = HolderSaverThings) { mutableStateOf(Things(0,"","",0,0,"",0))  }
+//    val navigator = rememberListDetailPaneScaffoldNavigator<Nothing>()
+//
+//    BackHandler(navigator.canNavigateBack()) {
+//        navigator.navigateBack()
+//    }
+//
+//    ListDetailPaneScaffold(
+//        directive = navigator.scaffoldDirective,
+//        value = navigator.scaffoldValue,
+//        listPane = {
+//            AnimatedPane {
+//
+//            }
+//        },
+//        detailPane = {
+//            // Show the detail pane content if selected item is available
+//            selectedItem.let { item ->
+//                AnimatedPane(modifier = Modifier.preferredWidth(370.dp)) {
+//
+//                }
+//            }
+//        },
+//    )
+//}
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable

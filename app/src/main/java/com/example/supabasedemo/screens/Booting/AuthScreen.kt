@@ -1,5 +1,6 @@
 package com.example.supabasedemo.screens.Booting
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -79,6 +80,7 @@ fun Auth(navController: NavController) {
         supaHelper.key = sharedPreference.GetString("API_key").toString()
         LaunchedEffect(true)
         {
+            supaHelper.userUUID = supaHelper.userSignIn(sharedPreference.GetString("Server_URL").toString(), sharedPreference.GetString("API_key").toString()).id
             navController.navigate("helloScreen")
         }
     }

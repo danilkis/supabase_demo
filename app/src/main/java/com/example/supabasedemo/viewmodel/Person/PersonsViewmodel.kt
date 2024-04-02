@@ -5,7 +5,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.example.supabasedemo.model.Persons.Contacts
 import com.example.supabasedemo.model.Persons.Persons
+import com.example.supabasedemo.supabase.supaHelper
 import com.example.supabasedemo.supabase.supaHelper.Companion.getAsyncClient
+import io.github.jan.supabase.gotrue.gotrue
 import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.postgrest.query.Returning
 import kotlinx.coroutines.CoroutineScope
@@ -14,8 +16,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.UUID
 
 class PersonsViewmodel : ViewModel() {
+    val asyncClient = getAsyncClient()
 
     val _persons = MutableStateFlow<MutableList<Persons>>(mutableListOf())
 
@@ -33,18 +37,17 @@ class PersonsViewmodel : ViewModel() {
         return withContext(Dispatchers.Main) {
             try {
                 deleteComplete.value = false
-                val asyncClient = getAsyncClient()
-                return@withContext asyncClient.postgrest["Persons"].select().decodeList<Persons>()
+                return@withContext asyncClient.postgrest["Persons"].select().decodeList<Persons>().toMutableList()
             } catch (e: Exception) {
-                return@withContext emptyList()
+                Log.e("pers", e.toString())
+                return@withContext emptyList<Persons>().toMutableList() //TODO: Поменять на простой лист
             }
-        } as MutableList<Persons>
+        }
     }
 
-    suspend fun deletePerson(personId: Int) {
+    suspend fun deletePerson(personId: String) {
         CoroutineScope(Dispatchers.Main).launch {
             try {
-                val asyncClient = getAsyncClient()
                 val info_person = asyncClient.postgrest["Persons"].select {
                     eq("id", personId)
                 }.decodeSingle<Persons>()
@@ -63,33 +66,28 @@ class PersonsViewmodel : ViewModel() {
         deleteComplete.value = false
     }
 
-    suspend fun insertContact(contacts: Contacts, person: Persons) {
+    suspend fun insertContact(contacts: Contacts, person: Persons) { //TODO: Проблема с RLS. Не работает вставка
         CoroutineScope(Dispatchers.Main).launch {
             try {
-                val asyncClient = getAsyncClient()
-                val info = asyncClient.postgrest["Contacts"].select().decodeList<Contacts>()
-                val new_contact =
-                    Contacts(info.last().id + 1, contacts.phone, contacts.telegram, contacts.url)
-                asyncClient.postgrest["Contacts"].insert(
-                    new_contact,
-                    returning = Returning.HEADERS_ONLY
-                )
-                val info_person = asyncClient.postgrest["Persons"].select().decodeList<Persons>()
+//                val newContact = asyncClient.postgrest["Contacts"].insert(
+//                    Contacts(UUID.randomUUID().toString(), contacts.phone, contacts.telegram, contacts.url)
+//                ).decodeSingle<Contacts>()
                 val new_person = Persons(
-                    info_person.last().id + 1,
+                    UUID.randomUUID().toString(),
                     person.Name,
                     person.Surname,
-                    info.last().id + 1
+                    "b9033035-7d21-4431-9fc0-a22a18c86cc6",
+                    supaHelper.userUUID
                 )
-                asyncClient.postgrest["Persons"].insert(
-                    new_person,
-                    returning = Returning.HEADERS_ONLY
-                )
+
+                Log.e("Session stats: Session", supaHelper.client.gotrue.sessionManager.loadSession().toString())
+                Log.e("Session stats: Sess val", supaHelper.client.gotrue.sessionStatus.value.toString())
+                Log.e("Pers info", new_person.toString())
+                asyncClient.postgrest["Persons"].insert(new_person)
                 reloadPersons()
             } catch (e: Exception) {
                 Log.e("SUPA", e.toString())
             }
         }
-
     }
 }

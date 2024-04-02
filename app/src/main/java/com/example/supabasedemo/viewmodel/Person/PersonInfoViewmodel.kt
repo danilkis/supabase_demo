@@ -28,7 +28,7 @@ class PersonInfoViewmodel(persons: Persons) : ViewModel() {
                 .decodeSingle<Contacts>()
             contact
         } catch (e: Exception) {
-            Contacts(0, "0", "0", "0")
+            Contacts("", "0", "0", "0")
         }
     }
 }

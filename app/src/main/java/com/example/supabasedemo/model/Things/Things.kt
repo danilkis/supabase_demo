@@ -2,8 +2,12 @@ package com.example.supabasedemo.model.Things
 
 import android.annotation.SuppressLint
 import android.content.Context
+import androidx.compose.runtime.saveable.Saver
 import com.example.supabasedemo.R
+import com.example.supabasedemo.model.Persons.Persons
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 @Serializable
 data class Things(
@@ -26,3 +30,7 @@ data class Things(
         return res
     }
 }
+val HolderSaverThings = Saver<Persons, String>(
+    save = { Json.encodeToString(it) },
+    restore = { Json.decodeFromString(it) }
+)

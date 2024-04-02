@@ -48,8 +48,8 @@ fun AddPersonDialog(
             confirmButton = {
                 TextButton(
                     onClick = {
-                        val new_person = Persons(0, name, surname, 0)
-                        val new_contact = Contacts(0, phone, telegram, avito)
+                        val new_person = Persons("", name, surname, "")
+                        val new_contact = Contacts("", phone, telegram, avito)
                         viewModel.deleteComplete.value = true
                         coroutineScope.launch { viewModel.insertContact(new_contact, new_person) }
                         onDismiss()

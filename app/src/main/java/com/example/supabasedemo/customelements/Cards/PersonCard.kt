@@ -73,10 +73,3 @@ fun PersonCard(Person: Persons, navController: NavController, onClick: (() -> Un
     }
 }
 
-@Preview
-@Composable
-fun Prevw() {
-    PersonCard(Persons(0, "3", "3", 1), navController = rememberNavController()) {
-
-    }
-}

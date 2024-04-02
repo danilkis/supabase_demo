@@ -35,7 +35,7 @@ fun PersonInfoScreen(
         PersonInfoViewmodelFactory(person).create(PersonInfoViewmodel::class.java)
     }
 ) {
-    val contact = viewModel.contacts.collectAsState(Contacts(0, "0", "0", "0")).value
+    val contact = viewModel.contacts.collectAsState(Contacts("", "0", "0", "0")).value
     Column(
         modifier = Modifier
             .fillMaxSize()
