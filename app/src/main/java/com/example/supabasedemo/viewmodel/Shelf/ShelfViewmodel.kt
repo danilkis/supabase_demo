@@ -17,7 +17,9 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.UUID
 
+@Suppress("LABEL_NAME_CLASH")
 class ShelfViewmodel: ViewModel() {
     val shelves: Flow<List<Shelf>> = flow {
         while (true) {
@@ -28,7 +30,7 @@ class ShelfViewmodel: ViewModel() {
             deleteComplete.value = false
         }
     }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), emptyList())
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(2000L), emptyList())
 
     var deleteComplete = mutableStateOf(false)
     private suspend fun getShelves(): List<Shelf> {
@@ -53,11 +55,12 @@ class ShelfViewmodel: ViewModel() {
                 val info = asyncClient.postgrest["Shelf"].select().decodeList<Shelf>()
                 val new_contact =
                     Shelf(
-                        info.last().id + 1,
+                        UUID.randomUUID().toString(),
                         shelf.name,
                         shelf.available_levels,
                         shelf.room,
-                        shelf.floor
+                        shelf.floor,
+                        supaHelper.userUUID
                     )
                 asyncClient.postgrest["Shelf"].insert(
                     new_contact,
@@ -69,7 +72,7 @@ class ShelfViewmodel: ViewModel() {
         }
     }
 
-    suspend fun deleteShelf(shelfId: Int) {
+    suspend fun deleteShelf(shelfId: String) {
         CoroutineScope(Dispatchers.Main).launch {
             try {
                 val asyncClient = supaHelper.getAsyncClient()

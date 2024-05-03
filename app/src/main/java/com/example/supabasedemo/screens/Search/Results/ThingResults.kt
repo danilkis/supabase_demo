@@ -12,7 +12,7 @@ import com.example.supabasedemo.screens.Search.thingsViewModel
 @Composable
 fun ThingsResults(query: String, onResult: (Int) -> Unit) {
     val types by thingsViewModel.types.collectAsState(initial = mutableListOf())
-    val things by thingsViewModel.things.collectAsState()
+    val things by thingsViewModel.things.collectAsState(initial = mutableListOf())
 
     val filteredThings = things.filter { thing ->
         thing.name.contains(query, ignoreCase = true) ||

@@ -1,5 +1,6 @@
 package com.example.supabasedemo.screens.Things.Dialogs
 
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
@@ -37,6 +38,7 @@ import com.example.supabasedemo.model.Things.Box
 import com.example.supabasedemo.model.Things.Things
 import com.example.supabasedemo.model.Things.Type
 import com.example.supabasedemo.supabase.BucketWorker
+import com.example.supabasedemo.supabase.supaHelper
 import com.example.supabasedemo.viewmodel.Things.ThingsViewmodel
 import kotlinx.coroutines.launch
 
@@ -54,7 +56,7 @@ fun AddThingDialog(
     var storeUrl by remember { mutableStateOf("") }
     var filePath by remember { mutableStateOf("") }
     val chosenType by remember { mutableStateOf(mutableStateOf(Type(0, ""))) }
-    val chosenBox by remember { mutableStateOf(mutableStateOf(Box(0, "", null))) }
+    val chosenBox by remember { mutableStateOf(mutableStateOf(Box("", "", ""))) }
     val ctx = LocalContext.current
     if (open) {
         AlertDialog(
@@ -64,18 +66,24 @@ fun AddThingDialog(
             confirmButton = {
                 TextButton(
                     onClick = {
+                        var boxuuid = chosenBox.value.id
+                        Log.e("BoxVal", chosenBox.value.toString())
+                        if (chosenBox.value.id.isNullOrBlank()) {
+                            boxuuid = "00000000-0000-0000-0000-000000000000"
+                        }
                         coroutineScope.launch {
                             val photo = BucketWorker().UploadFile(filePath, contentResolver)
                             if (!photo.isNullOrBlank()) {
                                 viewModel.insertThing(
                                     Things(
-                                        0,
+                                        "",
                                         name,
                                         storeUrl,
                                         amount.toInt(),
                                         chosenType.value.id,
                                         photo,
-                                        chosenBox.value.id
+                                        boxuuid,
+                                        supaHelper.userUUID
                                     )
                                 )
                             }

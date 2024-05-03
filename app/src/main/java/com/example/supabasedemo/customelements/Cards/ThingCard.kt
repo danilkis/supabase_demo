@@ -31,7 +31,7 @@ import com.example.supabasedemo.model.Things.Type
 @Composable
 fun ThingCard(
     thing: Things,
-    type: MutableList<Type>,
+    type: List<Type>,
     onClick: () -> Unit,
     LongClickAction: () -> Unit
 ) {

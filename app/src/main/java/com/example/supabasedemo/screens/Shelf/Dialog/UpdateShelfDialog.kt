@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.supabasedemo.R
 import com.example.supabasedemo.model.Shelf.Shelf
+import com.example.supabasedemo.supabase.supaHelper
 import com.example.supabasedemo.viewmodel.Shelf.ShelfViewmodel
 import kotlinx.coroutines.launch
 
@@ -64,7 +65,8 @@ fun UpdateShelfDialog(
                                     name,
                                     availableLevels.toInt(),
                                     room,
-                                    floor.toInt()
+                                    floor.toInt(),
+                                    supaHelper.userUUID
                                 )
                             )
                         }

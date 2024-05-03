@@ -104,7 +104,7 @@ fun CameraPreview(navController: NavController, thingsVM: ThingsViewmodel) {
         }
     )
     if (ModalSheetState.value) {
-        things.find { it.id == thingID.value.toInt() }?.let {
+        things.find { it.id == thingID.value }?.let {
             ThingSheet(
                 thing = it,
                 types,

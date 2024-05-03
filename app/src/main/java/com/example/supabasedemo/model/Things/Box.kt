@@ -9,9 +9,9 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class Box(
-    val id: Int,
+    val id: String,
     val name: String,
-    val barcode: String?
+    val user_id: String
 ) {
     fun getBoxName(types: MutableList<Box>): String {
         return types.find { it.id == id }?.name ?: "Nothing"

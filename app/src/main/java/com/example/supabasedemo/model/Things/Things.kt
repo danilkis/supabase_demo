@@ -11,16 +11,17 @@ import kotlinx.serialization.json.Json
 
 @Serializable
 data class Things(
-    val id: Int,
+    val id: String,
     val name: String,
     val store: String?,
     val amount: Int,
     val type: Int,
     val photoUrl: String?,
-    val boxId: Int
+    val boxId: String?,
+    val user_id: String
 ) {
     @SuppressLint("DiscouragedApi")
-    fun getTypeName(types: MutableList<Type>, ctx: Context): Int {
+    fun getTypeName(types: List<Type>, ctx: Context): Int {
         val stringKey = types.find { it.id == type }?.Name ?: "nothing"
 
         var res = ctx.resources.getIdentifier(stringKey, "string", ctx.packageName)

@@ -64,7 +64,7 @@ fun ShelfPane(navController: NavController, shelfViewmodel: ShelfViewmodel) {
     // Currently selected item
     //var selectedItem: Persons? by rememberSaveable(stateSaver = Persons) { mutableStateOf(null) }
     var selectedItem: Shelf by remember {
-        mutableStateOf(Shelf(0, "", 0, "0", 0))
+        mutableStateOf(Shelf("", "", 0, "0", 0, ""))
     }
 
 // Create the ListDetailPaneScaffoldState

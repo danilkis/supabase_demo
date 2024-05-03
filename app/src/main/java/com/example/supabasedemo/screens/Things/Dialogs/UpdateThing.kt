@@ -35,6 +35,7 @@ import com.example.supabasedemo.model.Things.Box
 import com.example.supabasedemo.model.Things.Things
 import com.example.supabasedemo.model.Things.Type
 import com.example.supabasedemo.supabase.BucketWorker
+import com.example.supabasedemo.supabase.supaHelper
 import com.example.supabasedemo.viewmodel.Things.ThingsViewmodel
 import kotlinx.coroutines.launch
 
@@ -57,7 +58,7 @@ fun UpdateThingDialog(
     var storeUrl by remember { mutableStateOf("") }
     val filePath by remember { mutableStateOf("") }
     val chosenType by remember { mutableStateOf(mutableStateOf(Type(0, ""))) }
-    val chosenBox by remember { mutableStateOf(mutableStateOf(Box(0, "", null))) }
+    val chosenBox by remember { mutableStateOf(mutableStateOf(Box("", "", ""))) }
     val ctx = LocalContext.current
     name = thing.name
     amount = thing.amount.toString()
@@ -86,7 +87,8 @@ fun UpdateThingDialog(
                                     amount.toInt(),
                                     chosenType.value.id,
                                     photo,
-                                    chosenBox.value.id
+                                    chosenBox.value.id,
+                                    supaHelper.userUUID
                                 )
                             )
                         }

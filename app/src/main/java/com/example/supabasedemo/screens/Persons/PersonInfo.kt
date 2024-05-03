@@ -23,6 +23,7 @@ import com.example.supabasedemo.customelements.Cards.ContactCard
 import com.example.supabasedemo.customelements.UserHead
 import com.example.supabasedemo.model.Persons.Contacts
 import com.example.supabasedemo.model.Persons.Persons
+import com.example.supabasedemo.supabase.supaHelper
 import com.example.supabasedemo.viewmodel.Person.PersonInfoViewmodel
 import com.example.supabasedemo.viewmodel.Person.PersonInfoViewmodelFactory
 
@@ -35,7 +36,8 @@ fun PersonInfoScreen(
         PersonInfoViewmodelFactory(person).create(PersonInfoViewmodel::class.java)
     }
 ) {
-    val contact = viewModel.contacts.collectAsState(Contacts("", "0", "0", "0")).value
+    val contact =
+        viewModel.contacts.collectAsState(Contacts("", "0", "0", "0", supaHelper.userUUID)).value
     Column(
         modifier = Modifier
             .fillMaxSize()

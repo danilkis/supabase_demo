@@ -46,7 +46,8 @@ fun AddShelfDialog(
             confirmButton = {
                 TextButton(
                     onClick = {
-                        val new_shelf = Shelf(0, name, availablelevels.toInt(), room, floor.toInt())
+                        val new_shelf =
+                            Shelf("", name, availablelevels.toInt(), room, floor.toInt(), "")
                         coroutineScope.launch { viewModel.insertShelf(new_shelf) }
                         onDismiss()
                     }

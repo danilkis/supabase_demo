@@ -14,5 +14,6 @@ data class Contacts(
     val id: String,
     val phone: String,
     val telegram: String?,
-    val url: String?
+    val url: String?,
+    val user_id: String
 )

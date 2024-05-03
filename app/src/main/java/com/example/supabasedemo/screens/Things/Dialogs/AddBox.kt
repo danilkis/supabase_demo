@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.supabasedemo.R
 import com.example.supabasedemo.model.Things.Box
+import com.example.supabasedemo.supabase.supaHelper
 import com.example.supabasedemo.viewmodel.Things.ThingsViewmodel
 import kotlinx.coroutines.launch
 
@@ -42,7 +43,7 @@ fun AddBoxDialog(
             confirmButton = {
                 TextButton(
                     onClick = {
-                        val box = Box(0, name, barcode)
+                        val box = Box("", name, supaHelper.userUUID)
                         viewModel.deleteComplete.value = true
                         coroutineScope.launch { viewModel.insertBoxes(box) }
                         onDismiss()

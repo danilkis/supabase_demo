@@ -73,7 +73,8 @@ class PersonsViewmodel : ViewModel() {
                         UUID.randomUUID().toString(),
                         contacts.phone,
                         contacts.telegram,
-                        contacts.url
+                        contacts.url,
+                        supaHelper.userUUID
                     )
                 ).decodeSingle<Contacts>()
                 val new_person = Persons(

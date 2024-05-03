@@ -10,9 +10,10 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class Shelf(
-    val id: Int,
+    val id: String,
     val name: String,
     val available_levels: Int?,
     val room: String,
-    val floor: Int
+    val floor: Int,
+    val user_id: String
 )

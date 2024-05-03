@@ -19,11 +19,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.supabasedemo.R
 import com.example.supabasedemo.customelements.Cards.BoxCard
 import com.example.supabasedemo.customelements.GenerateQRButton
@@ -45,9 +43,9 @@ fun ShelfInfoScreen(shelf: Shelf, navController: NavController) { //TODO: Уда
             verticalAlignment = Alignment.CenterVertically
         ) {
             UserHead(
-                id = shelf.id.toString(),
+                id = shelf.id,
                 firstName = shelf.name,
-                lastName = shelf.id.toString(),
+                lastName = shelf.id,
                 size = 95.dp,
                 textStyle = MaterialTheme.typography.headlineLarge
             )
@@ -104,10 +102,4 @@ fun ShelfInfoScreen(shelf: Shelf, navController: NavController) { //TODO: Уда
             }
         }
     }
-}
-
-@Preview
-@Composable
-fun ShelfPreview() {
-    ShelfInfoScreen(Shelf(0, "Demo", 8, "seu", 1), rememberNavController())
 }

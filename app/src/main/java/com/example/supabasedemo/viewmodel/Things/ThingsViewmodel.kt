@@ -14,40 +14,46 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.UUID
 
 open class ThingsViewmodel : ViewModel() {
-    private val _things = MutableStateFlow<MutableList<Things>>(mutableListOf())
+    val things: Flow<List<Things>> = flow {
+        while (true) {
+            delay(500)
+            val cont = getThings()
+            emit(cont)
+            Log.i("ThingFlow", "REQ")
+            deleteComplete.value = false
+        }
+    }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(2000L), emptyList())
 
-    var things: StateFlow<MutableList<Things>> = _things
-
-    private val _types = MutableStateFlow<MutableList<Type>>(mutableListOf())
-    var types: StateFlow<MutableList<Type>> = _types
-
-    private val _boxes = MutableStateFlow<MutableList<Box>>(mutableListOf())
+    val types: Flow<List<Type>> = flow {
+        while (true) {
+            delay(500)
+            val cont = getTypes()
+            emit(cont)
+            Log.i("TypeFlow", "REQ")
+            deleteComplete.value = false
+        }
+    }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(2000L), emptyList())
 
     val boxes: Flow<List<Box>> = flow {
         while (true) {
             delay(500)
-            val box = getBoxes()
-            emit(box)
-            Log.i("BoxFlow1", "REQ")
+            val cont = getBoxes()
+            emit(cont)
+            Log.i("BoxFlow", "REQ")
             deleteComplete.value = false
         }
     }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), emptyList())
-
-    init {
-        CoroutineScope(Dispatchers.IO).launch {
-            reloadThings()
-        }
-    }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(2000L), emptyList())
 
     var deleteComplete = mutableStateOf(false)
 
@@ -63,14 +69,13 @@ open class ThingsViewmodel : ViewModel() {
         } as MutableList<Things>
     }
 
-    suspend fun deleteThing(thingId: Int) {
+    suspend fun deleteThing(thingId: String) {
         CoroutineScope(Dispatchers.Main).launch {
             try {
                 val asyncClient = supaHelper.getAsyncClient()
                 asyncClient.postgrest["Things"].delete {
                     eq("id", thingId)
                 }
-                reloadThings()
             } catch (e: Exception) {
                 Log.e("SUPA", e.toString())
             }
@@ -81,22 +86,21 @@ open class ThingsViewmodel : ViewModel() {
         CoroutineScope(Dispatchers.Main).launch {
             try {
                 val asyncClient = supaHelper.getAsyncClient()
-                val info = asyncClient.postgrest["Things"].select().decodeList<Things>()
                 val new_thing =
                     Things(
-                        info.last().id + 1,
+                        UUID.randomUUID().toString(),
                         thing.name,
                         thing.store,
                         thing.amount,
                         thing.type,
                         thing.photoUrl,
-                        thing.boxId
+                        thing.boxId,
+                        supaHelper.userUUID
                     )
                 asyncClient.postgrest["Things"].insert(
                     new_thing,
                     returning = Returning.HEADERS_ONLY
                 )
-                reloadThings()
             } catch (e: Exception) {
                 Log.e("SUPA", e.toString())
             }
@@ -112,7 +116,6 @@ open class ThingsViewmodel : ViewModel() {
                 {
                     eq("id", thing.id)
                 }
-                reloadThings()
             } catch (e: Exception) {
                 Log.e("SUPA", e.toString())
             }
@@ -126,6 +129,7 @@ open class ThingsViewmodel : ViewModel() {
                 var asyncClient = supaHelper.getAsyncClient()
                 return@withContext asyncClient.postgrest["Thing_types"].select().decodeList<Type>()
             } catch (e: Exception) {
+                Log.e("Types", "Failed to fetch")
                 return@withContext emptyList()
             }
         } as MutableList<Type>
@@ -135,6 +139,7 @@ open class ThingsViewmodel : ViewModel() {
         return withContext(Dispatchers.Main) {
             try {
                 var asyncClient = supaHelper.getAsyncClient()
+                Log.e("Boxes", asyncClient.postgrest["Box"].select().decodeList<Box>().toString())
                 return@withContext asyncClient.postgrest["Box"].select().decodeList<Box>()
             } catch (e: Exception) {
                 return@withContext emptyList()
@@ -146,38 +151,28 @@ open class ThingsViewmodel : ViewModel() {
         CoroutineScope(Dispatchers.Main).launch {
             try {
                 var asyncClient = supaHelper.getAsyncClient()
-                var info = asyncClient.postgrest["Box"].select().decodeList<Box>()
                 val new_thing =
-                    Box(info.last().id + 1, box.name, box.barcode)
+                    Box(UUID.randomUUID().toString(), box.name, supaHelper.userUUID)
                 asyncClient.postgrest["Box"].insert(
                     new_thing,
                     returning = Returning.HEADERS_ONLY
                 )
-                reloadThings()
             } catch (e: Exception) {
                 Log.e("ThingsViewmodel", e.toString())
             }
         }
     }
 
-    suspend fun deleteBox(boxId: Int) {
+    suspend fun deleteBox(boxId: String) {
         CoroutineScope(Dispatchers.Main).launch {
             try {
                 val asyncClient = supaHelper.getAsyncClient()
                 asyncClient.postgrest["Box"].delete {
                     eq("id", boxId)
                 }
-                reloadThings()
             } catch (e: Exception) {
                 Log.e("SUPA", e.toString())
             }
         }
-    }
-
-    suspend fun reloadThings() {
-        _things.emit(getThings())
-        _types.emit(getTypes())
-        _boxes.emit(getBoxes())
-        deleteComplete.value = false
     }
 }

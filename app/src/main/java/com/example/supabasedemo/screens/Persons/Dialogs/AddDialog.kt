@@ -50,7 +50,7 @@ fun AddPersonDialog(
                 TextButton(
                     onClick = {
                         val new_person = Persons("", name, surname, "", supaHelper.userUUID)
-                        val new_contact = Contacts("", phone, telegram, avito)
+                        val new_contact = Contacts("", phone, telegram, avito, supaHelper.userUUID)
                         viewModel.deleteComplete.value = true
                         coroutineScope.launch { viewModel.insertContact(new_contact, new_person) }
                         onDismiss()

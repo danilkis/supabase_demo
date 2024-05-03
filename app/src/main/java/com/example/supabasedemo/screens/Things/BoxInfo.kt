@@ -3,10 +3,8 @@ package com.example.supabasedemo.screens.Things
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.EaseIn
 import androidx.compose.animation.core.EaseOut
@@ -18,13 +16,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -35,7 +29,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
-import androidx.compose.material3.Text
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -49,26 +42,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.supabasedemo.R
 import com.example.supabasedemo.customelements.BoxInfoHeader
-import com.example.supabasedemo.customelements.Cards.PersonCard
 import com.example.supabasedemo.customelements.Cards.ThingCard
-import com.example.supabasedemo.customelements.GenerateQRButton
 import com.example.supabasedemo.customelements.ThingSheet
-import com.example.supabasedemo.customelements.UserHead
-import com.example.supabasedemo.model.Persons.Contacts
 import com.example.supabasedemo.model.States
 import com.example.supabasedemo.model.Things.Box
-import com.example.supabasedemo.model.Things.Things
-import com.example.supabasedemo.screens.Persons.Dialogs.DeleteDialog
-import com.example.supabasedemo.screens.Persons.Info
-import com.example.supabasedemo.screens.Persons.PersonLoaded
-import com.example.supabasedemo.screens.Persons.PersonLoading
 import com.example.supabasedemo.screens.Things.Dialogs.DeleteThingDialog
 import com.example.supabasedemo.screens.Things.Dialogs.UpdateThingDialog
 import com.example.supabasedemo.viewmodel.Things.ThingsViewmodel
@@ -117,7 +98,7 @@ fun BoxInfoThingColumn(viewModel: ThingsViewmodel, box: Box, navController: NavC
     LaunchedEffect(Unit) {
         columnAppeared = true
     }
-    val things by viewModel.things.collectAsStateWithLifecycle()
+    val things by viewModel.things.collectAsState(initial = mutableListOf())
     val types by viewModel.types.collectAsState(initial = mutableListOf())
     val ModalSheetState = remember { mutableStateOf(false) }
     val EditDialogState = remember { mutableStateOf(false) }

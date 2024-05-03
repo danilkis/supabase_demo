@@ -9,7 +9,8 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class shelf_boxes(
-    val id: Int,
-    val ShelfID: Int,
-    val BoxID: Int,
+    val id: String,
+    val ShelfID: String,
+    val BoxID: String,
+    val user_id: String
 )

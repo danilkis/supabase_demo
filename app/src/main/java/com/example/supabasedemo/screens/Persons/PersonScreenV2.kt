@@ -16,6 +16,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -29,6 +30,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
+import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
@@ -58,6 +60,7 @@ import com.example.supabasedemo.model.Persons.HolderSaver
 import com.example.supabasedemo.model.Persons.Persons
 import com.example.supabasedemo.model.States
 import com.example.supabasedemo.screens.Persons.Dialogs.DeleteDialog
+import com.example.supabasedemo.supabase.supaHelper
 import com.example.supabasedemo.viewmodel.Person.PersonInfoViewmodel
 import com.example.supabasedemo.viewmodel.Person.PersonInfoViewmodelFactory
 import com.example.supabasedemo.viewmodel.Person.PersonsViewmodel
@@ -119,7 +122,8 @@ fun PersInfo(
     }
 ) {
     var currentState by remember { mutableStateOf(States.Empty) }
-    val contact = viewModel.contacts.collectAsState(Contacts("", "0", "0", "0")).value
+    val contact =
+        viewModel.contacts.collectAsState(Contacts("", "0", "0", "0", supaHelper.userUUID)).value
     Crossfade(targetState = currentState, animationSpec = tween(300, 100)) { state ->
         when (state) {
             States.Info -> Info()
@@ -152,6 +156,15 @@ fun PersList( //TODO: Уменьшить кол-во рекомпозиций
     var unread by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         columnAppeared = true
+    }
+    if (persons.isEmpty()) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(text = "Пока что тут пусто, добавьте что-нибудь")
+        }
     }
     LazyColumn(
         modifier = Modifier

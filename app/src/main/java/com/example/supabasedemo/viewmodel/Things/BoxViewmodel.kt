@@ -10,7 +10,7 @@ class BoxViewmodel : ThingsViewmodel() { //TODO: При удалении пер�
     private val _filterThings = MutableStateFlow<MutableList<Things>>(mutableListOf())
 
     var FilteredThings: StateFlow<MutableList<Things>> = _filterThings
-    var boxId = 0
+    var boxId = ""
     suspend fun getBoxThings(): MutableList<Things> {
         return withContext(Dispatchers.IO) {
             reloadFilteredDevices()

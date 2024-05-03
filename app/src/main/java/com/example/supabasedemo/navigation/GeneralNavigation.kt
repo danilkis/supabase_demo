@@ -110,7 +110,7 @@ fun GeneralNavigation(
             }
         ) {
             val boxes by thingVm.boxes.collectAsStateWithLifecycle(initialValue = listOf())
-            val personInfoId: Int = it.arguments?.getInt("boxId") ?: 0
+            val personInfoId: String = it.arguments?.getString("boxId") ?: ""
             boxes.forEach { it ->
                 if (it.id == personInfoId) {
                     BoxInfoScreen(it, navController)
@@ -135,7 +135,7 @@ fun GeneralNavigation(
                 )
             }
         ) {
-            val shelfID: Int = it.arguments?.getInt("shelfId") ?: 0
+            val shelfID: String = it.arguments?.getString("shelfId") ?: ""
             val shelves by shelfVm.shelves.collectAsStateWithLifecycle(initialValue = listOf())
             shelves.forEach { it ->
                 if (it.id == shelfID) {

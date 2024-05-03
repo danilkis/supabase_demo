@@ -1,13 +1,8 @@
 package com.example.supabasedemo.screens.Things
 
 import android.annotation.SuppressLint
-import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
-import androidx.activity.compose.BackHandler
-import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Spring
@@ -26,33 +21,27 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Done
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
-import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
-import androidx.compose.material3.adaptive.layout.AnimatedPane
-import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
-import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
-import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
+import androidx.compose.material3.Text
 import androidx.compose.material3.rememberSwipeToDismissBoxState
-import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -69,19 +58,11 @@ import com.example.supabasedemo.customelements.OptionsFAB
 import com.example.supabasedemo.customelements.SearchBarCustom
 import com.example.supabasedemo.customelements.ThingSheet
 import com.example.supabasedemo.customelements.ToggleHeading
-import com.example.supabasedemo.model.Persons.HolderSaver
-import com.example.supabasedemo.model.Persons.Persons
-import com.example.supabasedemo.model.Things.HolderSaverThings
-import com.example.supabasedemo.model.Things.Things
-import com.example.supabasedemo.screens.Persons.PersInfo
-import com.example.supabasedemo.screens.Persons.PersList
 import com.example.supabasedemo.screens.Things.Dialogs.AddBoxDialog
 import com.example.supabasedemo.screens.Things.Dialogs.AddThingDialog
 import com.example.supabasedemo.screens.Things.Dialogs.DeleteBoxDialog
 import com.example.supabasedemo.screens.Things.Dialogs.DeleteThingDialog
 import com.example.supabasedemo.screens.Things.Dialogs.UpdateThingDialog
-import com.example.supabasedemo.viewmodel.Person.PersonInfoViewmodel
-import com.example.supabasedemo.viewmodel.Person.PersonsViewmodel
 import com.example.supabasedemo.viewmodel.Things.ThingsViewmodel
 import kotlinx.coroutines.launch
 
@@ -119,20 +100,21 @@ import kotlinx.coroutines.launch
 @Composable
 fun ThingsMainScreen(navController: NavController, viewModel: ThingsViewmodel = viewModel()) {
     val things by viewModel.things.collectAsState(initial = mutableListOf())
+    val boxes by viewModel.boxes.collectAsState(initial = mutableListOf())
     val openDialogThing = remember { mutableStateOf(false) }
     val openDialogBox = remember { mutableStateOf(false) }
     Scaffold(topBar = { SearchBarCustom(navController) }, floatingActionButton = {
         OptionsFAB({ openDialogBox.value = true }, { openDialogThing.value = true })
     })
     { paddingValues ->
-        if (things.isEmpty()) {
+        if (things.isEmpty() && boxes.isEmpty()) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(top = paddingValues.calculateTopPadding())
             ) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator(modifier = Modifier.size(60.dp))
+                    Text(text = "Пока что тут пусто, добавьте что-нибудь")
                 }
             }
         } else {
@@ -193,7 +175,7 @@ fun BoxColumn(
             .padding(paddingValues), verticalArrangement = Arrangement.spacedBy(4.dp)
     )
     {
-        items(boxes.filter { it.id != 1 }) { box ->
+        items(boxes) { box ->
             val dismissState = rememberSwipeToDismissBoxState(
                 positionalThreshold = { distance -> distance * .25f }
             )
@@ -302,7 +284,7 @@ fun ThingColumn(
             .padding(paddingValues), verticalArrangement = Arrangement.spacedBy(4.dp)
     )
     {
-        items(things.filter { it.boxId == 1 }) { thing ->
+        items(things.filter { it.boxId.isNullOrBlank() }) { thing ->
             val dismissState = rememberSwipeToDismissBoxState(
                 positionalThreshold = { distance -> distance * .25f }
             )

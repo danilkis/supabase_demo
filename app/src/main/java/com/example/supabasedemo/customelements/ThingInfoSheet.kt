@@ -34,7 +34,7 @@ import com.example.supabasedemo.viewmodel.Order.OrderThingsViewmodel
 @Composable
 fun ThingSheet(
     thing: Things,
-    types: MutableList<Type>,
+    types: List<Type>,
     onDismiss: () -> Unit,
     navController: NavController
 ) {
@@ -46,7 +46,6 @@ fun ThingSheet(
         }
     ) {
         val orderThingVM = OrderThingsViewmodel()
-        orderThingVM.thingId = thing.id
         val orders by orderThingVM.OrderThings.collectAsState(initial = listOf())
 
         Column(modifier = androidx.compose.ui.Modifier.padding(8.dp)) {
@@ -80,7 +79,7 @@ fun ThingSheet(
                 style = MaterialTheme.typography.bodyMedium
             )
             Text(
-                text = stringResource(R.string.boxID_thinginfo, thing.boxId),
+                text = stringResource(R.string.boxID_thinginfo, thing.boxId ?: " "),
                 style = MaterialTheme.typography.bodyMedium
             )
             Spacer(modifier = androidx.compose.ui.Modifier.height(16.dp))
