@@ -29,7 +29,7 @@
     <string name="welcome_back">Avec le retour de %1$s</string>
     <string name="connect_to_server">Connexion au serveur</string>
     <string name="your_name">Votre nom</string>
-    <string name="server_url">URL du serveur</string>
+    <string name="Login">Login</string>
     <string name="add_thing_fab">Ajouter une chose</string>
     <string name="add_box_fab">Ajouter une boîte</string>
     <string name="add">Ajouter</string>
@@ -72,4 +72,5 @@
     <string name="shelf_info_floor">"Étage: "</string>
     <string name="qr_save">Enregistrez ou envoyez le code</string>
     <string name="shelves">Rayonnages</string>
+    <string name="Password">Password</string>
 </resources>
