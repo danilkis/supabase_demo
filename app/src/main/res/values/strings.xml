@@ -28,7 +28,7 @@
     <string name="welcome_back">С возращением %1$s</string>
     <string name="connect_to_server">Подключение к серверу</string>
     <string name="your_name">Ваше имя</string>
-    <string name="Login">Логин</string>
+    <string name="Login">Email</string>
     <string name="add_thing_fab">Добавить вещь</string>
     <string name="add_box_fab">Добавить коробку</string>
     <string name="add">Добавить</string>
@@ -72,4 +72,5 @@
     <string name="qr_save">Сохраните или отправьте код</string>
     <string name="shelves">Стелажи</string>
     <string name="Password">Пароль</string>
+    <string name="PasswordRepeat">Пароль еще раз</string>
 </resources>

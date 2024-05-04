@@ -3,6 +3,7 @@ package com.example.supabasedemo.supabase
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.gotrue.GoTrue
+import io.github.jan.supabase.gotrue.OtpType
 import io.github.jan.supabase.gotrue.gotrue
 import io.github.jan.supabase.gotrue.providers.builtin.Email
 import io.github.jan.supabase.gotrue.user.UserInfo
@@ -33,6 +34,22 @@ class supaHelper {
                 email = mail
                 password = pass
             }
+            return client.gotrue.retrieveUserForCurrentSession(updateSession = true)
+        }
+
+        suspend fun userSignUp(mail: String, pass: String) {
+            val user = client.gotrue.signUpWith(provider = Email) {
+                email = mail
+                password = pass
+            }
+        }
+
+        suspend fun verifyOTP(mail: String, token: String): UserInfo {
+            val user = client.gotrue.verifyEmailOtp(
+                type = OtpType.Email.SIGNUP,
+                email = mail,
+                token = token
+            )
             return client.gotrue.retrieveUserForCurrentSession(updateSession = true)
         }
         fun getAsyncClient(): SupabaseClient {

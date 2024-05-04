@@ -17,6 +17,8 @@ import com.example.supabasedemo.qrcode.Scanner.ReaderScreen
 import com.example.supabasedemo.screens.Booting.Auth
 import com.example.supabasedemo.screens.Booting.Hello
 import com.example.supabasedemo.screens.Booting.MainScreen
+import com.example.supabasedemo.screens.Booting.OTPScreen
+import com.example.supabasedemo.screens.Booting.SignUp
 import com.example.supabasedemo.screens.Persons.PersonInfoScreen
 import com.example.supabasedemo.screens.Search.SearchResultScreen
 import com.example.supabasedemo.screens.Shelf.ShelfInfoScreen
@@ -39,6 +41,12 @@ fun GeneralNavigation(
         composable("auth") {
             Auth(navController)
             //Ввод адреса сервера
+        }
+        composable("Signup") {
+            SignUp(navController)
+        }
+        composable("OTPScreen") {
+            OTPScreen(navController)
         }
         composable("helloScreen") {
             Hello(navController)
