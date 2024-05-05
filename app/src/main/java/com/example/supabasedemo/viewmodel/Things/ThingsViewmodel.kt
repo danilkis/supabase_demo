@@ -27,7 +27,6 @@ open class ThingsViewmodel : ViewModel() {
             delay(500)
             val cont = getThings()
             emit(cont)
-            Log.i("ThingFlow", "REQ")
             deleteComplete.value = false
         }
     }
@@ -61,9 +60,11 @@ open class ThingsViewmodel : ViewModel() {
         return withContext(Dispatchers.Main) {
             try {
                 val asyncClient = supaHelper.getAsyncClient()
-                return@withContext asyncClient.postgrest["Things"].select().decodeList<Things>()
+                val res = asyncClient.postgrest["Things"].select().decodeList<Things>()
+                Log.i("ThingFlow", res.toString())
+                return@withContext res
             } catch (e: Exception) {
-                Log.e("SUPA", e.toString())
+                Log.e("ThingFlow", e.toString())
                 return@withContext emptyList()
             }
         } as MutableList<Things>

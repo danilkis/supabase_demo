@@ -50,6 +50,7 @@ import com.example.supabasedemo.customelements.Cards.ThingCard
 import com.example.supabasedemo.customelements.ThingSheet
 import com.example.supabasedemo.model.States
 import com.example.supabasedemo.model.Things.Box
+import com.example.supabasedemo.screens.Search.thingsViewModel
 import com.example.supabasedemo.screens.Things.Dialogs.DeleteThingDialog
 import com.example.supabasedemo.screens.Things.Dialogs.UpdateThingDialog
 import com.example.supabasedemo.viewmodel.Things.ThingsViewmodel
@@ -65,7 +66,7 @@ fun BoxInfoScreen( //TODO: Если пусто показать надпись �
     Column(modifier = Modifier.fillMaxSize())
     {
         BoxInfoHeader(box = box)
-        BoxInfoThingColumn(viewModel = viewModel, box = box, navController = navController)
+        BoxInfoThingColumn(box = box, navController = navController)
          var currentState by remember { mutableStateOf(States.Empty) }
 //        val things by viewModel.things.collectAsState(initial = mutableListOf())
 //        Crossfade(targetState = currentState, animationSpec = tween(300, 100)) { state ->
@@ -92,8 +93,9 @@ fun BoxInfoScreen( //TODO: Если пусто показать надпись �
 @RequiresApi(Build.VERSION_CODES.Q)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BoxInfoThingColumn(viewModel: ThingsViewmodel, box: Box, navController: NavController)
+fun BoxInfoThingColumn(box: Box, navController: NavController)
 {
+    val viewModel = thingsViewModel
     var columnAppeared by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         columnAppeared = true

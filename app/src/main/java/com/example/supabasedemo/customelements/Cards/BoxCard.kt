@@ -23,7 +23,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Composable
-fun BoxCard(box: Box, navController: NavController) {
+fun BoxCard(box: Box, navController: NavController, onClick: (() -> Unit)? = null) {
     val coroutineScope = rememberCoroutineScope()
     OutlinedCard(
         modifier = Modifier
@@ -31,7 +31,10 @@ fun BoxCard(box: Box, navController: NavController) {
             .padding(start = 4.dp, top = 2.dp, end = 4.dp, bottom = 2.dp)
             .clickable {
                 coroutineScope.launch(Dispatchers.Main) {
-                    navController.navigate("box/${box.id}")
+                    if (onClick != null) {
+                        onClick()
+                    }
+                    //navController.navigate("box/${box.id}")
                 }
             }
     ) {

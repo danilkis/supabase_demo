@@ -87,12 +87,12 @@ fun AuthSetup(navController: NavController, sharedPreference: SharedPreference) 
             sharedPreference.SaveString("Name", name)
             signingIn = true
         }) {
-            Text(text = "Войти")
+            Text(text = stringResource(R.string.Sign_in))
         }
         Button(onClick = {
             navController.navigate("Signup")
         }) {
-            Text(text = "Регистрация")
+            Text(text = stringResource(R.string.Signup))
         }
         if (signingIn) {
             SignInExistingUser(
@@ -111,12 +111,14 @@ fun SignInExistingUser(
     onFail: () -> Unit,
     onComplete: () -> Unit
 ) {
+    val ctx = LocalContext.current
     // State variables
     var showErrorDialog by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf("") }
 
     val coroutineScope = rememberCoroutineScope()
-
+    val no_serv_conn = ctx.getString(R.string.No_serv_connection)
+    val invalid_data = ctx.getString(R.string.WrongSignData)
     // Function to handle sign-in process
     fun signIn() {
         coroutineScope.launch {
@@ -130,13 +132,12 @@ fun SignInExistingUser(
             } catch (e: BadRequestRestException) {
                 // Handling bad request exception
                 showErrorDialog = true
-                errorMessage =
-                    "Неверные учетные данные. Пожалуйста, проверьте свой URL сервера и API ключ."
+                errorMessage = invalid_data
                 sharedPreference.SaveBool("Init_setup", false)
             } catch (e: HttpRequestException) {
                 // Handling HTTP request exception
                 showErrorDialog = true
-                errorMessage = "Нет подключения к серверу. Подождите немного или попробуйте вновь."
+                errorMessage = no_serv_conn
                 sharedPreference.SaveBool("Init_setup", false)
             }
         }
@@ -151,7 +152,7 @@ fun SignInExistingUser(
     fun ErrorDialog() {
         AlertDialog(
             onDismissRequest = { showErrorDialog = false },
-            title = { Text(text = "Ошибка") },
+            title = { Text(text = stringResource(R.string.Error)) },
             text = { Text(text = errorMessage) },
             confirmButton = {
                 Button(

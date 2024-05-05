@@ -3,11 +3,14 @@ package com.example.supabasedemo.screens.Things
 import android.annotation.SuppressLint
 import android.os.VibrationEffect
 import android.os.Vibrator
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
@@ -16,6 +19,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -33,7 +37,13 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
+import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.material3.adaptive.layout.AnimatedPane
+import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
+import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
+import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
 import androidx.compose.material3.rememberSwipeToDismissBoxState
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -41,6 +51,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -58,6 +69,10 @@ import com.example.supabasedemo.customelements.OptionsFAB
 import com.example.supabasedemo.customelements.SearchBarCustom
 import com.example.supabasedemo.customelements.ThingSheet
 import com.example.supabasedemo.customelements.ToggleHeading
+import com.example.supabasedemo.model.States
+import com.example.supabasedemo.model.Things.Box
+import com.example.supabasedemo.model.Things.HolderSaverBox
+import com.example.supabasedemo.screens.Persons.Info
 import com.example.supabasedemo.screens.Things.Dialogs.AddBoxDialog
 import com.example.supabasedemo.screens.Things.Dialogs.AddThingDialog
 import com.example.supabasedemo.screens.Things.Dialogs.DeleteBoxDialog
@@ -65,36 +80,6 @@ import com.example.supabasedemo.screens.Things.Dialogs.DeleteThingDialog
 import com.example.supabasedemo.screens.Things.Dialogs.UpdateThingDialog
 import com.example.supabasedemo.viewmodel.Things.ThingsViewmodel
 import kotlinx.coroutines.launch
-
-//@RequiresApi(Build.VERSION_CODES.Q)
-//@OptIn(ExperimentalMaterial3WindowSizeClassApi::class, ExperimentalMaterial3AdaptiveApi::class)
-//@Composable
-//fun ThingPanes(navController: NavController, thingsViewmodel: ThingsViewmodel) {
-//    //var selec3tedItem: Things by rememberSaveable(stateSaver = HolderSaverThings) { mutableStateOf(Things(0,"","",0,0,"",0))  }
-//    val navigator = rememberListDetailPaneScaffoldNavigator<Nothing>()
-//
-//    BackHandler(navigator.canNavigateBack()) {
-//        navigator.navigateBack()
-//    }
-//
-//    ListDetailPaneScaffold(
-//        directive = navigator.scaffoldDirective,
-//        value = navigator.scaffoldValue,
-//        listPane = {
-//            AnimatedPane {
-//
-//            }
-//        },
-//        detailPane = {
-//            // Show the detail pane content if selected item is available
-//            selectedItem.let { item ->
-//                AnimatedPane(modifier = Modifier.preferredWidth(370.dp)) {
-//
-//                }
-//            }
-//        },
-//    )
-//}
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -114,51 +99,60 @@ fun ThingsMainScreen(navController: NavController, viewModel: ThingsViewmodel = 
                     .padding(top = paddingValues.calculateTopPadding())
             ) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(text = "Пока что тут пусто, добавьте что-нибудь")
+                    Text(text = stringResource(R.string.Empty_add_something))
                 }
             }
         } else {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(top = paddingValues.calculateTopPadding(), start = 6.dp, end = 6.dp)
-                    .fillMaxWidth()
-            ) {
-                ToggleHeading(
-                    { BoxColumn(navController = navController, viewModel, 4.dp) },
-                    stringResource(
-                        R.string.boxes
-                    )
+            ThingsBoxesPanes(navController, viewModel, paddingValues)
+            if (openDialogThing.value) {
+                AddThingDialog(
+                    openDialogThing.value,
+                    onDismiss = { openDialogThing.value = false },
+                    viewModel
                 )
-                Spacer(modifier = Modifier.height(8.dp))
-                ToggleHeading(
-                    { ThingColumn(navController = navController, viewModel, 4.dp) },
-                    stringResource(
-                        R.string.unsorted
-                    )
+            }
+            if (openDialogBox.value) {
+                AddBoxDialog(
+                    openDialogBox.value,
+                    onDismiss = { openDialogBox.value = false },
+                    viewModel
                 )
             }
         }
-        if (openDialogThing.value) {
-            AddThingDialog(
-                openDialogThing.value,
-                onDismiss = { openDialogThing.value = false },
-                viewModel
-            )
+    }
+}
+
+@Composable
+fun BoxInfo(
+    box: Box,
+    viewModel: ThingsViewmodel = viewModel(),
+    navController: NavController,
+    paddingValues: PaddingValues
+) {
+    var currentState by remember { mutableStateOf(States.Empty) }
+    val boxes =
+        viewModel.boxes.collectAsState(
+            Box("", "", "")
+        ).value
+    Crossfade(targetState = currentState, animationSpec = tween(300, 100)) { state ->
+        when (state) {
+            States.Info -> Info()
+            States.Loading -> BoxLoading(box = box, paddingValues)
+            States.Loaded -> BoxLoaded(box = box, navController = navController, paddingValues)
+            States.Empty -> Box {}
         }
-        if (openDialogBox.value) {
-            AddBoxDialog(
-                openDialogBox.value,
-                onDismiss = { openDialogBox.value = false },
-                viewModel
-            )
-        }
+    }
+    currentState = if (box.name.isNullOrBlank()) {
+        States.Info
+    } else {
+        States.Loaded
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BoxColumn(
+    onItemClick: (Box) -> Unit,
     navController: NavController,
     viewModel: ThingsViewmodel = viewModel(),
     paddingValues: Dp
@@ -208,12 +202,18 @@ fun BoxColumn(
                 exit = fadeOut(
                     animationSpec = spring(Spring.DampingRatioLowBouncy, Spring.StiffnessMedium)
                 ) + scaleOut(
-                    animationSpec = spring(Spring.DampingRatioMediumBouncy, Spring.StiffnessMedium)
+                    animationSpec = spring(
+                        Spring.DampingRatioMediumBouncy,
+                        Spring.StiffnessMedium
+                    )
                 ),
                 enter = fadeIn(
                     animationSpec = spring(Spring.DampingRatioLowBouncy, Spring.StiffnessMedium)
                 ) + scaleIn(
-                    animationSpec = spring(Spring.DampingRatioLowBouncy, Spring.StiffnessMediumLow)
+                    animationSpec = spring(
+                        Spring.DampingRatioLowBouncy,
+                        Spring.StiffnessMediumLow
+                    )
                 )
             ) {
                 SwipeToDismissBox(
@@ -256,12 +256,13 @@ fun BoxColumn(
                         }
                     }
                 ) {
-                    BoxCard(box = box, navController = navController)
+                    BoxCard(box = box, navController = navController) { onItemClick(box) }
                 }
             }
         }
     }
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ThingColumn(
@@ -284,7 +285,7 @@ fun ThingColumn(
             .padding(paddingValues), verticalArrangement = Arrangement.spacedBy(4.dp)
     )
     {
-        items(things.filter { it.boxId.isNullOrBlank() }) { thing ->
+        items(things) { thing ->
             val dismissState = rememberSwipeToDismissBoxState(
                 positionalThreshold = { distance -> distance * .25f }
             )
@@ -317,12 +318,18 @@ fun ThingColumn(
                 exit = fadeOut(
                     animationSpec = spring(Spring.DampingRatioLowBouncy, Spring.StiffnessMedium)
                 ) + scaleOut(
-                    animationSpec = spring(Spring.DampingRatioMediumBouncy, Spring.StiffnessMedium)
+                    animationSpec = spring(
+                        Spring.DampingRatioMediumBouncy,
+                        Spring.StiffnessMedium
+                    )
                 ),
                 enter = fadeIn(
                     animationSpec = spring(Spring.DampingRatioLowBouncy, Spring.StiffnessMedium)
                 ) + scaleIn(
-                    animationSpec = spring(Spring.DampingRatioLowBouncy, Spring.StiffnessMediumLow)
+                    animationSpec = spring(
+                        Spring.DampingRatioLowBouncy,
+                        Spring.StiffnessMediumLow
+                    )
                 )
             ) {
                 SwipeToDismissBox(
@@ -386,9 +393,79 @@ fun ThingColumn(
                         thing = thing
                     )
                 }
+                }
             }
         }
-    }
 }
+
+@OptIn(ExperimentalMaterial3WindowSizeClassApi::class, ExperimentalMaterial3AdaptiveApi::class)
+@Composable
+fun ThingsBoxesPanes(
+    navController: NavController,
+    thingsViewmodel: ThingsViewmodel,
+    paddingValues: PaddingValues
+) {
+    var selectedItem: Box by rememberSaveable(stateSaver = HolderSaverBox) {
+        mutableStateOf(Box("", "", ""))
+    }
+    val navigator = rememberListDetailPaneScaffoldNavigator<Nothing>()
+
+    BackHandler(navigator.canNavigateBack()) {
+        navigator.navigateBack()
+    }
+
+    ListDetailPaneScaffold(
+        directive = navigator.scaffoldDirective,
+        value = navigator.scaffoldValue,
+        listPane =
+        {
+            AnimatedPane {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues)
+                        .fillMaxWidth()
+                ) {
+                    ToggleHeading(
+                        {
+                            BoxColumn(
+                                onItemClick = { id ->
+                                    // Set current item
+                                    selectedItem = id
+                                    // Display the detail pane
+                                    navigator.navigateTo(ListDetailPaneScaffoldRole.Detail)
+                                },
+                                navController = navController,
+                                viewModel = thingsViewmodel,
+                                paddingValues = 4.dp
+                            )
+                        },
+                        stringResource(
+                            R.string.boxes
+                        )
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    ToggleHeading(
+                        { ThingColumn(navController = navController, thingsViewmodel, 4.dp) },
+                        stringResource(
+                            R.string.All_things
+                        )
+                    )
+                }
+            }
+        },
+        detailPane = {
+            selectedItem.let { item ->
+                AnimatedPane(modifier = Modifier.preferredWidth(370.dp)) {
+                    BoxInfo(
+                        box = item,
+                        navController = navController,
+                        paddingValues = paddingValues
+                    )
+                }
+            }
+        },
+    )
+    }
 
 

@@ -47,7 +47,7 @@ fun OTPScreen(navController: NavController) {
     ) {
         // UI components for signing up
         Text(
-            text = "На вашу почту был направлен одноразовый шестизначный пароль. Ввведите его ниже",
+            text = stringResource(R.string.OTP_Mail_message),
             style = MaterialTheme.typography.bodyLarge
         )
         Spacer(modifier = Modifier.height(16.dp))
@@ -60,7 +60,7 @@ fun OTPScreen(navController: NavController) {
             // Saving credentials and initiating sign-up
             OTP = true
         }) {
-            Text(text = "Готово")
+            Text(text = stringResource(id = R.string.done))
         }
         if (OTP) {
             OTPdone(
@@ -86,7 +86,9 @@ fun OTPdone(
     // State variables
     var showErrorDialog by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf("") }
-
+    val ctx = LocalContext.current
+    val no_serv_conn = ctx.getString(R.string.No_serv_connection)
+    val invalid_data = ctx.getString(R.string.WrongSignData)
     val coroutineScope = rememberCoroutineScope()
     val unsorted = stringResource(id = R.string.unsorted)
 
@@ -103,12 +105,12 @@ fun OTPdone(
             } catch (e: BadRequestRestException) {
                 // Handling bad request exception
                 showErrorDialog = true
-                errorMessage = "Неверные учетные данные."
+                errorMessage = invalid_data
                 sharedPreference.SaveBool("Init_setup", false)
             } catch (e: HttpRequestException) {
                 // Handling HTTP request exception
                 showErrorDialog = true
-                errorMessage = "Нет подключения к серверу. Подождите немного или попробуйте вновь."
+                errorMessage = no_serv_conn
                 sharedPreference.SaveBool("Init_setup", false)
             }
         }
@@ -123,7 +125,7 @@ fun OTPdone(
     fun ErrorDialog() {
         AlertDialog(
             onDismissRequest = { showErrorDialog = false },
-            title = { Text(text = "Ошибка") },
+            title = { Text(text = stringResource(id = R.string.Error)) },
             text = { Text(text = errorMessage) },
             confirmButton = {
                 Button(
@@ -140,5 +142,4 @@ fun OTPdone(
     if (showErrorDialog) {
         ErrorDialog()
     }
-    // Display error dialog if needed
 }

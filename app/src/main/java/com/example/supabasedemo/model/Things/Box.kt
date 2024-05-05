@@ -1,6 +1,9 @@
 package com.example.supabasedemo.model.Things
 
+import androidx.compose.runtime.saveable.Saver
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 /** Модель серериализацией для коробки
  * @param id ID коробки
@@ -17,3 +20,8 @@ data class Box(
         return types.find { it.id == id }?.name ?: "Nothing"
     }
 }
+
+val HolderSaverBox = Saver<Box, String>(
+    save = { Json.encodeToString(it) },
+    restore = { Json.decodeFromString(it) }
+)

@@ -1,8 +1,6 @@
 package com.example.supabasedemo.screens.Things.Dialogs
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AllInbox
 import androidx.compose.material3.AlertDialog
@@ -16,9 +14,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.supabasedemo.R
 import com.example.supabasedemo.model.Things.Box
@@ -58,12 +54,6 @@ fun AddBoxDialog(
                         value = name,
                         onValueChange = { name = it },
                         placeholder = { Text(stringResource(R.string.name)) }
-                    )
-                    Spacer(modifier = Modifier.height(5.dp))
-                    OutlinedTextField(
-                        value = barcode,
-                        onValueChange = { barcode = it },
-                        placeholder = { Text(stringResource(R.string.barcode)) }
                     )
                 }
             },

@@ -74,4 +74,12 @@
     <string name="shelves">Shelving</string>
     <string name="Password">Password</string>
     <string name="PasswordRepeat">Your password again</string>
+    <string name="Error">Ошибка</string>
+    <string name="No_serv_connection">No server connection. Try again later</string>
+    <string name="All_things">All things</string>
+    <string name="WrongSignData">Incorrect account data, try again</string>
+    <string name="Sign_in">Sign in</string>
+    <string name="Signup">Sign up</string>
+    <string name="OTP_Mail_message">A 6 character long one time password has been sent to your email. Enter the code below</string>
+    <string name="Empty_add_something">It\'s empty here, add something to get started</string>
 </resources>

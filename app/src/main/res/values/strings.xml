@@ -73,4 +73,12 @@
     <string name="shelves">Стелажи</string>
     <string name="Password">Пароль</string>
     <string name="PasswordRepeat">Пароль еще раз</string>
+    <string name="All_things">Все вещи</string>
+    <string name="Error">Ошибка</string>
+    <string name="No_serv_connection">Нет подключения к серверу. Подождите немного или попробуйте вновь.</string>
+    <string name="WrongSignData">Неверные учетные данные. Пожалуйста, проверьте свой URL сервера и API ключ.</string>
+    <string name="Sign_in">Войти</string>
+    <string name="Signup">Регистрация</string>
+    <string name="OTP_Mail_message">На вашу почту был направлен одноразовый шестизначный пароль. Ввведите его ниже</string>
+    <string name="Empty_add_something">Пока что тут пусто, добавьте что-нибудь</string>
 </resources>
