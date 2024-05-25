@@ -26,7 +26,7 @@
     <string name="person_delete_message">Вы собираетесь удалить %1$s %2$s?</string>
     <string name="contacts">Контакты</string>
     <string name="welcome_back">С возращением %1$s</string>
-    <string name="connect_to_server">Подключение к серверу</string>
+    <string name="connect_to_server">Добро пожаловать!</string>
     <string name="your_name">Ваше имя</string>
     <string name="Login">Email</string>
     <string name="add_thing_fab">Добавить вещь</string>
@@ -81,4 +81,6 @@
     <string name="Signup">Регистрация</string>
     <string name="OTP_Mail_message">На вашу почту был направлен одноразовый шестизначный пароль. Ввведите его ниже</string>
     <string name="Empty_add_something">Пока что тут пусто, добавьте что-нибудь</string>
+    <string name="ClickOnCard">Нажмите на карточку для информации</string>
+    <string name="change">Изменить</string>
 </resources>

@@ -14,8 +14,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,7 +26,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.example.supabasedemo.R
 import com.example.supabasedemo.model.Things.Things
 import com.example.supabasedemo.model.Things.Type
-import com.example.supabasedemo.viewmodel.Order.OrderThingsViewmodel
+import java.util.regex.Pattern
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -45,20 +43,21 @@ fun ThingSheet(
             onDismiss()
         }
     ) {
-        val orderThingVM = OrderThingsViewmodel()
-        val orders by orderThingVM.OrderThings.collectAsState(initial = listOf())
-
         Column(modifier = androidx.compose.ui.Modifier.padding(8.dp)) {
-            Image(
-                painter = painter,
-                contentDescription = "Photo of ${thing.name}",
-                contentScale = ContentScale.FillWidth,
-                modifier = androidx.compose.ui.Modifier
-                    .height(200.dp)
-                    .fillMaxWidth()
-                    .clip(shape = RoundedCornerShape(16.dp))
-            )
-            Spacer(modifier = androidx.compose.ui.Modifier.height(16.dp))
+            if (!thing.photoUrl.isNullOrBlank()) {
+                if (isValidUrl(thing.photoUrl)) {
+                    Image(
+                        painter = painter,
+                        contentDescription = "Photo of ${thing.name}",
+                        contentScale = ContentScale.FillWidth,
+                        modifier = androidx.compose.ui.Modifier
+                            .height(200.dp)
+                            .fillMaxWidth()
+                            .clip(shape = RoundedCornerShape(16.dp))
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
+            }
             Text(
                 text = stringResource(R.string.name_thingInfo, thing.name),
                 style = MaterialTheme.typography.bodyMedium
@@ -93,4 +92,20 @@ fun ThingSheet(
             }
         }
     }
+}
+
+fun isValidEmail(email: String): Boolean {
+    val emailPattern = Pattern.compile(
+        "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+"
+    )
+    return emailPattern.matcher(email).matches()
+}
+
+fun isValidUrl(url: String): Boolean {
+    // Регулярное выражение для проверки URL
+    val regex =
+        """https://supabase.pavlovskhome.ru/storage/v1/object/public/photos/[A-Za-z0-9._-]+\.jpg"""
+    val pattern = Pattern.compile(regex)
+    val matcher = pattern.matcher(url)
+    return matcher.matches()
 }

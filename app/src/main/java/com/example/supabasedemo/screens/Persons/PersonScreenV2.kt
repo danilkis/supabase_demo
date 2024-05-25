@@ -17,6 +17,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -70,7 +71,11 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class, ExperimentalMaterial3AdaptiveApi::class)
 @Composable
-fun PersonPanes(navController: NavController, personsViewmodel: PersonsViewmodel) {
+fun PersonPanes(
+    navController: NavController,
+    personsViewmodel: PersonsViewmodel,
+    paddingValues: PaddingValues
+) {
     var selectedItem: Persons by rememberSaveable(stateSaver = HolderSaver) {
         mutableStateOf(
             Persons(
@@ -83,12 +88,13 @@ fun PersonPanes(navController: NavController, personsViewmodel: PersonsViewmodel
         )
     }
     val navigator = rememberListDetailPaneScaffoldNavigator<Nothing>()
-
     BackHandler(navigator.canNavigateBack()) {
         navigator.navigateBack()
     }
-
     ListDetailPaneScaffold(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(top = 60.dp),
         directive = navigator.scaffoldDirective,
         value = navigator.scaffoldValue,
         listPane = {

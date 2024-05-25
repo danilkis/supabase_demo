@@ -7,6 +7,8 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.EaseIn
+import androidx.compose.animation.core.EaseOut
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
@@ -30,6 +32,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -72,6 +75,7 @@ import com.example.supabasedemo.customelements.ToggleHeading
 import com.example.supabasedemo.model.States
 import com.example.supabasedemo.model.Things.Box
 import com.example.supabasedemo.model.Things.HolderSaverBox
+import com.example.supabasedemo.model.Things.Things
 import com.example.supabasedemo.screens.Persons.Info
 import com.example.supabasedemo.screens.Things.Dialogs.AddBoxDialog
 import com.example.supabasedemo.screens.Things.Dialogs.AddThingDialog
@@ -137,8 +141,8 @@ fun BoxInfo(
     Crossfade(targetState = currentState, animationSpec = tween(300, 100)) { state ->
         when (state) {
             States.Info -> Info()
-            States.Loading -> BoxLoading(box = box, paddingValues)
-            States.Loaded -> BoxLoaded(box = box, navController = navController, paddingValues)
+            States.Loading -> BoxLoading(box = box)
+            States.Loaded -> BoxLoaded(box = box, navController = navController)
             States.Empty -> Box {}
         }
     }
@@ -276,6 +280,7 @@ fun ThingColumn(
     val EditDialogState = remember { mutableStateOf(false) }
     var unread by remember { mutableStateOf(false) }
     var columnAppeared by remember { mutableStateOf(false) }
+    var selectedThing by remember { mutableStateOf<Things?>(null) }
     LaunchedEffect(Unit) {
         columnAppeared = true
     }
@@ -283,8 +288,7 @@ fun ThingColumn(
         modifier = Modifier
             .fillMaxWidth()
             .padding(paddingValues), verticalArrangement = Arrangement.spacedBy(4.dp)
-    )
-    {
+    ) {
         items(things) { thing ->
             val dismissState = rememberSwipeToDismissBoxState(
                 positionalThreshold = { distance -> distance * .25f }
@@ -293,7 +297,6 @@ fun ThingColumn(
             val coroutineScope = rememberCoroutineScope()
             // check if the user swiped
             if (dismissState.dismissDirection == SwipeToDismissBoxValue.EndToStart) {
-// Create an array of timings in milliseconds
                 DeleteThingDialog(
                     thing,
                     viewModel,
@@ -304,6 +307,20 @@ fun ThingColumn(
                         vibrator.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_TICK))
                         unread = true; coroutineScope.launch { dismissState.reset() }
                     })
+            } else if (dismissState.dismissDirection == SwipeToDismissBoxValue.StartToEnd) {
+                EditDialogState.value = true
+                UpdateThingDialog(
+                    open = EditDialogState.value,
+                    onDismiss = {
+                        unread = false; EditDialogState.value =
+                        false; coroutineScope.launch { dismissState.reset() }
+                    },
+                    onCancel = {
+                        vibrator.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_TICK))
+                        unread = true; coroutineScope.launch { dismissState.reset() }
+                    },
+                    thing = thing
+                )
             }
 
             var itemAppeared by remember { mutableStateOf(!columnAppeared) }
@@ -316,30 +333,26 @@ fun ThingColumn(
             AnimatedVisibility(
                 visible = itemAppeared && !viewModel.deleteComplete.value,
                 exit = fadeOut(
-                    animationSpec = spring(Spring.DampingRatioLowBouncy, Spring.StiffnessMedium)
-                ) + scaleOut(
-                    animationSpec = spring(
-                        Spring.DampingRatioMediumBouncy,
-                        Spring.StiffnessMedium
+                    animationSpec = tween(
+                        durationMillis = 400,
+                        easing = EaseOut
                     )
                 ),
                 enter = fadeIn(
-                    animationSpec = spring(Spring.DampingRatioLowBouncy, Spring.StiffnessMedium)
-                ) + scaleIn(
-                    animationSpec = spring(
-                        Spring.DampingRatioLowBouncy,
-                        Spring.StiffnessMediumLow
+                    animationSpec = tween(
+                        durationMillis = 400,
+                        easing = EaseIn
                     )
                 )
             ) {
                 SwipeToDismissBox(
-                    state = dismissState,
+                    state = dismissState, // Ограничение свайпа справа налево
                     backgroundContent = {
                         val direction = dismissState.dismissDirection
                         val color by animateColorAsState(
                             when (dismissState.targetValue) {
                                 SwipeToDismissBoxValue.Settled -> MaterialTheme.colorScheme.background
-                                SwipeToDismissBoxValue.StartToEnd,
+                                SwipeToDismissBoxValue.StartToEnd -> MaterialTheme.colorScheme.secondaryContainer
                                 SwipeToDismissBoxValue.EndToStart -> MaterialTheme.colorScheme.error
                             }
                         )
@@ -349,7 +362,7 @@ fun ThingColumn(
                             SwipeToDismissBoxValue.Settled -> Alignment.Center
                         }
                         val icon = when (direction) {
-                            SwipeToDismissBoxValue.StartToEnd -> Icons.Default.Done
+                            SwipeToDismissBoxValue.StartToEnd -> Icons.Default.Edit
                             SwipeToDismissBoxValue.EndToStart -> Icons.Default.Delete
                             SwipeToDismissBoxValue.Settled -> Icons.Default.Done
                         }
@@ -372,30 +385,28 @@ fun ThingColumn(
                         }
                     }
                 ) {
-                    ThingCard(
-                        thing,
-                        types,
-                        { ModalSheetState.value = true },
-                        { EditDialogState.value = true })
-                }
-                if (ModalSheetState.value) {
-                    ThingSheet(
-                        thing = thing,
-                        types,
-                        { ModalSheetState.value = false },
-                        navController
-                    )
-                }
-                if (EditDialogState.value) {
-                    UpdateThingDialog(
-                        open = EditDialogState.value,
-                        onDismiss = { EditDialogState.value = false },
-                        thing = thing
-                    )
-                }
+                    ThingCard(thing, types, {
+                        selectedThing = thing // Устанавливаем выбранный элемент
+                        ModalSheetState.value = true
+                    },
+                        {
+                            selectedThing = thing // Устанавливаем выбранный элемент
+                            EditDialogState.value = true
+                        })
                 }
             }
         }
+    }
+    if (ModalSheetState.value) {
+        selectedThing?.let {
+            ThingSheet(
+                thing = it,
+                types,
+                { ModalSheetState.value = false },
+                navController
+            )
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class, ExperimentalMaterial3AdaptiveApi::class)
@@ -446,7 +457,9 @@ fun ThingsBoxesPanes(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     ToggleHeading(
-                        { ThingColumn(navController = navController, thingsViewmodel, 4.dp) },
+                        {
+                            ThingColumn(navController = navController, thingsViewmodel, 4.dp)
+                        },
                         stringResource(
                             R.string.All_things
                         )
@@ -456,7 +469,9 @@ fun ThingsBoxesPanes(
         },
         detailPane = {
             selectedItem.let { item ->
-                AnimatedPane(modifier = Modifier.preferredWidth(370.dp)) {
+                AnimatedPane(modifier = Modifier
+                    .preferredWidth(370.dp)
+                    .padding(top = 60.dp)) {
                     BoxInfo(
                         box = item,
                         navController = navController,

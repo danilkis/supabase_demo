@@ -33,7 +33,7 @@ import io.github.jan.supabase.exceptions.HttpRequestException
 import kotlinx.coroutines.launch
 
 @Composable
-fun OTPScreen(navController: NavController) {
+fun OTPScreen(navController: NavController) { //TODO: Сделать красиво
     val context = LocalContext.current
     val sharedPreference = SharedPreference(context)
     var OTPToken by remember { mutableStateOf("") }

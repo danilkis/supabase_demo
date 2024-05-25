@@ -2,7 +2,6 @@ package com.example.supabasedemo.customelements
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -51,11 +50,10 @@ fun SearchBarCustom(navController: NavController) {
         val savedHistory = sharedPreference.sharedPref.getStringSet("searchHistory", emptySet())
         searchHistory.addAll(savedHistory ?: emptySet())
     }
-    Column(modifier = Modifier.padding(5.dp)) {
-        Row(modifier = Modifier.fillMaxWidth())
-        {
             SearchBar(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(5.dp),
                 query = text,
                 onQueryChange = {
                     text = it
@@ -100,7 +98,7 @@ fun SearchBarCustom(navController: NavController) {
                             Icon(
                                 imageVector = Icons.Filled.QrCodeScanner,
                                 contentDescription = null,
-                                modifier = Modifier.size(95.dp),
+                                modifier = Modifier.size(40.dp),
                                 tint = MaterialTheme.colorScheme.primary
                             )
                         }
@@ -140,8 +138,6 @@ fun SearchBarCustom(navController: NavController) {
                 )
             }
         }
-    }
-}
 
 @Preview
 @Composable

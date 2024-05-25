@@ -43,7 +43,6 @@ class supaHelper {
                 password = pass
             }
         }
-
         suspend fun verifyOTP(mail: String, token: String): UserInfo {
             val user = client.gotrue.verifyEmailOtp(
                 type = OtpType.Email.SIGNUP,

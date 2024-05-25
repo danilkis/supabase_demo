@@ -45,6 +45,7 @@ import kotlinx.coroutines.launch
 fun UpdateThingDialog(
     open: Boolean,
     onDismiss: () -> Unit,
+    onCancel: () -> Unit,
     viewModel: ThingsViewmodel = viewModel(),
     thing: Things //TODO: Воткнуть
 ) {
@@ -95,7 +96,7 @@ fun UpdateThingDialog(
                         onDismiss()
                     }
                 ) {
-                    Text(text = stringResource(R.string.done))
+                    Text(text = stringResource(R.string.change))
                 }
             },
             text = {
@@ -223,7 +224,7 @@ fun UpdateThingDialog(
             dismissButton = {
                 TextButton(
                     onClick = {
-                        onDismiss()
+                        onCancel()
                     }
                 ) {
                     Text(text = stringResource(R.string.cancel))

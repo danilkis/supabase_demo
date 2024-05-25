@@ -2,7 +2,6 @@ package com.example.supabasedemo.screens.Things
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,13 +18,12 @@ import com.example.supabasedemo.model.Things.Box
 
 @Composable
 fun BoxLoading(
-    box: Box,
-    paddingValues: PaddingValues
+    box: Box
 ) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(paddingValues),
+            .padding(),
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.Top
     ) {
@@ -42,13 +40,13 @@ fun BoxLoading(
 }
 
 @Composable
-fun BoxLoaded(box: Box, navController: NavController, paddingValues: PaddingValues) {
+fun BoxLoaded(box: Box, navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(paddingValues)
+            .padding()
     ) {
         BoxInfoHeader(box = box)
-        BoxInfoThingColumn(box, navController)
+        ThingColumn(navController = navController, paddingValues = 5.dp)
     }
 }
