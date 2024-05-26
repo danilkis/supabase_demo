@@ -3,9 +3,7 @@ package com.example.supabasedemo.screens.Search
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -24,18 +22,19 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.supabasedemo.R
 import com.example.supabasedemo.customelements.SearchBarCustom
+import com.example.supabasedemo.customelements.ToggleHeading
 import com.example.supabasedemo.screens.Search.Results.BoxResults
-import com.example.supabasedemo.screens.Search.Results.OrdersResults
 import com.example.supabasedemo.screens.Search.Results.PersonsResults
+import com.example.supabasedemo.screens.Search.Results.ShelfResults
 import com.example.supabasedemo.screens.Search.Results.ThingsResults
-import com.example.supabasedemo.viewmodel.Order.OrderViewmodel
 import com.example.supabasedemo.viewmodel.Person.PersonsViewmodel
+import com.example.supabasedemo.viewmodel.Shelf.ShelfViewmodel
 import com.example.supabasedemo.viewmodel.Things.BoxViewmodel
 import com.example.supabasedemo.viewmodel.Things.ThingsViewmodel
 import kotlinx.coroutines.delay
 
 val boxViewModel = BoxViewmodel()
-val ordersViewModel = OrderViewmodel()
+val shelfViewmodel = ShelfViewmodel()
 val thingsViewModel = ThingsViewmodel()
 val personsViewModel = PersonsViewmodel()
 
@@ -43,10 +42,8 @@ val personsViewModel = PersonsViewmodel()
 fun SearchResultScreen(query: String, navController: NavController) {
     var thingsCount by remember { mutableStateOf(0) }
     var personsCount by remember { mutableStateOf(0) }
-    var ordersCount by remember { mutableStateOf(0) }
+    var shelfCount by remember { mutableStateOf(0) }
     var boxesCount by remember { mutableStateOf(0) }
-
-
     var showLoading by remember { mutableStateOf(true) }
 
     LaunchedEffect(key1 = query) {
@@ -59,51 +56,53 @@ fun SearchResultScreen(query: String, navController: NavController) {
             CircularProgressIndicator()
         }
     } else {
-        Scaffold(topBar = { SearchBarCustom(navController) })
-        { paddingValues ->
+        Scaffold(topBar = { SearchBarCustom(navController) }) { paddingValues ->
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(top = paddingValues.calculateTopPadding(), start = 6.dp, end = 6.dp),
+                    .padding(top = paddingValues.calculateTopPadding(), start = 10.dp, end = 10.dp),
             ) {
-                PersonsResults(query = query, navController = navController) { count ->
-                    personsCount = count
-                }
-                if (personsCount > 0) {
-                    Text(
-                        stringResource(id = R.string.persons),
-                        style = MaterialTheme.typography.headlineLarge
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                }
+                val totalResults = personsCount + shelfCount + thingsCount + boxesCount
+                Text(
+                    text = "$totalResults найдено",
+                    style = MaterialTheme.typography.headlineLarge,
+                    modifier = Modifier.padding(16.dp)
+                )
 
-                OrdersResults(query, navController) { count -> ordersCount = count }
-                if (ordersCount > 0) {
-                    Text(
-                        stringResource(id = R.string.orders),
-                        style = MaterialTheme.typography.headlineLarge
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                }
+                ToggleHeading(
+                    heading = stringResource(id = R.string.persons),
+                    expandByDefault = true,
+                    Content = {
+                        PersonsResults(query = query, navController = navController) { count ->
+                            personsCount = count
+                        }
+                    })
 
-                ThingsResults(query = query) { count -> thingsCount = count }
-                if (thingsCount > 0) {
-                    Text(
-                        stringResource(id = R.string.things),
-                        style = MaterialTheme.typography.headlineLarge
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                }
+                ToggleHeading(
+                    heading = stringResource(id = R.string.shelves),
+                    expandByDefault = true,
+                    Content = {
+                        ShelfResults(query, navController) { count -> shelfCount = count }
+                    }
+                )
 
-                BoxResults(query = query, navController) { count -> boxesCount = count }
-                if (boxesCount > 0) {
-                    Text(
-                        stringResource(id = R.string.boxes),
-                        style = MaterialTheme.typography.headlineLarge
-                    )
-                }
+                ToggleHeading(
+                    heading = stringResource(id = R.string.things),
+                    expandByDefault = true,
+                    Content = {
+                        ThingsResults(navController, query = query) { count -> thingsCount = count }
+                    }
+                )
 
-                if (personsCount + ordersCount + thingsCount + boxesCount <= 0) {
+                ToggleHeading(
+                    heading = stringResource(id = R.string.boxes),
+                    expandByDefault = true,
+                    Content = {
+                        BoxResults(query = query, navController) { count -> boxesCount = count }
+                    }
+                )
+
+                if (totalResults <= 0) {
                     Text(
                         stringResource(id = R.string.nothing_found),
                         style = MaterialTheme.typography.headlineLarge
@@ -112,7 +111,7 @@ fun SearchResultScreen(query: String, navController: NavController) {
             }
         }
     }
-// Handle back button press
+    // Handle back button press
     BackHandler {
         navController.navigate("mainScreen")
     }

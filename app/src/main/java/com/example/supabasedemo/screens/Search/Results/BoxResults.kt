@@ -23,7 +23,8 @@ fun BoxResults(query: String, navController: NavController, onResult: (Int) -> U
         items(filteredThings) { box ->
             BoxCard(
                 box = box,
-                navController = navController // replace with actual NavController
+                navController = navController, // replace with actual NavController
+                { navController.navigate("box/${box.id}") }
             )
         }
     }

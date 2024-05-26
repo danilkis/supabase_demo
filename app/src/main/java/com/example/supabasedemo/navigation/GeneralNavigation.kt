@@ -77,7 +77,7 @@ fun GeneralNavigation(
         }
         composable(
             "person/{personInfoId}",
-            arguments = listOf(navArgument("personInfoId") { type = NavType.IntType }),
+            arguments = listOf(navArgument("personInfoId") { type = NavType.StringType }),
             enterTransition = {
                 fadeIn(
                     animationSpec = tween(

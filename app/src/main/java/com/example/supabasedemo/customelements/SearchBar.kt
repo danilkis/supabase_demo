@@ -38,6 +38,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.supabasedemo.R
 import com.example.supabasedemo.SharedPreference
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -50,111 +51,97 @@ fun SearchBarCustom(navController: NavController) {
         val savedHistory = sharedPreference.sharedPref.getStringSet("searchHistory", emptySet())
         searchHistory.addAll(savedHistory ?: emptySet())
     }
-            SearchBar(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(5.dp),
-                query = text,
-                onQueryChange = {
-                    text = it
-                },
-                onSearch = {
-                    searchHistory.add(text)
-                    active = false
-                    navController.navigate("searchResults/$text")
+    SearchBar(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(5.dp),
+        query = text,
+        onQueryChange = {
+            text = it
+        },
+        onSearch = {
+            searchHistory.add(text)
+            active = false
+            navController.navigate("searchResults/$text")
+            with(sharedPreference.sharedPref.edit()) {
+                putStringSet("searchHistory", searchHistory.toSet())
+                apply()
+            }
+        },
+        active = active,
+        onActiveChange = {
+            active = it
+        },
+        placeholder = {
+            Text(text = stringResource(R.string.search))
+        },
+        leadingIcon = {
+            Icon(imageVector = Icons.Default.Search, contentDescription = "Search icon")
+        },
+        trailingIcon = {
+            if (active) {
+                Icon(
+                    modifier = Modifier.clickable {
+                        if (text.isNotEmpty()) {
+                            text = ""
+                        } else {
+                            active = false
+                        }
+                    },
+                    imageVector = Icons.Default.Close,
+                    contentDescription = "Close icon"
+                )
+            } else {
+                IconButton(
+                    onClick = { navController.navigate("Scanner") },
+                    modifier = Modifier.size(40.dp),
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.QrCodeScanner,
+                        contentDescription = null,
+                        modifier = Modifier.size(40.dp),
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+            }
+        }
+    ) {
+        searchHistory.forEach { historyItem ->
+            if (historyItem.isNotEmpty()) {
+                Row(
+                    modifier = Modifier
+                        .padding(all = 14.dp)
+                        .clickable {
+                            text = historyItem
+                            active = true // Установите активное состояние
+                            navController.navigate("searchResults/$historyItem")
+                        }
+                ) {
+                    Icon(imageVector = Icons.Default.History, contentDescription = null)
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Text(text = historyItem)
+                }
+            }
+        }
+        Text(
+            modifier = Modifier
+                .padding(all = 14.dp)
+                .clickable {
+                    searchHistory.clear()
                     with(sharedPreference.sharedPref.edit()) {
                         putStringSet("searchHistory", searchHistory.toSet())
                         apply()
                     }
                 },
-                active = active,
-                onActiveChange = {
-                    active = it
-                },
-                placeholder = {
-                    Text(text = stringResource(R.string.search))
-                },
-                leadingIcon = {
-                    Icon(imageVector = Icons.Default.Search, contentDescription = "Search icon")
-                },
-                trailingIcon = {
-                    if (active) {
-                        Icon(
-                            modifier = Modifier.clickable {
-                                if (text.isNotEmpty()) {
-                                    text = ""
-                                } else {
-                                    active = false
-                                }
-                            },
-                            imageVector = Icons.Default.Close,
-                            contentDescription = "Close icon"
-                        )
-                    } else {
-                        IconButton(
-                            onClick = { navController.navigate("Scanner") },
-                            modifier = Modifier.size(40.dp),
-                        ) {
-                            Icon(
-                                imageVector = Icons.Filled.QrCodeScanner,
-                                contentDescription = null,
-                                modifier = Modifier.size(40.dp),
-                                tint = MaterialTheme.colorScheme.primary
-                            )
-                        }
-                    }
-                }
-            ) {
-                searchHistory.forEach { historyItem ->
-                    if (historyItem.isNotEmpty()) {
-                        Row(
-                            modifier = Modifier
-                                .padding(all = 14.dp)
-                                .clickable {
-                                    text = historyItem
-                                    active = false
-                                    navController.navigate("searchResults/$historyItem")
-                                }
-                        ) {
-                            Icon(imageVector = Icons.Default.History, contentDescription = null)
-                            Spacer(modifier = Modifier.width(10.dp))
-                            Text(text = historyItem)
-                        }
-                    }
-                }
-                Text(
-                    modifier = Modifier
-                        .padding(all = 14.dp)
-                        .clickable {
-                            searchHistory.clear()
-                            with(sharedPreference.sharedPref.edit()) {
-                                putStringSet("searchHistory", searchHistory.toSet())
-                                apply()
-                            }
-                        },
-                    textAlign = TextAlign.Center,
-                    fontWeight = FontWeight.Bold,
-                    text = stringResource(R.string.clear_history)
-                )
-            }
-        }
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight.Bold,
+            text = stringResource(R.string.clear_history)
+        )
+    }
+}
 
 @Preview
 @Composable
 fun SearchTest() {
     SearchBarCustom(navController = rememberNavController())
 }
-/*
-      IconButton(
-          onClick = { navController.navigate("Scanner") },
-          modifier = Modifier.size(90.dp),
-      ) {
-          Icon(
-              imageVector = Icons.Filled.QrCodeScanner,
-              contentDescription = null,
-              modifier = Modifier.size(100.dp),
-              tint = MaterialTheme.colorScheme.primary
-          )
-      }
-
-       */

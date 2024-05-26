@@ -7,29 +7,26 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.navigation.NavController
-import com.example.supabasedemo.customelements.Cards.OrderCard
-import com.example.supabasedemo.screens.Search.ordersViewModel
+import com.example.supabasedemo.customelements.Cards.ShelfCard
+import com.example.supabasedemo.screens.Search.shelfViewmodel
 
 @Composable
-fun OrdersResults(query: String, navController: NavController, onResult: (Int) -> Unit) {
+fun ShelfResults(query: String, navController: NavController, onResult: (Int) -> Unit) {
 
-    val orders by ordersViewModel.orders.collectAsState(initial = listOf())
-    val filteredThings = orders.filter { order ->
-        order.created_at.contains(query, ignoreCase = true) ||
-                order.deadline.contains(query, ignoreCase = true) ||
-                order.status.toString().contains(query, ignoreCase = true) ||
-                order.BillingId.toString().contains(query, ignoreCase = true) ||
-                order.name.contains(query, ignoreCase = true) ||
-                order.personId.toString().contains(query, ignoreCase = true)
+    val shelf by shelfViewmodel.shelves.collectAsState(initial = listOf())
+    val filteredThings = shelf.filter { it ->
+        it.name.contains(query) || it.room.contains(query)
     }
     LaunchedEffect(filteredThings.size) {
         onResult(filteredThings.size)
     }
     LazyColumn {
-        items(filteredThings) { order ->
-            OrderCard(
-                order,
-                navController // replace with actual NavController
+        items(filteredThings) { it ->
+            ShelfCard(
+                it,
+                navController,
+                {},
+                { navController.navigate("shelf/${it.id}") }
             )
         }
     }

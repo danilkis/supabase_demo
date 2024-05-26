@@ -26,7 +26,8 @@ fun PersonsResults(query: String, navController: NavController, onResult: (Int) 
         items(filteredThings) { person ->
             PersonCard(
                 person,
-                navController = navController // replace with actual NavController
+                navController = navController, // replace with actual NavController
+                { navController.navigate("person/${person.id}") }
             )
         }
     }
