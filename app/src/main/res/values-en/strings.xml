@@ -84,4 +84,5 @@
     <string name="Empty_add_something">It\'s empty here, add something to get started</string>
     <string name="ClickOnCard">Click on the card to see information</string>
     <string name="change">Update</string>
+    <string name="unlinkBox">You are about to move %1$s from the shelf. Are you sure?</string>
 </resources>

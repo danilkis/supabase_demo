@@ -83,4 +83,5 @@
     <string name="Empty_add_something">Пока что тут пусто, добавьте что-нибудь</string>
     <string name="ClickOnCard">Нажмите на карточку для информации</string>
     <string name="change">Изменить</string>
+    <string name="unlinkBox">Вы собиратесь убрать %1$s со стеллажа. Вы уверенны?</string>
 </resources>

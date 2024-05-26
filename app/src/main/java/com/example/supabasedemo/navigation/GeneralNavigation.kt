@@ -24,6 +24,7 @@ import com.example.supabasedemo.screens.Search.SearchResultScreen
 import com.example.supabasedemo.screens.Shelf.ShelfInfoScreen
 import com.example.supabasedemo.screens.Things.BoxInfoScreen
 import com.example.supabasedemo.viewmodel.Person.PersonsViewmodel
+import com.example.supabasedemo.viewmodel.Shelf.ShelfBoxesViewmodel
 import com.example.supabasedemo.viewmodel.Shelf.ShelfViewmodel
 import com.example.supabasedemo.viewmodel.Things.ThingsViewmodel
 
@@ -31,7 +32,8 @@ import com.example.supabasedemo.viewmodel.Things.ThingsViewmodel
 fun GeneralNavigation(
     personVm: PersonsViewmodel = PersonsViewmodel(),
     thingVm: ThingsViewmodel = ThingsViewmodel(),
-    shelfVm: ShelfViewmodel = ShelfViewmodel()
+    shelfVm: ShelfViewmodel = ShelfViewmodel(),
+    shelfBoxesVm: ShelfBoxesViewmodel = ShelfBoxesViewmodel(),
 ) {
     val navController = rememberNavController()
     NavHost(navController = navController,
@@ -147,7 +149,7 @@ fun GeneralNavigation(
             val shelves by shelfVm.shelves.collectAsStateWithLifecycle(initialValue = listOf())
             shelves.forEach { it ->
                 if (it.id == shelfID) {
-                    ShelfInfoScreen(it, navController)
+                    ShelfInfoScreen(it, navController, shelfBoxesVm, thingVm)
                 }
             }
         }

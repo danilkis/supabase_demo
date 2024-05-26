@@ -37,7 +37,6 @@ open class ThingsViewmodel : ViewModel() {
             delay(500)
             val cont = getTypes()
             emit(cont)
-            Log.i("TypeFlow", "REQ")
             deleteComplete.value = false
         }
     }
@@ -48,7 +47,6 @@ open class ThingsViewmodel : ViewModel() {
             delay(500)
             val cont = getBoxes()
             emit(cont)
-            Log.i("BoxFlow", "REQ")
             deleteComplete.value = false
         }
     }
@@ -61,7 +59,6 @@ open class ThingsViewmodel : ViewModel() {
             try {
                 val asyncClient = supaHelper.getAsyncClient()
                 val res = asyncClient.postgrest["Things"].select().decodeList<Things>()
-                Log.i("ThingFlow", res.toString())
                 return@withContext res
             } catch (e: Exception) {
                 Log.e("ThingFlow", e.toString())
@@ -140,7 +137,6 @@ open class ThingsViewmodel : ViewModel() {
         return withContext(Dispatchers.Main) {
             try {
                 var asyncClient = supaHelper.getAsyncClient()
-                Log.e("Boxes", asyncClient.postgrest["Box"].select().decodeList<Box>().toString())
                 return@withContext asyncClient.postgrest["Box"].select().decodeList<Box>()
             } catch (e: Exception) {
                 return@withContext emptyList()
