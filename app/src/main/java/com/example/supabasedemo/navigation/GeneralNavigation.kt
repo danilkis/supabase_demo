@@ -101,7 +101,7 @@ fun GeneralNavigation(
         }
         composable(
             "box/{boxId}",
-            arguments = listOf(navArgument("boxId") { type = NavType.IntType }),
+            arguments = listOf(navArgument("boxId") { type = NavType.StringType }),
             enterTransition = {
                 fadeIn(
                     animationSpec = tween(
@@ -127,7 +127,7 @@ fun GeneralNavigation(
         }
         composable(
             "shelf/{shelfId}",
-            arguments = listOf(navArgument("shelfId") { type = NavType.IntType }),
+            arguments = listOf(navArgument("shelfId") { type = NavType.StringType }),
             enterTransition = {
                 fadeIn(
                     animationSpec = tween(

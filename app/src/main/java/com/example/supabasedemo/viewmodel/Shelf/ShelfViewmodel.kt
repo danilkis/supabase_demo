@@ -26,7 +26,7 @@ class ShelfViewmodel: ViewModel() {
             delay(500)
             val cont = getShelves()
             emit(cont)
-            Log.i("ShelfFlow", "REQ")
+
             deleteComplete.value = false
         }
     }
@@ -39,7 +39,8 @@ class ShelfViewmodel: ViewModel() {
             withContext(Dispatchers.Main) {
                 try {
                     val asyncClient = supaHelper.getAsyncClient()
-                    return@withContext asyncClient.postgrest["Shelf"].select().decodeList<Shelf>()
+                    val res = asyncClient.postgrest["Shelf"].select().decodeList<Shelf>()
+                    return@withContext res
                 } catch (e: Exception) {
                     Log.e("MVVM", e.toString())
                     return@withContext emptyList()

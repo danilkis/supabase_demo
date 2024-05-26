@@ -47,6 +47,6 @@ fun BoxLoaded(box: Box, navController: NavController) {
             .padding()
     ) {
         BoxInfoHeader(box = box)
-        ThingColumn(navController = navController, paddingValues = 5.dp)
+        ThingColumn(navController = navController, paddingValues = 5.dp, box = box)
     }
 }

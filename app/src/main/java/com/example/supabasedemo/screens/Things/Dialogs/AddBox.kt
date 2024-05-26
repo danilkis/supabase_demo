@@ -53,7 +53,7 @@ fun AddBoxDialog(
                     OutlinedTextField(
                         value = name,
                         onValueChange = { name = it },
-                        placeholder = { Text(stringResource(R.string.name)) }
+                        label = { Text(stringResource(R.string.name)) }
                     )
                 }
             },

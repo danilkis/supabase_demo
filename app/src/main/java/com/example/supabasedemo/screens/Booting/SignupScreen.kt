@@ -54,7 +54,7 @@ fun SignUp(navController: NavController) {
     var passwordRep by remember { mutableStateOf("") }
     var name by remember { mutableStateOf("") }
     var signingUp by remember { mutableStateOf(false) }
-
+    var dataError by remember { mutableStateOf(false) }
 
     var emailError by remember { mutableStateOf(false) }
     var passwordError by remember { mutableStateOf(false) }
@@ -164,12 +164,37 @@ fun SignUp(navController: NavController) {
             sharedPreference.SaveString("Server_URL", serverURL)
             sharedPreference.SaveString("API_key", apiKey)
             sharedPreference.SaveString("Name", name)
-            signingUp = true
+            if (passwordRep == apiKey && !emailError) {
+                signingUp = true
+            } else {
+                dataError = true
+            }
+
         }) {
             Text(text = "Sign Up")
         }
         if (signingUp) {
             SignUpUser(navController, sharedPreference, { signingUp = false }, { signingUp = true })
+        }
+        @Composable
+        fun ErrorDialog() {
+            AlertDialog(
+                onDismissRequest = { dataError = false },
+                title = { Text(text = stringResource(R.string.Error)) },
+                text = { Text(text = stringResource(R.string.WrongSignData)) },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            dataError = false
+                        }
+                    ) {
+                        Text(text = "OK")
+                    }
+                }
+            )
+        }
+        if (dataError) {
+            ErrorDialog()
         }
     }
 }

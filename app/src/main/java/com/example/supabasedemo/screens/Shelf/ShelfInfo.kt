@@ -1,5 +1,6 @@
 package com.example.supabasedemo.screens.Shelf
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,25 +14,74 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.supabasedemo.R
+import com.example.supabasedemo.customelements.BoxSheet
 import com.example.supabasedemo.customelements.Cards.BoxCard
 import com.example.supabasedemo.customelements.GenerateQRButton
 import com.example.supabasedemo.customelements.UserHead
 import com.example.supabasedemo.model.Shelf.Shelf
+import com.example.supabasedemo.model.Things.Box
 import com.example.supabasedemo.viewmodel.Shelf.ShelfBoxesViewmodel
 import com.example.supabasedemo.viewmodel.Things.ThingsViewmodel
+import kotlinx.coroutines.launch
+
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@Composable
+fun ShelfInfoScreen(
+    shelf: Shelf,
+    navController: NavController,
+    viewModel: ShelfBoxesViewmodel = viewModel(),
+    viewModel2: ThingsViewmodel = viewModel()
+) { //TODO: Удалить
+    Scaffold(topBar = { ShelfInfoHeader(shelf = shelf, navController) })
+    {
+        val boxes by viewModel2.boxes.collectAsStateWithLifecycle(initialValue = listOf())
+        val shelfBoxes by viewModel.shelves_boxes.collectAsStateWithLifecycle(initialValue = listOf())
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 210.dp, start = 6.dp, end = 6.dp)
+        )
+        {
+            items(shelfBoxes.flatMap { shelf -> boxes.filter { shelf.BoxID == it.id } }) {
+                BoxCard(it, navController, { navController.navigate("box/${it.id}") })
+            }
+        }
+    }
+}
+/*
+
+        Spacer(modifier = Modifier.height(.dp))
+
+ */
+
 
 @Composable
-fun ShelfInfoScreen(shelf: Shelf, navController: NavController) { //TODO: Удалить
+fun ShelfInfoHeader(
+    shelf: Shelf,
+    navController: NavController,
+    viewModel: ShelfBoxesViewmodel = viewModel()
+) {
+    var openSheet = remember { mutableStateOf(false) }
+    var boxChosen = remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
+    var box by remember { mutableStateOf(Box("0", "0", "0")) }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -78,27 +128,23 @@ fun ShelfInfoScreen(shelf: Shelf, navController: NavController) { //TODO: Уда
         Spacer(modifier = Modifier.height(8.dp))
         Row(horizontalArrangement = Arrangement.Center)
         {
-            OutlinedButton(onClick = { /*TODO*/ }) {
-                Text(stringResource(R.string.add_thing))
-            }
-            Spacer(modifier = Modifier.width(8.dp))
-            OutlinedButton(onClick = { /*TODO*/ }) {
+            OutlinedButton(onClick = { openSheet.value = true }) {
                 Text(stringResource(R.string.add_box))
             }
         }
-        val thingVm = ThingsViewmodel()
-        val boxes by thingVm.boxes.collectAsStateWithLifecycle(initialValue = listOf())
-        val shelfBoxesVm = ShelfBoxesViewmodel()
-        val shelfBoxes by shelfBoxesVm.shelves_boxes.collectAsStateWithLifecycle(initialValue = listOf())
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(top = 16.dp, start = 6.dp, end = 6.dp)
-        )
+        Spacer(modifier = Modifier.height(4.dp))
+        if (openSheet.value)
         {
-            val CurrentShelf = shelfBoxes.filter { it.ShelfID == shelf.id }
-            items(CurrentShelf.flatMap { shelf -> boxes.filter { shelf.BoxID == it.id } }) {
-                BoxCard(it, navController)
+            BoxSheet(
+                onDismiss = { openSheet.value = false },
+                navController = navController,
+                onChosen = { box = it; boxChosen.value = true; openSheet.value = false })
+        }
+        LaunchedEffect(boxChosen.value) {
+            if (boxChosen.value) {
+                coroutineScope.launch {
+                    viewModel.addBoxToShelf(shelf, box)
+                }
             }
         }
     }

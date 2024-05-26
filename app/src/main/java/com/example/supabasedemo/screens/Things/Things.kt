@@ -272,7 +272,8 @@ fun BoxColumn(
 fun ThingColumn(
     navController: NavController,
     viewModel: ThingsViewmodel = viewModel(),
-    paddingValues: Dp
+    paddingValues: Dp,
+    box: Box = Box("0", "0", "0")
 ) {
     val things by viewModel.things.collectAsState(initial = mutableListOf())
     val types by viewModel.types.collectAsState(initial = mutableListOf())
@@ -280,7 +281,11 @@ fun ThingColumn(
     val EditDialogState = remember { mutableStateOf(false) }
     var unread by remember { mutableStateOf(false) }
     var columnAppeared by remember { mutableStateOf(false) }
+    var applyFilter by remember { mutableStateOf(false) }
     var selectedThing by remember { mutableStateOf<Things?>(null) }
+    if (box.id != "0") {
+        applyFilter = true
+    }
     LaunchedEffect(Unit) {
         columnAppeared = true
     }
@@ -289,7 +294,13 @@ fun ThingColumn(
             .fillMaxWidth()
             .padding(paddingValues), verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        items(things) { thing ->
+        val filteredThings = if (applyFilter) {
+            things.filter { it.boxId == box.id } // применение фильтра
+        } else {
+            things
+        }
+
+        items(filteredThings) { thing ->
             val dismissState = rememberSwipeToDismissBoxState(
                 positionalThreshold = { distance -> distance * .25f }
             )

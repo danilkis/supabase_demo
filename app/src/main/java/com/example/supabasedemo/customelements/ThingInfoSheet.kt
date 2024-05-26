@@ -14,6 +14,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -21,11 +23,13 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.supabasedemo.R
 import com.example.supabasedemo.model.Things.Things
 import com.example.supabasedemo.model.Things.Type
+import com.example.supabasedemo.viewmodel.Things.ThingsViewmodel
 import java.util.regex.Pattern
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -34,10 +38,13 @@ fun ThingSheet(
     thing: Things,
     types: List<Type>,
     onDismiss: () -> Unit,
-    navController: NavController
+    navController: NavController,
+    viewModel: ThingsViewmodel = viewModel()
 ) {
     val painter = rememberAsyncImagePainter(model = thing.photoUrl)
     val ctx = LocalContext.current
+    val boxes by viewModel.boxes.collectAsState(initial = mutableListOf())
+    val current_box = boxes.findLast { it.id == thing.boxId }
     ModalBottomSheet(
         onDismissRequest = {
             onDismiss()
@@ -77,8 +84,9 @@ fun ThingSheet(
                 ),
                 style = MaterialTheme.typography.bodyMedium
             )
+
             Text(
-                text = stringResource(R.string.boxID_thinginfo, thing.boxId ?: " "),
+                text = stringResource(R.string.boxID_thinginfo, current_box?.name ?: " "),
                 style = MaterialTheme.typography.bodyMedium
             )
             Spacer(modifier = androidx.compose.ui.Modifier.height(16.dp))
@@ -92,13 +100,6 @@ fun ThingSheet(
             }
         }
     }
-}
-
-fun isValidEmail(email: String): Boolean {
-    val emailPattern = Pattern.compile(
-        "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+"
-    )
-    return emailPattern.matcher(email).matches()
 }
 
 fun isValidUrl(url: String): Boolean {

@@ -32,6 +32,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.supabasedemo.R
 import com.example.supabasedemo.model.Things.Box
@@ -57,6 +58,12 @@ fun AddThingDialog(
     var filePath by remember { mutableStateOf("") }
     val chosenType by remember { mutableStateOf(mutableStateOf(Type(0, ""))) }
     val chosenBox by remember { mutableStateOf(mutableStateOf(Box("", "", ""))) }
+
+    var nameError by remember { mutableStateOf(false) }
+    var amountError by remember { mutableStateOf(false) }
+    var typeError by remember { mutableStateOf(false) }
+    var boxError by remember { mutableStateOf(false) }
+
     val ctx = LocalContext.current
     if (open) {
         AlertDialog(
@@ -98,28 +105,36 @@ fun AddThingDialog(
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     OutlinedTextField(
                         value = name,
-                        onValueChange = { name = it },
-                        placeholder = { Text(stringResource(R.string.name)) }
+                        onValueChange = {
+                            name = it
+                            nameError = it.isNullOrBlank()
+                        },
+                        isError = nameError,
+                        label = { Text(stringResource(R.string.name)) }
                     )
                     Spacer(modifier = Modifier.height(5.dp))
                     OutlinedTextField(
                         value = amount,
-                        onValueChange = { amount = it },
-                        placeholder = { Text(stringResource(R.string.in_stock)) },
+                        onValueChange = {
+                            amount = it
+                            amountError = it.isNullOrBlank().and(!it.isDigitsOnly())
+                        },
+                        isError = amountError,
+                        label = { Text(stringResource(R.string.in_stock)) },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                     )
                     Spacer(modifier = Modifier.height(5.dp))
                     OutlinedTextField(
                         value = storeUrl,
                         onValueChange = { storeUrl = it },
-                        placeholder = { Text(stringResource(R.string.store_url)) }
+                        label = { Text(stringResource(R.string.store_url)) }
                     )
                     Spacer(modifier = Modifier.height(5.dp))
                     val boxesList = viewModel.boxes.collectAsState(initial = listOf<Box>()).value
                     var boxFieldValue by remember { mutableStateOf("") }
                     var expanded1 by remember { mutableStateOf(false) }
                     // container for textfield and menu
-                    ExposedDropdownMenuBox(
+                    ExposedDropdownMenuBox( // Коробка
                         expanded = expanded1,
                         onExpandedChange = {
                             expanded1 = !expanded1
@@ -165,7 +180,7 @@ fun AddThingDialog(
                     var textFieldValue by remember { mutableStateOf("") }
                     var expanded by remember { mutableStateOf(false) }
                     // container for textfield and menu
-                    ExposedDropdownMenuBox(
+                    ExposedDropdownMenuBox( //Тип
                         expanded = expanded,
                         onExpandedChange = {
                             expanded = !expanded

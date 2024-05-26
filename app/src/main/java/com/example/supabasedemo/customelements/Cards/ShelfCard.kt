@@ -25,7 +25,12 @@ import com.example.supabasedemo.model.Shelf.Shelf
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ShelfCard(shelf: Shelf, navController: NavController, LongClickAction: () -> Unit) {
+fun ShelfCard(
+    shelf: Shelf,
+    navController: NavController,
+    LongClickAction: () -> Unit,
+    onClick: () -> Unit
+) {
     //val coroutineScope = rememberCoroutineScope()
     OutlinedCard(
         modifier = Modifier
@@ -33,7 +38,7 @@ fun ShelfCard(shelf: Shelf, navController: NavController, LongClickAction: () ->
             .padding(start = 4.dp, top = 2.dp, end = 4.dp, bottom = 2.dp)
             .combinedClickable(
                 onClick = {
-                    navController.navigate("shelf/${shelf.id}")
+                    onClick()
                 },
                 onLongClick = {
                     LongClickAction()

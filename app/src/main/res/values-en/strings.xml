@@ -74,7 +74,7 @@
     <string name="shelves">Shelving</string>
     <string name="Password">Password</string>
     <string name="PasswordRepeat">Your password again</string>
-    <string name="Error">Ошибка</string>
+    <string name="Error">Error</string>
     <string name="No_serv_connection">No server connection. Try again later</string>
     <string name="All_things">All things</string>
     <string name="WrongSignData">Incorrect account data, try again</string>

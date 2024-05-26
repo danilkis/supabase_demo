@@ -74,6 +74,6 @@
     <string name="shelves">Rayonnages</string>
     <string name="Password">Password</string>
     <string name="PasswordRepeat">Your password again</string>
-    <string name="Error">Ошибка</string>
+    <string name="Error">Error</string>
     <string name="No_serv_connection">Нет подключения к серверу. Подождите немного или попробуйте вновь.</string>
 </resources>
